@@ -14,8 +14,13 @@ Aeiou.registry
 		['mod', 'Mod commands'],
 		['some', 'Some group'],
 		['other', 'Some other group'],
+		['core', 'Core commands']
 	])
-	.registerDefaults()
+	.registerDefaultTypes()
+	.registerDefaultGroups()
+	.registerDefaultCommands({
+		ping: false
+	})
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 Aeiou.on('ready', () => {
@@ -24,7 +29,7 @@ Aeiou.on('ready', () => {
 
 Aeiou.on('message', (msg) => {
 	if (msg.author.id == Aeiou.user.id) return;
-	msg.channel.send(`${msg.author.username} said "${msg.content}"`);
+	console.log(`${msg.author.username} said "${msg.content}"`);
 });
 
 Aeiou.setProvider(

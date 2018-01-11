@@ -4,17 +4,17 @@ module.exports = class ReplyCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'ping',
-			group: 'core',
+			group: 'fun',
 			memberName: 'ping',
 			description: 'do a ping',
 			details: 'use it to see if aeiou is online',
 			examples: ['!ping'],
 			format: '',
-			guildOnly: false
+			guildOnly: true,
 		});
 	}
 
 	async run(msg, args) {
-		msg.say("Pong!");
+		msg.say(`hi ${msg.member.nickname ? msg.member.nickname : msg.member.user.username}`);
 	}
 };

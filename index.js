@@ -4,7 +4,7 @@ const path = require('path');
 const sqlite = require('sqlite');
 
 const Aeiou = new Commando.Client({
-	owner: '147604925612818432',
+	owner: ['147604925612818432', '94155927032176640'],
 	commandPrefix: '!',
 	unknownCommandResponse: false,
 });

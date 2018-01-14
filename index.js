@@ -14,6 +14,7 @@ Aeiou.registry
 		['mod', 'Mod commands'],
 		['donor', 'Donor commands'],
 		['fun', 'Fun commands'],
+		['tag', 'Tag related commands'],
 	])
 	.registerDefaultTypes()
 	.registerDefaultGroups()

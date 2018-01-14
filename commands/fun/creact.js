@@ -4,6 +4,7 @@ module.exports = class ReplyCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'creact',
+			aliases: ['custreact', 'cr'],
 			group: 'fun',
 			memberName: 'creact',
 			description: 'Adds a custom reaction using a trigger and content.',

@@ -15,6 +15,6 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, args) {
-		msg.say(`hi ${msg.member.nickname ? msg.member.nickname : msg.member.user.username}`);
+		msg.say('Pong!');
 	}
 };

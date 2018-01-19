@@ -2,6 +2,7 @@ const secure = require('./secure.json');
 const Commando = require('discord.js-commando');
 const path = require('path');
 const sqlite = require('sqlite');
+const database = require('./database.js');
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -32,6 +33,7 @@ Aeiou.on('ready', () => {
  \\__,_| \\___||_| \\___/  \\__,_|
 
 Ready to be used and abused!`);
+	database.start();
 });
 
 Aeiou.on('message', (msg) => {

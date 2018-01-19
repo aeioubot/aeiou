@@ -13,6 +13,8 @@
     "discord.js-commando": "github:gawdl3y/discord.js-commando#11.2",
     "eslint": "^4.15.0",
     "eslint-config-google": "^0.9.1",
+    "mysql2": "^1.5.1",
+    "sequelize": "^4.31.2",
     "sqlite": "^2.9.1"
   }
 }

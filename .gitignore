@@ -2,3 +2,5 @@ node_modules/
 secure.json
 settings.sqlite3
 npm-debug.log
+package-lock.json
+.vscode/

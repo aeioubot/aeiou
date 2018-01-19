@@ -1,14 +1,18 @@
 const secure = require('./secure.json');
 const Commando = require('discord.js-commando');
 const path = require('path');
-const sqlite = require('sqlite');
+const SequelizeProvider = require('./providers/Sequelize');
+
 const database = require('./database.js');
+database.start();
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
 	commandPrefix: '!',
 	unknownCommandResponse: false,
 });
+
+Aeiou.setProvider(new SequelizeProvider(database.db)).catch(console.error);
 
 Aeiou.registry
 	.registerGroups([
@@ -33,7 +37,6 @@ Aeiou.on('ready', () => {
  \\__,_| \\___||_| \\___/  \\__,_|
 
 Ready to be used and abused!`);
-	database.start();
 });
 
 Aeiou.on('message', (msg) => {
@@ -48,9 +51,5 @@ Aeiou.on('message', async (message) => {
 	});
 	if (toSay) return message.channel.send(toSay.content);
 });
-
-Aeiou.setProvider(
-	sqlite.open(path.join(__dirname, 'settings.sqlite3')).then((settingsProvider) => new Commando.SQLiteProvider(settingsProvider))
-).catch(console.error);
 
 Aeiou.login(secure.discordAPIKey);

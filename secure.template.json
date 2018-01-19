@@ -1,4 +1,5 @@
 {
-    "discordAPIKey": "token here",
+    "token": "token here",
+	"prefix": "prefix here",
     "dbPassword": "local MySQL database pass"
 }

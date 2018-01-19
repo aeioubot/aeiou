@@ -29,12 +29,12 @@ module.exports = class ReplyCommand extends Command {
 	async run(msg, args) {
 		const {trigger, content} = args;
 		const provider = this.client.provider;
-		let testIfTagExists = provider.get(msg.guild, 'tags', []).find((x) => {
-			if (x.trigger == trigger) return x;
+		const testIfTagExists = provider.get(msg.guild, 'tags', []).find((x) => {
+			if (x.trigger === trigger) return x;
 		});
 		if (testIfTagExists) return msg.say(`There is already a tag with the trigger **${trigger}**!`);
-		if (trigger == '' || content == '') return msg.say('The tag name and/or content can\'t be empty');
-		let toBePushed = provider.get(msg.guild, 'tags', []);
+		if (trigger === '' || content === '') return msg.say('The tag name and/or content can\'t be empty');
+		const toBePushed = provider.get(msg.guild, 'tags', []);
 		toBePushed.push({
 			trigger: trigger,
 			content: content,

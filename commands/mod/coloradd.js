@@ -23,7 +23,7 @@ module.exports = class ReplyCommand extends Command {
 		});
 	}
 
-	async run(msg, args) {
-		const {roles} = args;
+	async run(msg, { roles }) {
+		// 
 	}
 };

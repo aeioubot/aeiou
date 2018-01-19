@@ -24,13 +24,13 @@ module.exports = class ReplyCommand extends Command {
 	async run(msg, args) {
 		const {trigger} = args;
 		const provider = this.client.provider;
-		let testIfTagExists = provider.get(msg.guild, 'tags', []).find((x) => {
-			if (x.trigger == trigger) return x;
+		const testIfTagExists = provider.get(msg.guild, 'tags', []).find(x => {
+			if (x.trigger === trigger) return x;
 		});
 		if (!testIfTagExists) return msg.say(`There is no tag with the name **${trigger}**!`);
-		let toBePushedDelete = provider.get(msg.guild, 'tags', []);
-		let toDelete = toBePushedDelete.find((x) => {
-			if (x.trigger == trigger) return x;
+		const toBePushedDelete = provider.get(msg.guild, 'tags', []);
+		const toDelete = toBePushedDelete.find(x => {
+			if (x.trigger === trigger) return x;
 		});
 		if (toDelete) {
 			if (msg.author.id !== toDelete.owner) return msg.say('You can only delete tags you created!');

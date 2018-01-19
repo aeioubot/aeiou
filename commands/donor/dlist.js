@@ -13,7 +13,7 @@ module.exports = class ReplyCommand extends Command {
 		});
 	}
 
-	async run(msg, args) {
+	async run(msg) {
 		const allDonors = this.client.provider.get(msg.guild.id, 'donorColors', []);
 		if (allDonors.length < 1) return msg.say('This server has no donor colors.');
 		let toSend = 'Here are the current donors, and the colors they are assigned to:\n```';

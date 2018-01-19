@@ -4,11 +4,12 @@ const path = require('path');
 const SequelizeProvider = require('./providers/Sequelize');
 
 const database = require('./database.js');
+
 database.start();
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
-	commandPrefix: '!',
+	commandPrefix: secure.prefix,
 	unknownCommandResponse: false,
 });
 
@@ -39,17 +40,13 @@ Aeiou.on('ready', () => {
 Ready to be used and abused!`);
 });
 
-Aeiou.on('message', (msg) => {
-
-});
-
 Aeiou.on('message', async (message) => {
 	if (message.author.bot) return;
-	let reactionObjects = Aeiou.provider.get(message.guild, 'customReactions', []);
-	let toSay = reactionObjects.find((reactObject) => {
-		if (message.content == reactObject.trigger) return reactObject;
+	const reactionObjects = Aeiou.provider.get(message.guild, 'customReactions', []);
+	const toSay = reactionObjects.find(reactObject => {
+		if (message.content === reactObject.trigger) return reactObject;
 	});
 	if (toSay) return message.channel.send(toSay.content);
 });
 
-Aeiou.login(secure.discordAPIKey);
+Aeiou.login(secure.token);

@@ -44,26 +44,25 @@ module.exports = class ReplyCommand extends Command {
 		const removeStrings = ['remove', 'take', 'remove', 'delete', 'del'];
 		str = str.toLowerCase();
 		for (let i = 0; i < addStrings.length; i++) {
-			if (str.indexOf(addStrings[i]) == 0) return 'add';
+			if (str.indexOf(addStrings[i]) === 0) return 'add';
 		}
 		for (let i = 0; i < removeStrings.length; i++) {
-			if (str.indexOf(removeStrings[i]) == 0) return 'remove';
+			if (str.indexOf(removeStrings[i]) === 0) return 'remove';
 		}
 		return null;
 	}
 
 	appendToSettings(msg, item) {
-		let toSet = this.client.provider.get(msg.guild.id, 'donorColors', []);
+		const toSet = this.client.provider.get(msg.guild.id, 'donorColors', []);
 		toSet.push(item);
 		this.client.provider.set(msg.guild.id, 'donorColors', toSet);
 	}
 
-	async run(msg, args) {
-		const {addOrRemove, user, role} = args;
-		let mode = this.determineMode(addOrRemove);
+	async run(msg, { addOrRemove, user, role }) {
+		const mode = this.determineMode(addOrRemove);
 		if (mode == null) return msg.say(`Please use 'add' or 'remove' as your first argument.'`);
 
-		if (mode == 'add') {
+		if (mode === 'add') {
 			this.appendToSettings(msg, {
 				user: user.user.id,
 				role: role.id,
@@ -71,12 +70,12 @@ module.exports = class ReplyCommand extends Command {
 			return msg.say(`Done! **${user.user.nickname ? user.user.nickname : user.user.username}** can now manage the role \`${role.name}\``);
 		}
 
-		if (mode == 'remove') {
-			let userArray = this.client.provider.get(msg.guild.id, 'donorColors', []);
-			let toSpliceIndex = userArray.findIndex((element) => {
-				if (element.user == user.user.id && element.role == role.id) return true;
+		if (mode === 'remove') {
+			const userArray = this.client.provider.get(msg.guild.id, 'donorColors', []);
+			const toSpliceIndex = userArray.findIndex((element) => {
+				if (element.user === user.user.id && element.role === role.id) return true;
 			});
-			if (toSpliceIndex == -1) return msg.say(`**${user.user.nickname ? user.user.nickname : user.user.username}** is already unable to manage \`${role.name}\`.`);
+			if (toSpliceIndex === -1) return msg.say(`**${user.user.nickname ? user.user.nickname : user.user.username}** is already unable to manage \`${role.name}\`.`);
 			userArray.splice(toSpliceIndex, 1);
 			this.client.provider.set(msg.guild.id, 'donorColors', userArray);
 			return msg.say(`Done! **${user.user.nickname ? user.user.nickname : user.user.username}** can no longer manage the role \`${role.name}\``);

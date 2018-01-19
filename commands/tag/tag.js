@@ -26,11 +26,11 @@ module.exports = class ReplyCommand extends Command {
 		const {tagname} = args;
 		if (msg.author.bot) return;
 		const provider = this.client.provider;
-		let tags = provider.get(msg.guild, 'tags', []);
-		let toSay = tags.find((tag) => {
-			if (tagname == tag.trigger) return tag;
+		const tags = provider.get(msg.guild, 'tags', []);
+		const toSay = tags.find((tag) => {
+			if (tagname === tag.trigger) return tag;
 		});
 		if (toSay) return msg.say(toSay.content);
-		else msg.say(`Tag **${tagname}** does not exist!`);
+		msg.say(`Tag **${tagname}** does not exist!`);
 	}
 };

@@ -22,8 +22,7 @@ module.exports = class ReplyCommand extends Command {
 		});
 	}
 
-	async run(msg, args) {
-		const {user} = args;
+	async run(msg, { user }) {
 		user.ban().then(() => {
 			msg.say(`**${user.displayName}** has been banned.`);
 		}).catch(() => {

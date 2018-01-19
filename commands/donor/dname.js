@@ -24,12 +24,10 @@ module.exports = class ReplyCommand extends Command {
 
 	async run(msg, args) {
 		const {name} = args;
-		const allDonors = this.client.provider.get(msg.guild.id, 'donorColors', []);
-		const thisDonor = allDonors.find((element) => {
-			return element.user == msg.author.id;
-		});
-		if (thisDonor == undefined) return msg.say('You don\'t have a donor color on this server!');
-		msg.guild.roles.find('id', thisDonor.role).setName(name);
+		const donors = this.client.provider.get(msg.guild.id, 'donorColors', []);
+		const donor = donors.find(donor => donor.user === msg.author.id);
+		if (donor === undefined) return msg.say('You don\'t have a donor color on this server!');
+		msg.guild.roles.find('id', donor.role).setName(name);
 		return msg.say('Your role name has been changed.');
 	}
 };

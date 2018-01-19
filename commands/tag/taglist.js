@@ -14,12 +14,10 @@ module.exports = class ReplyCommand extends Command {
 		});
 	}
 
-	async run(msg, args) {
+	async run(msg) {
 		const provider = this.client.provider;
 		let tags = provider.get(msg.guild, 'tags', []);
-		tags = tags.map(function(tag) {
-			return tag.trigger;
-		}).join(', ');
+		tags = tags.map(tag => tag.trigger).join(', ');
 		msg.say(`Tag list: \`\`\`fix\n${tags}\`\`\``);
 	}
 };

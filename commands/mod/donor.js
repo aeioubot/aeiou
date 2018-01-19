@@ -19,10 +19,10 @@ module.exports = class ReplyCommand extends Command {
 					format: '[add or remove]',
 				},
 				{
-					key: 'user',
-					prompt: 'Which user do you want to add a role to?',
+					key: 'member',
+					prompt: 'Which member do you want to add a role to?',
 					type: 'member',
-					format: '[user]',
+					format: '[member]',
 				},
 				{
 					key: 'role',
@@ -58,27 +58,25 @@ module.exports = class ReplyCommand extends Command {
 		this.client.provider.set(msg.guild.id, 'donorColors', toSet);
 	}
 
-	async run(msg, { addOrRemove, user, role }) {
+	async run(msg, { addOrRemove, member, role }) {
 		const mode = this.determineMode(addOrRemove);
 		if (mode == null) return msg.say(`Please use 'add' or 'remove' as your first argument.'`);
 
 		if (mode === 'add') {
 			this.appendToSettings(msg, {
-				user: user.user.id,
+				user: member.id,
 				role: role.id,
 			});
-			return msg.say(`Done! **${user.user.nickname ? user.user.nickname : user.user.username}** can now manage the role \`${role.name}\``);
+			return msg.say(`Done! **${member.displayName}** can now manage the role \`${role.name}\``);
 		}
 
 		if (mode === 'remove') {
 			const userArray = this.client.provider.get(msg.guild.id, 'donorColors', []);
-			const toSpliceIndex = userArray.findIndex((element) => {
-				if (element.user === user.user.id && element.role === role.id) return true;
-			});
-			if (toSpliceIndex === -1) return msg.say(`**${user.user.nickname ? user.user.nickname : user.user.username}** is already unable to manage \`${role.name}\`.`);
+			const toSpliceIndex = userArray.findIndex(donor => donor.id === member.id && donor.role === role.id);
+			if (toSpliceIndex === -1) return msg.say(`**${member.displayName}** is already unable to manage \`${role.name}\`.`);
 			userArray.splice(toSpliceIndex, 1);
 			this.client.provider.set(msg.guild.id, 'donorColors', userArray);
-			return msg.say(`Done! **${user.user.nickname ? user.user.nickname : user.user.username}** can no longer manage the role \`${role.name}\``);
+			return msg.say(`Done! **${member.displayName}** can no longer manage the role \`${role.name}\``);
 		}
 	}
 };

@@ -42,26 +42,21 @@ module.exports = class ReplyCommand extends Command {
 
 	async run(msg, args) {
 		let {color} = args;
-		const allDonors = this.client.provider.get(msg.guild.id, 'donorColors', []);
-		const thisDonor = allDonors.find((element) => {
-			return element.user === msg.author.id;
-		});
-		if (thisDonor === undefined) return msg.say('You don\'t have a donor color on this server!');
+		const donors = this.client.provider.get(msg.guild.id, 'donorColors', []);
+		const donor = donors.find(donor => donor.id === msg.author.id);
+		if (!donor) return msg.say('You don\'t have a donor color on this server!');
 		const type = this.validateType(color);
-		if (type === null) return msg.say('Your color was invalid, please use RGB or hex format.');
+		if (!type) return msg.say('Your color was invalid, please use RGB or hex format.');
 		if (type === 'rgb') {
 			let thisColor = color.replace(/[^0-9\s]/g, '').split(' ');
-			thisColor = thisColor.map((number) => {
-				return this.rgbToHex(number);
-			});
+			thisColor = thisColor.map(number => this.rgbToHex(number));
 			thisColor = `#${thisColor.join('')}`;
-			msg.guild.roles.find('id', thisDonor.role).setColor(thisColor);
+			msg.guild.roles.find('id', donor.role).setColor(thisColor);
 			return msg.say('Your role color has been changed.');
 		}
 		if (type === 'hex') {
-			msg.guild.roles.find('id', thisDonor.role).setColor(color);
 			if (color.substring(0, 1) !== '#') color = `#${color}`;
-			msg.guild.roles.find('id', thisDonor.role).setColor(color);
+			msg.guild.roles.find('id', donor.role).setColor(color);
 			return msg.say('Your role color has been changed.');
 		}
 	}

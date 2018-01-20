@@ -8,7 +8,7 @@ const database = require('./database.js');
 database.start();
 
 const Aeiou = new Commando.Client({
-	owner: ['147604925612818432', '94155927032176640'],
+	owner: ['147604925612818432', '94155927032176640', '296895991985078272'],
 	commandPrefix: secure.prefix,
 	unknownCommandResponse: false,
 });

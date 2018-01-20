@@ -15,11 +15,13 @@ module.exports = class PingCommand extends commando.Command {
 	}
 
 	async run(msg) {
-		try {
-			const placeholder = await msg.say("Pinging...");
-			return placeholder.edit(`Pong! Aeiou's ping is \`${placeholder.createdTimestamp - msg.createdTimestamp}ms\`. ${this.client.ping ? `The websocket ping is \`${Math.round(this.client.ping)}ms.\`` : ''}`);
-		} catch(ex) {
-			//
-		}
+		// try {
+		// 	const placeholder = await msg.say("Pinging...");
+		// 	return placeholder.edit(`Pong! Aeiou's ping is \`${placeholder.createdTimestamp - msg.createdTimestamp}ms\`. ${this.client.ping ? `The websocket ping is \`${Math.round(this.client.ping)}ms.\`` : ''}`);
+		// } catch(ex) {
+		// 	//
+		// }
+		const s = require('../../utils/models/donor.js');
+		console.log(await s.setDonors(msg, []))
 	}
 };

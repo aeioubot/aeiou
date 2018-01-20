@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const donorDB = require('../../utils/models/donor.js');
 
 module.exports = class ReplyCommand extends Command {
 	constructor(client) {
@@ -14,7 +15,7 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg) {
-		const donors = this.client.provider.get(msg.guild.id, 'donorColors', []);
+		const donors = await donorDB.getDonors(msg);
 		if (donors.length < 1) return msg.say('This server has no donor colors.');
 		let message = 'Here are the current donors, and the colors they are assigned to:\n```';
 		donors.forEach(donor => {

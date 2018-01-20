@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const donorDB = require('../../utils/models/donor.js');
 
 module.exports = class ReplyCommand extends Command {
 	constructor(client) {
@@ -39,44 +40,27 @@ module.exports = class ReplyCommand extends Command {
 		return 'You need permission to manage roles in order to manage donor colors.';
 	}
 
-	determineMode(str) {
-		const addStrings = ['add', 'plus', 'give', 'create'];
-		const removeStrings = ['remove', 'take', 'remove', 'delete', 'del'];
-		str = str.toLowerCase();
-		for (let i = 0; i < addStrings.length; i++) {
-			if (str.indexOf(addStrings[i]) === 0) return 'add';
-		}
-		for (let i = 0; i < removeStrings.length; i++) {
-			if (str.indexOf(removeStrings[i]) === 0) return 'remove';
-		}
-		return null;
-	}
-
-	appendToSettings(msg, item) {
-		const toSet = this.client.provider.get(msg.guild.id, 'donorColors', []);
-		toSet.push(item);
-		this.client.provider.set(msg.guild.id, 'donorColors', toSet);
-	}
-
 	async run(msg, { addOrRemove, member, role }) {
-		const mode = this.determineMode(addOrRemove);
-		if (mode == null) return msg.say(`Please use 'add' or 'remove' as your first argument.'`);
+		addOrRemove = addOrRemove.toLowerCase();
 
-		if (mode === 'add') {
-			this.appendToSettings(msg, {
-				user: member.id,
+		if (['add', 'plus', 'give', 'create'].includes(addOrRemove)) {
+			const oldDonors = await donorDB.getDonors(msg);
+			oldDonors.push({
+				id: member.id,
 				role: role.id,
 			});
+			donorDB.setDonors(msg, oldDonors);
 			return msg.say(`Done! **${member.displayName}** can now manage the role \`${role.name}\``);
 		}
 
-		if (mode === 'remove') {
-			const userArray = this.client.provider.get(msg.guild.id, 'donorColors', []);
-			const toSpliceIndex = userArray.findIndex(donor => donor.id === member.id && donor.role === role.id);
+		if (['remove', 'take', 'remove', 'delete', 'del'].includes(addOrRemove)) {
+			const oldDonors = await donorDB.getDonors(msg);
+			const toSpliceIndex = oldDonors.findIndex(donor => donor.id === member.id && donor.role === role.id);
 			if (toSpliceIndex === -1) return msg.say(`**${member.displayName}** is already unable to manage \`${role.name}\`.`);
-			userArray.splice(toSpliceIndex, 1);
-			this.client.provider.set(msg.guild.id, 'donorColors', userArray);
+			oldDonors.splice(toSpliceIndex, 1);
+			donorDB.setDonors(msg, oldDonors);
 			return msg.say(`Done! **${member.displayName}** can no longer manage the role \`${role.name}\``);
 		}
+		return msg.say(`Please use 'add' or 'remove' as your first argument.`);
 	}
 };

@@ -21,6 +21,7 @@ Aeiou.registry
 		['donor', 'Donor commands'],
 		['fun', 'Fun commands'],
 		['tag', 'Tag related commands'],
+		['owner', 'Owner commands'],
 	])
 	.registerDefaultTypes()
 	.registerDefaultGroups()

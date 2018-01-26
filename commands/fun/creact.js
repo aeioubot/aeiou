@@ -35,6 +35,11 @@ module.exports = class ReplyCommand extends Command {
 		});
 	}
 
+	hasPermission(msg) {
+		if (msg.member.hasPermission('MANAGE_MESSAGES')) return true;
+		return 'You need permission to manage messages in order to manage custom reacts.';
+	}
+
 	async run(msg, args) {
 		const {option, trigger, content} = args;
 		const provider = this.client.provider;

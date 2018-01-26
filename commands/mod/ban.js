@@ -22,6 +22,11 @@ module.exports = class ReplyCommand extends Command {
 		});
 	}
 
+	hasPermission(msg) {
+		if (msg.member.hasPermission('BAN_MEMBERS')) return true;
+		return 'You need permission to ban members in order to use this command.';
+	}
+
 	async run(msg, { user }) {
 		user.ban().then(() => {
 			msg.say(`**${user.displayName}** has been banned.`);

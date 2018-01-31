@@ -36,6 +36,7 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	hasPermission(msg) {
+		if (this.client.isOwner(msg.author)) return true;
 		if (msg.member.hasPermission('MANAGE_MESSAGES')) return true;
 		return 'You need permission to manage messages in order to manage custom reacts.';
 	}

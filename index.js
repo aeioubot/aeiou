@@ -11,6 +11,7 @@ const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640', '296895991985078272'],
 	commandPrefix: secure.prefix,
 	unknownCommandResponse: false,
+	disableEveryone: true
 });
 
 Aeiou.setProvider(new SequelizeProvider(database.db)).catch(console.error);

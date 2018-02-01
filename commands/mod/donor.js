@@ -45,6 +45,8 @@ module.exports = class ReplyCommand extends Command {
 
 		if (['add', 'plus', 'give', 'create'].includes(addOrRemove)) {
 			const oldDonors = await donorDB.getDonors(msg);
+			const existCheck = oldDonors.find((donorObject) => donorObject.id == member.id && donorObject.role == role.id);
+			if (existCheck) return msg.say(`**${member.displayName}** can already manage the role \`${role.name}\``);
 			oldDonors.push({
 				id: member.id,
 				role: role.id,

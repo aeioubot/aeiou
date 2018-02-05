@@ -36,9 +36,8 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	hasPermission(msg) {
-		if (this.client.isOwner(msg.author)) return true;
 		if (msg.member.hasPermission('MANAGE_ROLES')) return true;
-		return 'You need permission to manage roles in order to manage donor colors.';
+		return 'you need permission to manage roles in order to manage donor colors.';
 	}
 
 	async run(msg, { addOrRemove, member, role }) {
@@ -58,7 +57,7 @@ module.exports = class ReplyCommand extends Command {
 
 		if (['remove', 'take', 'remove', 'delete', 'del'].includes(addOrRemove)) {
 			const oldDonors = await donorDB.getDonors(msg);
-			const toSpliceIndex = oldDonors.findIndex(donor => donor.id === member.id && donor.role === role.id);
+			const toSpliceIndex = oldDonors.findIndex((donor) => donor.id === member.id && donor.role === role.id);
 			if (toSpliceIndex === -1) return msg.say(`**${member.displayName}** is already unable to manage \`${role.name}\`.`);
 			oldDonors.splice(toSpliceIndex, 1);
 			donorDB.setDonors(msg, oldDonors);

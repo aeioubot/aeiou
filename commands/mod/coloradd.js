@@ -26,7 +26,7 @@ module.exports = class ReplyCommand extends Command {
 	hasPermission(msg) {
 		if (this.client.isOwner(msg.author)) return true;
 		if (msg.member.hasPermission('MANAGE_ROLES')) return true;
-		return 'You need permission to manage roles in order to manage donor colors.';
+		return 'you need permission to manage roles in order to manage colors.';
 	}
 
 	async run(msg, { roles }) {

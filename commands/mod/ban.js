@@ -25,7 +25,7 @@ module.exports = class ReplyCommand extends Command {
 	hasPermission(msg) {
 		if (this.client.isOwner(msg.author)) return true;
 		if (msg.member.hasPermission('BAN_MEMBERS')) return true;
-		return 'You need permission to ban members in order to use this command.';
+		return 'you need permission to ban members in order to use this command.';
 	}
 
 	async run(msg, { user }) {

@@ -2,6 +2,7 @@ const secure = require('./secure.json');
 const Commando = require('discord.js-commando');
 const path = require('path');
 const SequelizeProvider = require('./providers/Sequelize');
+const reactDB = require('./utils/models/creact.js');
 
 const database = require('./database.js');
 
@@ -44,9 +45,9 @@ Ready to be used and abused!`);
 
 Aeiou.on('message', async (message) => {
 	if (message.author.bot) return;
-	const reactionObjects = Aeiou.provider.get(message.guild, 'customReactions', []);
+	const reactionObjects = await reactDB.getReacts(message);
 	const toSay = reactionObjects.find(reactObject => {
-		if (message.content === reactObject.trigger) return reactObject;
+		if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
 	});
 	if (toSay) return message.channel.send(toSay.content);
 });

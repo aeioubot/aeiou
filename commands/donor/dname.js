@@ -23,6 +23,12 @@ module.exports = class ReplyCommand extends Command {
 		});
 	}
 
+	hasPermission(msg) {
+		if (this.client.isOwner(msg.author)) return true;
+		if (!msg.guild.me.hasPermission('MANAGE_ROLES')) return 'I need permission to manage roles in order to use this command.';
+		return true;
+	}
+
 	async run(msg, args) {
 		const {name} = args;
 		const donors = await donorDB.getDonors(msg);

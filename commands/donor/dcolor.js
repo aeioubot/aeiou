@@ -33,6 +33,12 @@ module.exports = class ReplyCommand extends Command {
 		return null;
 	}
 
+	hasPermission(msg) {
+		if (this.client.isOwner(msg.author)) return true;
+		if (!msg.guild.me.hasPermission('MANAGE_ROLES')) return 'I need permission to manage roles in order to use this command.';
+		return true;
+	}
+
 	rgbToHex(rgb) {
 		let hex = Number(rgb).toString(16);
 		if (hex.length < 2) {

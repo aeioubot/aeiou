@@ -45,7 +45,7 @@ Ready to be used and abused!`);
 });
 
 Aeiou.on('message', async (message) => {
-	if (message.author.bot) return;
+	if (message.author.bot || message.channel.type != 'text') return;
 	const reactionObjects = await reactDB.getReacts(message);
 	const toSay = reactionObjects.find(reactObject => {
 		if (message.content.toLowerCase() === reactObject.trigger) return reactObject;

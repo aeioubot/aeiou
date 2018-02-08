@@ -24,7 +24,7 @@ module.exports = class ReplyCommand extends Command {
 					key: 'trigger',
 					prompt: 'What is the trigger for the reaction?',
 					type: 'string',
-					parse: (trigger) => trigger.toLowerCase(),
+					parse: (trigger) => trigger.toLowerCase().trim(),
 					default: '', // Default empty arguments for trigger and content, so list doesn't ask for additional arguments.
 				},
 				{

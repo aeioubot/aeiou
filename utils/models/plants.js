@@ -22,7 +22,9 @@ module.exports = {
 			where: {
 				user: msg.author.id,
 			},
-		}).then(returnedData => JSON.parse(returnedData[0].dataValues.data));
+		}).then(plant => {
+			return new Plant(plant[0].dataValues.user, JSON.parse(plant[0].dataValues.data));
+		});
 	},
 	getAllPlants: async function() {
 		return userPlants.findAll().then(plants => {
@@ -33,18 +35,18 @@ module.exports = {
 		});
 	},
 	storePlant: async function(plantClass) {
-		if (x.constructor.name !== "Plant") throw new Error("The argument provided to store a plant must be an instance of the Plant class.");
+		if (plantClass.constructor.name !== "Plant") throw new Error("The argument provided to store a plant must be an instance of the Plant class.");
 		return userPlants.upsert({
 			user: plantClass.user,
-			data: JSON.stringify(plantData),
+			data: JSON.stringify(plantClass.getPlantData()),
 		});
 	},
 	storeAllPlants: async function(plantClasses) {
-		if (x.constructor.name !== "Plant") throw new Error("The argument provided to store a plant must be an instance of the Plant class.");
+		if (plantClass.constructor.name !== "Plant") throw new Error("The argument provided to store a plant must be an instance of the Plant class.");
 		plantClasses.forEach((plant) => {
 			return userPlants.upsert({
 				user: plant.user,
-				data: JSON.stringify(plant.plantData),
+				data: JSON.stringify(plant.getPlantData()),
 			});
 		});
 	},

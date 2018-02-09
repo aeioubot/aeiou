@@ -20,6 +20,15 @@ class Plant {
 	grow(growthRate) {
 		return Math.max((Math.floor(Math.random() * growthRate)), 3);
 	}
+
+	async addToSeeds(seed) {
+		if (this.plantData.seeds.length >= 10) throw new Error("You can only have up to 10 seeds at once.");
+		this.plantData.seeds.push(seed);
+	}
+
+	getPlantData() {
+		return this.plantData;
+	}
 }
 
 module.exports = Plant;

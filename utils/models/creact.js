@@ -5,6 +5,7 @@ const db = Database.db;
 
 const guildReacts = db.define('guildReacts', {
 	guild: {
+		// eslint-disable-next-line
 		type: Sequelize.STRING(25),
 		unique: true,
 	},

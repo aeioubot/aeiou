@@ -49,7 +49,7 @@ module.exports = class ReplyCommand extends Command {
 
 	async run(msg, args) {
 		let {color} = args;
-		const donors = await donorDB.getDonors(msg)
+		const donors = await donorDB.getDonors(msg);
 		const donor = donors.find(donor => donor.id === msg.author.id);
 		if (!donor) return msg.say('You don\'t have a donor color on this server!');
 		const type = this.validateType(color);
@@ -58,12 +58,12 @@ module.exports = class ReplyCommand extends Command {
 			let thisColor = color.replace(/[^0-9\s]/g, '').split(' ');
 			thisColor = thisColor.map(number => this.rgbToHex(number));
 			thisColor = `#${thisColor.join('')}`;
-			msg.guild.roles.find('id', donor.role).setColor(thisColor);
+			msg.guild.roles.find('id', donor.role).setColor(thisColor).catch(() => msg.say('It looks like I don\'t have permission to manage your role. Please make sure my role is above yours.'));
 			return msg.say('Your role color has been changed.');
 		}
 		if (type === 'hex') {
 			if (color.substring(0, 1) !== '#') color = `#${color}`;
-			msg.guild.roles.find('id', donor.role).setColor(color);
+			msg.guild.roles.find('id', donor.role).setColor(color).catch(() => msg.say('It looks like I don\'t have permission to manage your role. Please make sure my role is above yours.'));
 			return msg.say('Your role color has been changed.');
 		}
 	}

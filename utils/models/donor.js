@@ -5,6 +5,7 @@ const db = Database.db;
 
 const guildDonors = db.define('guildDonors', {
 	guild: {
+		// eslint-disable-next-line
 		type: Sequelize.STRING(25),
 		unique: true,
 	},

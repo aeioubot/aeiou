@@ -34,7 +34,8 @@ module.exports = class ReplyCommand extends Command {
 		const donors = await donorDB.getDonors(msg);
 		const donor = donors.find(donor => donor.id === msg.author.id);
 		if (donor === undefined) return msg.say('You don\'t have a donor color on this server!');
-		msg.guild.roles.find('id', donor.role).setName(name);
-		return msg.say('Your role name has been changed.');
+		msg.guild.roles.find('id', donor.role).setName(name)
+			.then(() => msg.say('Your role name has been changed.'))
+			.catch(() => msg.say('It looks like I don\'t have permission to manage your role. Please make sure my role is above yours.'));
 	}
 };

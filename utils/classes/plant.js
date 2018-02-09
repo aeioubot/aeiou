@@ -11,7 +11,7 @@ class Plant {
 		this.plantData = plantData;
 		this.user = user;
 	}
-	async hourly() {
+	async tick() {
 		if (this.plantData.progress == 100 || !this.plantData.activeSeed) return;
 		this.plantData.progress += this.grow(this.activeSeed.growthRate);
 		if (this.plantData.progress > 100) this.plantData.progress = 100;

@@ -3,7 +3,7 @@ const Commando = require('discord.js-commando');
 const path = require('path');
 const SequelizeProvider = require('./providers/Sequelize');
 const reactDB = require('./utils/models/creact.js');
-
+const plants = require('./utils/models/plants.js');
 const database = require('./database.js');
 
 database.start();
@@ -35,6 +35,7 @@ Aeiou.registry
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 Aeiou.on('ready', () => {
+	plants.startTimer().then(console.log("Plant timers have been started!"));
 	console.log(`              _
              (_)
   __ _   ___  _   ___   _   _

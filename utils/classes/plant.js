@@ -12,22 +12,43 @@ class Plant {
 		this.user = user;
 	}
 	async tick() {
-		if (this.plantData.progress == 100 || !this.plantData.activeSeed) return;
-		this.plantData.progress += this.grow(this.activeSeed.growthRate);
+		if (this.plantData.progress === 100 || !this.plantData.activeSeed) return;
+		this.plantData.progress += this.grow(this.plantData.activeSeed.growthRate);
 		if (this.plantData.progress > 100) this.plantData.progress = 100;
 	}
 
 	grow(growthRate) {
-		return Math.max((Math.floor(Math.random() * growthRate)), 3);
+		return Math.max((Math.floor(Math.random() * this.plantData.activeSeed.growthRate)), 3);
 	}
 
 	async addToSeeds(seed) {
-		if (this.plantData.seeds.length >= 10) throw new Error("You can only have up to 10 seeds at once.");
+		if (this.plantData.seeds.length >= 10) return {success: false, seeds: this.plantData.seeds.length};
 		this.plantData.seeds.push(seed);
+		return {success: true, seeds: this.plantData.seeds.length};
 	}
 
 	getPlantData() {
 		return this.plantData;
+	}
+
+	async plant(index) {
+		const toPlant = this.plantData.seeds[index];
+		if (!toPlant) return {success: false};
+		this.plantData.activeSeed = this.plantData.seeds.splice(index, 1)[0];
+		this.plantData.progress = 0;
+		return {success: true};
+	}
+
+	async harvest() {
+		if (!this.plantData.activeSeed) return {success: false, leaves: null};
+		const returnObject = {
+			success: true,
+			grown: this.plantData.progress == 100,
+			leaves: this.plantData.progress == 100 ? Math.floor(Math.random() * this.plantData.activeSeed.leafiness) : 0,
+		};
+		this.plantData.activeSeed = null;
+		this.plantData.leaves += returnObject.leaves;
+		return returnObject;
 	}
 }
 

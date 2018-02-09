@@ -12,7 +12,7 @@ const userPlants = db.define('userPlants', {
 	},
 	data: {
 		type: Sequelize.TEXT,
-		defaultValue: '{"progress":null,"activeSeed":null,"seeds":[],"inventory":[]}',
+		defaultValue: '{"progress":null,"activeSeed":null,"seeds":[],"leaves":0,"inventory":[]}',
 	},
 }, {timestamps: false, charset: "utf8mb4"});
 
@@ -22,15 +22,11 @@ module.exports = {
 			where: {
 				user: msg.author.id,
 			},
-		}).then(plant => {
-			return new Plant(plant[0].dataValues.user, JSON.parse(plant[0].dataValues.data));
-		});
+		}).then(plant => new Plant(plant[0].dataValues.user, JSON.parse(plant[0].dataValues.data)));
 	},
 	getAllPlants: async function() {
 		return userPlants.findAll().then(plants => {
-			plantClasses = plants.map((plantData) => {
-				return new Plant(plantData.dataValues.user, JSON.parse(plantData.dataValues.data));
-			});
+			plantClasses = plants.map((plantData) => new Plant(plantData.dataValues.user, JSON.parse(plantData.dataValues.data)));
 			return plantClasses;
 		});
 	},
@@ -42,12 +38,32 @@ module.exports = {
 		});
 	},
 	storeAllPlants: async function(plantClasses) {
-		if (plantClass.constructor.name !== "Plant") throw new Error("The argument provided to store a plant must be an instance of the Plant class.");
 		plantClasses.forEach((plant) => {
+			if (plant.constructor.name !== "Plant") throw new Error("The argument provided to store a plant must be an instance of the Plant class.");
 			return userPlants.upsert({
 				user: plant.user,
 				data: JSON.stringify(plant.getPlantData()),
 			});
+		});
+	},
+	startTimer: async function() {
+		const tickPlants = () => {
+			return this.getAllPlants().then((plantClasses) => {
+				plantClasses.forEach((plant) => plant.tick());
+				this.storeAllPlants(plantClasses);
+			});
+		};
+		tickPlants();
+		setInterval(() => {
+			tickPlants();
+		}, 3600000);
+	},
+	testTick: async function() {
+		return this.getAllPlants().then((plantClasses) => {
+			plantClasses.forEach((plant) => {
+				plant.tick();
+			});
+			this.storeAllPlants(plantClasses);
 		});
 	},
 };

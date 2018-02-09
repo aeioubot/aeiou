@@ -8,7 +8,7 @@ module.exports = class ReplyCommand extends Command {
 			group: 'plant',
 			memberName: 'dig',
 			description: 'Digs at the floor, netting you a poor quality seed.',
-			details: 'Digs at the floor, netting you a poor quality seed.',
+			details: 'Digs at the floor, netting you a poor quality seed. Has a cooldown of 12 hours.',
 			examples: ['dig'],
 			guildOnly: false,
 			throttling: {usages: 1, duration: 43200},
@@ -22,11 +22,9 @@ module.exports = class ReplyCommand extends Command {
 				leafiness: 10,
 				sleepChance: 60,
 				waterAffinity: 10,
-			}).then(() => {
+			}).then((added) => {
 				plants.storePlant(plantClass);
-				msg.say("You scratch at the floor, finding an extremely poor quality seed. :seedling:");
-			}).catch(() => {
-				msg.say("Your seed pouch is full, you cannot hold any more seeds.");
+				msg.say(added.success ? "You scratch at the floor, finding an extremely poor quality seed. :seedling:" : "Your seed pouch is full, you cannot hold any more seeds. <:seedPouch:411660762470416399>");
 			});
 		});
 	}

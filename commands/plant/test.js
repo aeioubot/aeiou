@@ -25,11 +25,8 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, args) {
-		plants.getAllPlants().then(data => {
-			data.forEach((x) => {
-				x.hourly();
-			});
-			plants.storeAllPlants(data);
-		});
+		plants.testTick();
+		const myPlant = await plants.getPlant(msg);
+		console.log(myPlant);
 	}
 };

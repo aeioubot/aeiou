@@ -12,7 +12,7 @@ const userPlants = db.define('userPlants', {
 	},
 	data: {
 		type: Sequelize.TEXT,
-		defaultValue: '{"progress":null,"activeSeed":null,"seeds":[],"leaves":0,"inventory":[]}',
+		defaultValue: '{"progress":null,"activeSeed":null,"leaves":0,"inventory":[],"seeds":[]}',
 	},
 }, {timestamps: false, charset: "utf8mb4"});
 
@@ -56,6 +56,7 @@ module.exports = {
 		tickPlants();
 		setInterval(() => {
 			tickPlants();
+			console.log("All plants ticked!");
 		}, 3600000);
 	},
 	testTick: async function() {

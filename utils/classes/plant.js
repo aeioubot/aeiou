@@ -13,12 +13,17 @@ class Plant {
 	}
 	async tick() {
 		if (this.plantData.progress === 100 || !this.plantData.activeSeed) return;
-		this.plantData.progress += this.grow(this.plantData.activeSeed.growthRate);
+		const watered = this.plantData.activeSeed.watered; // How can I do this without an extra variable?
+		const growth = this.grow(this.plantData.activeSeed.growthRate);
+		this.plantData.progress += growth;
+		this.plantData.activeSeed.lastEvent = `Your plant has grown ${growth}% taller${watered ? ", consuming its water in the process" : ""}.`;
 		if (this.plantData.progress > 100) this.plantData.progress = 100;
 	}
 
 	grow(growthRate) {
-		return Math.max((Math.floor(Math.random() * this.plantData.activeSeed.growthRate)), 3);
+		const waterMultiplier = this.plantData.activeSeed.watered ? 1.2 : 1;
+		this.plantData.activeSeed.watered = false;
+		return Math.max((Math.floor(Math.random() * this.plantData.activeSeed.growthRate * waterMultiplier)), 3);
 	}
 
 	async addToSeeds(seed) {
@@ -35,7 +40,9 @@ class Plant {
 		const toPlant = this.plantData.seeds[index];
 		if (!toPlant) return {success: false};
 		this.plantData.activeSeed = this.plantData.seeds.splice(index, 1)[0];
+		this.plantData.activeSeed.watered = false;
 		this.plantData.progress = 0;
+		this.plantData.activeSeed.lastEvent = "This seed was just planted.";
 		return {success: true};
 	}
 

@@ -24,6 +24,8 @@ const titles = [
 	'A warm sun makes for a happy plant.',
 	'A little bit cloudy, but your plant doesnt seem to mind.',
 	'Is this thing on?',
+	'You can tell it\'s not a succulent by how thirsty it is.',
+	'It might be Wednesday, my dudes.',
 ];
 
 module.exports = class ReplyCommand extends Command {
@@ -50,9 +52,9 @@ module.exports = class ReplyCommand extends Command {
 			thumbnail: {
 				url: `${thumbnailURLs[Math.floor(plantData.progress / 10)]}`,
 			},
-			image: {
-				url: "https://i.imgur.com/ADn4piz.png",
-			},
+			// image: {
+			// 	url: "https://i.imgur.com/ADn4piz.png",
+			// },
 			author: {
 				name: msg.member.displayName,
 				icon_url: msg.author.displayAvatarURL,

@@ -25,7 +25,7 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, args) {
-		plants.testTick();
+		await plants.testTick();
 		const myPlant = await plants.getPlant(msg);
 		console.log(myPlant);
 	}

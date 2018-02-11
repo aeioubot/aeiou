@@ -30,6 +30,6 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, { roles }) {
-		// 
+		//
 	}
 };

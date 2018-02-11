@@ -11,7 +11,7 @@ module.exports = class ReplyCommand extends Command {
 			details: 'Waters your or someone else\'s plant.',
 			examples: ['water'],
 			guildOnly: true,
-			throttling: {usages: 1, duration: 60},
+			throttling: {usages: 1, duration: 300},
 			args: [
 				{
 					key: 'personToWater',
@@ -26,15 +26,28 @@ module.exports = class ReplyCommand extends Command {
 	async run(msg, {personToWater}) {
 		if (!personToWater) {
 			const userPlant = await plants.getPlant(msg);
-			if (!userPlant.getPlantData().activeSeed) return msg.say("You water the soil... I guess. :shower:");
-			if (userPlant.getPlantData().activeSeed.watered) return msg.say("Your plant is already watered.");
-			userPlant.getPlantData().activeSeed.watered = true;
+			const userPlantData = userPlant.getPlantData();
+			if (!userPlantData.activeSeed) return msg.say("You water the soil... I guess. :shower:");
+			if (userPlantData.activeSeed.watered) {
+				userPlantData.progress = Math.max(0, userPlantData.progress - Math.floor(Math.random() * 10) + 1);
+				userPlantData.activeSeed.lastEvent = "You overwated your plant, undoing some of its effort.";
+				return plants.storePlant(userPlant).then(() => msg.say(`You overwatered your plant. It doesn't seem to like it. :shower:`));
+			}
+			userPlantData.activeSeed.watered = true;
+			userPlantData.activeSeed.lastEvent = "You watered your plant.";
 			return plants.storePlant(userPlant).then(() => msg.say("Your plant was watered. :shower:"));
 		}
+
 		const notMine = await plants.getPlant(personToWater.id);
-		if (!notMine.getPlantData().activeSeed) return msg.say(`You water ${personToWater.displayName}'s soil... I guess. :shower:`);
-		if (notMine.getPlantData().activeSeed.watered) return msg.say(`${personToWater.displayName}'s plant is already watered.`);
-		notMine.getPlantData().activeSeed.watered = true;
+		const notMineData = notMine.getPlantData();
+		if (!notMineData.activeSeed) return msg.say(`You water ${personToWater.displayName}'s soil... I guess. :shower:`);
+		if (notMineData.activeSeed.watered) {
+			notMineData.progress = Math.max(0, notMineData.progress - Math.floor(Math.random() * 10) + 1);
+			notMineData.activeSeed.lastEvent = `${msg.member.displayName} overwated your plant, undoing some of its effort.`;
+			return plants.storePlant(notMine).then(() => msg.say(`You overwatered ${personToWater.displayName}'s plant. That wasn't very nice. :shower:`));
+		}
+		notMineData.activeSeed.watered = true;
+		notMineData.activeSeed.lastEvent = `${msg.member.displayName} watered your plant.`;
 		return plants.storePlant(notMine).then(() => msg.say(`${personToWater.displayName}'s plant was watered. :shower:`));
 	}
 };

@@ -17,7 +17,6 @@ module.exports = class ReplyCommand extends Command {
 					key: 'seedNumber',
 					prompt: 'Which seed would you like to plant?',
 					type: 'integer',
-					format: '[seed]',
 				},
 			],
 		});

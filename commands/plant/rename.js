@@ -17,13 +17,11 @@ module.exports = class ReplyCommand extends Command {
 					key: 'seedIndex',
 					prompt: 'Which seed would you like to rename?',
 					type: 'integer',
-					format: '[seed number]',
 				},
 				{
 					key: 'newName',
 					prompt: 'What would you like to rename the seed to?',
 					type: 'string',
-					format: '[new name]',
 				},
 			],
 		});

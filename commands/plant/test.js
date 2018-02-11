@@ -10,7 +10,6 @@ module.exports = class ReplyCommand extends Command {
 			description: 'asd',
 			details: 'asd',
 			examples: ['asd', 'asd'],
-			format: '[asd]',
 			guildOnly: true,
 			// args: [
 			// 	{

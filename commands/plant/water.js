@@ -11,13 +11,13 @@ module.exports = class ReplyCommand extends Command {
 			details: 'Waters your or someone else\'s plant.',
 			examples: ['water'],
 			guildOnly: true,
+			throttling: {usages: 1, duration: 60},
 			args: [
 				{
 					key: 'personToWater',
 					prompt: 'aaaahhhh eeeeee wooo lllll',
 					type: 'member',
 					default: '',
-					format: '[member]',
 				},
 			],
 		});

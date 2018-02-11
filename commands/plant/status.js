@@ -64,7 +64,6 @@ module.exports = class ReplyCommand extends Command {
 					prompt: 'yooooooo laaaaa xxxxx peeeee',
 					type: 'member',
 					default: '',
-					format: '[member]',
 				},
 			],
 		});

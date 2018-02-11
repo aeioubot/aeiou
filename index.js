@@ -5,6 +5,7 @@ const SequelizeProvider = require('./providers/Sequelize');
 const reactDB = require('./utils/models/creact.js');
 const plants = require('./utils/models/plants.js');
 const database = require('./database.js');
+const donors = require('./utils/models/donor.js');
 
 database.start();
 
@@ -53,6 +54,16 @@ Aeiou.on('message', async (message) => {
 		if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
 	});
 	if (toSay) return message.channel.send(toSay.content);
+});
+
+Aeiou.on('guildMemberAdd', member => {
+	donors.getDonors(member).then(donors => {
+		const possibleDonor = donors.find(donorObject => member.id === donorObject.id);
+		console.log(possibleDonor);
+		if (possibleDonor) {
+			member.addRole(member.guild.roles.get(possibleDonor.role)).catch((e) => {/* nothing because there's nothing to respond to, and its not an important error. */});
+		}
+	});
 });
 
 Aeiou.login(secure.token);

@@ -26,6 +26,25 @@ const titles = [
 	'Is this thing on?',
 	'You can tell it\'s not a succulent by how thirsty it is.',
 	'It might be Wednesday, my dudes.',
+	'Your plant stretches its leaves to embrace the sunshine.',
+	'A cool wind rustles your plant, but it is learning to stay strong.',
+	'Your plant loves listening to you, even if it cannot reply.',
+	'You wonder what kind of music your plants like.',
+	'Your plant is excited to someday shed its leaves in the harvest',
+	'Your plant loves the summer heat, but it doesn\'t mind chilling.',
+	'You wonder if you should knit your plant a little hat for the winter.',
+	'Hi, my name is Planty Bee, and I am from the Bronx.',
+	'Your plant flexes in the wind instead of snapping. Perhaps you could learn something.',
+	'Your plant is never afraid to turn over a new leaf.',
+	'Your plant appreciates your patience.',
+	'Swaying in the breeze, you could swear your plant is dancing.',
+	'What color do you think your plant’s flower will become?',
+	'It grows, it grows, it grows, it grows, yuh!',
+	'Your plant seems tranquil today, simply observing the world around it.',
+	'A blackbird lands in the garden and chirps inquisitively at the growing seed.',
+	'A calico kitten waddles into the garden, his curiosity getting the best of him.',
+	'You decide to take a break from your hard work gardening and enjoy a sip of water alongside your plant.',
+	'You study your thumb, wondering when it’ll turn green.',
 ];
 
 module.exports = class ReplyCommand extends Command {
@@ -39,15 +58,25 @@ module.exports = class ReplyCommand extends Command {
 			details: 'Displays the status of your current plant.',
 			examples: ['status'],
 			guildOnly: true,
+			args: [
+				{
+					key: 'notMe',
+					prompt: 'yooooooo laaaaa xxxxx peeeee',
+					type: 'member',
+					default: '',
+					format: '[member]',
+				},
+			],
 		});
 	}
 
-	async run(msg) {
-		const plantData = await plants.getPlant(msg).then(plant => plant.getPlantData());
-		if (!plantData.activeSeed) return msg.say("You don't have a seed planted currently.");
+	async run(msg, {notMe}) {
+		const plantData = await plants.getPlant(notMe ? notMe.id : msg).then(plant => plant.getPlantData());
+		if (!plantData.activeSeed) return msg.say(`${notMe ? `${notMe.displayName} doesnt` : "You don't"} have a seed planted currently.`);
 
 		const embed = {
-			title: titles[Math.floor(Math.random() * titles.length)],
+			title: plantData.activeSeed.name,
+			description: titles[Math.floor(Math.random() * titles.length)],
 			color: 4353864,
 			thumbnail: {
 				url: `${thumbnailURLs[Math.floor(plantData.progress / 10)]}`,
@@ -56,8 +85,8 @@ module.exports = class ReplyCommand extends Command {
 			// 	url: "https://i.imgur.com/ADn4piz.png",
 			// },
 			author: {
-				name: msg.member.displayName,
-				icon_url: msg.author.displayAvatarURL,
+				name: notMe ? notMe.displayName : msg.member.displayName,
+				icon_url: notMe ? notMe.user.displayAvatarURL : msg.author.displayAvatarURL,
 			},
 			fields: [
 				{

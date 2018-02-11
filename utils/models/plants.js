@@ -17,10 +17,17 @@ const userPlants = db.define('userPlants', {
 }, {timestamps: false, charset: "utf8mb4"});
 
 module.exports = {
-	getPlant: async function(msg) {
+	getPlant: async function(msgOrID) {
+		if (msgOrID.author) {
+			return userPlants.findOrCreate({
+				where: {
+					user: msgOrID.author.id,
+				},
+			}).then(plant => new Plant(plant[0].dataValues.user, JSON.parse(plant[0].dataValues.data)));
+		}
 		return userPlants.findOrCreate({
 			where: {
-				user: msg.author.id,
+				user: msgOrID,
 			},
 		}).then(plant => new Plant(plant[0].dataValues.user, JSON.parse(plant[0].dataValues.data)));
 	},

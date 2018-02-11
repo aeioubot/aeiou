@@ -18,6 +18,7 @@ module.exports = class ReplyCommand extends Command {
 	async run(msg, args) {
 		return plants.getPlant(msg).then(plantClass => {
 			plantClass.addToSeeds({
+				name: "An unnamed seed",
 				growthRate: 8,
 				leafiness: 10,
 				sleepChance: 60,

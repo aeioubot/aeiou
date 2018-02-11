@@ -34,7 +34,7 @@ module.exports = class ReplyCommand extends Command {
 			let textContent = ['The seeds you own are:', '```'];
 			const plantClass = await plants.getPlant(msg);
 			plantClass.getPlantData().seeds.forEach((seed, index) => {
-				textContent.push(`[${index}]  ${seed.growthRate}`);
+				textContent.push(`[${index}]  ${seed.name}`);
 			});
 			if (textContent.length == 2) return msg.say('You don\'t have any seeds in your pouch. Try using `!dig` to find one.');
 			textContent.push('```');

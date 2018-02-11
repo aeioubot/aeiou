@@ -1,8 +1,14 @@
 /*
- * growthRate (int 1-75): the amount (between 0 and growthRate) a plant will grow every tick.
- * leafiness: (0-100): the amount of leaves that're dropped when the plant is harvested.
- * sleepChance: (0-75): percent chance the plant will fall asleep every hour
- * waterAffinity (-20-20): the percent increase that the growthRate will experience when this plant is watered
+ * growthRate (1-75) - the amount (between 0 and growthRate) a plant will grow every tick.
+ * leafiness: (0-100) - the amount of leaves that're dropped when the plant is harvested.
+ * sleepChance: (0-75) - percent chance the plant will fall asleep every hour
+ * waterAffinity (-20-20) - the percent increase that the growthRate will experience when this plant is watered
+ * name (str) - the name of the seed
+ *
+ * Active seed only traits
+ *
+ * watered (bool) - whether this plant will recieve the water bonus during the next tick.
+ * lastEvent (str) - The last thing that occured on this plant.
  */
 
 
@@ -18,10 +24,10 @@ class Plant {
 	async tick() {
 		if (!this.plantData.activeSeed) return;
 		if (this.plantData.progress === 100) return this.plantData.activeSeed.lastEvent = "Your plant is fully grown, and ready to be harvested.";
-		const watered = this.plantData.activeSeed.watered; // How can I do this without an extra variable?
 		const growth = this.grow(this.plantData.activeSeed.growthRate);
 		this.plantData.progress += growth;
-		this.plantData.activeSeed.lastEvent = `Your plant has grown ${growth}% taller${watered ? ", consuming its water in the process" : ""}.`;
+		this.plantData.activeSeed.lastEvent = `Your plant has grown ${growth}% taller${this.plantData.activeSeed.watered ? ", consuming its water in the process" : ""}.`;
+		this.plantData.activeSeed.watered = false;
 		if (this.plantData.progress > 100) this.plantData.progress = 100;
 	}
 	/**
@@ -30,8 +36,7 @@ class Plant {
 	 * @return {int}
 	 */
 	grow(growthRate) {
-		const waterMultiplier = this.plantData.activeSeed.watered ? 1.2 : 1;
-		this.plantData.activeSeed.watered = false;
+		const waterMultiplier = this.plantData.activeSeed.watered ? (1 + (this.plantData.waterAffinity / 100)) : 1;
 		return Math.max((Math.floor(Math.random() * this.plantData.activeSeed.growthRate * waterMultiplier)), 3);
 	}
 	/**
@@ -74,12 +79,26 @@ class Plant {
 		const returnObject = {
 			success: true,
 			grown: this.plantData.progress == 100,
-			leaves: this.plantData.progress == 100 ? Math.floor(Math.random() * this.plantData.activeSeed.leafiness) : 0,
+			leaves: this.plantData.progress == 100 ? Math.max(Math.floor(Math.random() * this.plantData.activeSeed.leafiness), 2) : 0,
 		};
 		this.plantData.progress = 0;
 		this.plantData.activeSeed = null;
 		this.plantData.leaves += returnObject.leaves;
 		return returnObject;
+	}
+	/**
+	 * Renames the seed at index to name.
+	 * @param {number} index - The index of the seed that should be renamed.
+	 * @param {string} name - The new name for the seed.
+	 * @return {Object}
+	 */
+	rename(index, name) {
+		try {
+			this.plantData.seeds[index].name = name;
+			return {success: true};
+		} catch (e) {
+			return {success: false};
+		}
 	}
 }
 

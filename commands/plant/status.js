@@ -2,17 +2,27 @@ const {Command} = require('discord.js-commando');
 const plants = require('../../utils/models/plants.js');
 
 const thumbnailURLs = [
-	"https://i.imgur.com/9HSr8QU.png",
-	"https://i.imgur.com/9HSr8QU.png",
-	"https://i.imgur.com/LkYU3AM.png",
-	"https://i.imgur.com/LkYU3AM.png",
-	"https://i.imgur.com/Kxoo9GP.png",
-	"https://i.imgur.com/Kxoo9GP.png",
-	"https://i.imgur.com/buheSnn.png",
-	"https://i.imgur.com/h7KsLl3.png",
-	"https://i.imgur.com/N6U8yHr.png",
-	"https://i.imgur.com/7W6n95s.png",
-	"https://i.imgur.com/7W6n95s.png",
+	"https://i.imgur.com/rOaxB9T.png",
+	"https://i.imgur.com/hPHudt2.png",
+	"https://i.imgur.com/Wt1T8SU.png",
+	"https://i.imgur.com/t3wYXfz.png",
+	"https://i.imgur.com/t3wYXfz.png",
+	"https://i.imgur.com/vzUdtko.png",
+	"https://i.imgur.com/5e8GadD.png",
+	"https://i.imgur.com/ioc0nUl.png",
+	"https://i.imgur.com/Ez2Kh9z.png",
+	"https://i.imgur.com/outG7gl.png",
+	"https://i.imgur.com/outG7gl.png",
+	"https://i.imgur.com/L3CnsFc.png",
+	"https://i.imgur.com/RwLniG4.png",
+	"https://i.imgur.com/RUuH9VB.png",
+	"https://i.imgur.com/MvM3Dm4.png",
+	"https://i.imgur.com/vZSPrF6.png",
+	"https://i.imgur.com/oxAfXxY.png",
+	"https://i.imgur.com/oxAfXxY.png",
+	"https://i.imgur.com/s6f2dKa.png",
+	"https://i.imgur.com/MstFtmz.png",
+	"https://i.imgur.com/8vBp8rL.png",
 ];
 
 const titles = [
@@ -30,7 +40,7 @@ const titles = [
 	'A cool wind rustles your plant, but it is learning to stay strong.',
 	'Your plant loves listening to you, even if it cannot reply.',
 	'You wonder what kind of music your plants like.',
-	'Your plant is excited to someday shed its leaves in the harvest',
+	'Your plant is excited to someday shed its leaves in the harvest.',
 	'Your plant loves the summer heat, but it doesn\'t mind chilling.',
 	'You wonder if you should knit your plant a little hat for the winter.',
 	'Hi, my name is Planty Bee, and I am from the Bronx.',
@@ -78,7 +88,7 @@ module.exports = class ReplyCommand extends Command {
 			description: titles[Math.floor(Math.random() * titles.length)],
 			color: 4353864,
 			thumbnail: {
-				url: `${thumbnailURLs[Math.floor(plantData.progress / 10)]}`,
+				url: `${thumbnailURLs[Math.floor(plantData.progress / 5)]}`,
 			},
 			// image: {
 			// 	url: "https://i.imgur.com/ADn4piz.png",

@@ -36,7 +36,7 @@ class Plant {
 	 * @return {int}
 	 */
 	grow(growthRate) {
-		const waterMultiplier = this.plantData.activeSeed.watered ? (1 + (this.plantData.waterAffinity / 100)) : 1;
+		const waterMultiplier = this.plantData.activeSeed.watered ? (1 + (this.plantData.activeSeed.waterAffinity / 100)) : 1;
 		return Math.max((Math.floor(Math.random() * this.plantData.activeSeed.growthRate * waterMultiplier)), 3);
 	}
 	/**

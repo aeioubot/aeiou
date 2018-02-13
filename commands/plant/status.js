@@ -71,6 +71,7 @@ module.exports = class ReplyCommand extends Command {
 			args: [
 				{
 					key: 'notMe',
+					label: 'member',
 					prompt: 'yooooooo laaaaa xxxxx peeeee',
 					type: 'member',
 					default: '',

@@ -2,10 +2,10 @@ const secure = require('./secure.json');
 const Commando = require('discord.js-commando');
 const path = require('path');
 const SequelizeProvider = require('./providers/Sequelize');
-const reactDB = require('./utils/models/creact.js');
 const plants = require('./utils/models/plants.js');
 const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
+const msgListeners = require('./utils/messageListeners.js');
 
 database.start();
 
@@ -48,12 +48,8 @@ Ready to be used and abused!`);
 });
 
 Aeiou.on('message', async (message) => {
-	if (message.author.bot || message.channel.type != 'text') return;
-	const reactionObjects = await reactDB.getReacts(message);
-	const toSay = reactionObjects.find(reactObject => {
-		if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
-	});
-	if (toSay) return message.channel.send(toSay.content);
+	msgListeners.creact(message);
+	msgListeners.plantSeed(message);
 });
 
 Aeiou.on('guildMemberAdd', member => {

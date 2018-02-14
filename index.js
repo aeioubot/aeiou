@@ -38,8 +38,7 @@ Aeiou.registry
 
 Aeiou.on('ready', () => {
 	plants.startTimer().then(console.log("Plant timers have been started!"));
-	creacts.buildReactCache().then(console.log("Custom reactions db constructed!"));
-
+	creacts.buildReactCache().then(console.log("Custom reactions db cached!"));
 	console.log(`              _
              (_)
   ____   ___  _   ___   _   _
@@ -58,7 +57,6 @@ Aeiou.on('message', async (message) => {
 Aeiou.on('guildMemberAdd', (member) => {
 	donors.getDonors(member).then((donors) => {
 		const possibleDonor = donors.find((donorObject) => member.id === donorObject.id);
-		console.log(possibleDonor);
 		if (possibleDonor) {
 			member.addRole(member.guild.roles.get(possibleDonor.role)).catch((e) => {/* nothing because there's nothing to respond to, and its not an important error. */});
 		}

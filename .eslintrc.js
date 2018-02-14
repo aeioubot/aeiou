@@ -4,8 +4,6 @@ module.exports = {
         "ecmaVersion": 2017
     },
     "rules": {
-        "quotes": 'off',
-        "arrow-parens": 'off',
         "object-curly-spacing": 'off',
         "no-const-assign": "warn",
         "linebreak-style": 'off',

@@ -23,16 +23,16 @@ module.exports = {
 				where: {
 					user: msgOrID.author.id,
 				},
-			}).then(plant => new Plant(plant[0].dataValues.user, JSON.parse(plant[0].dataValues.data)));
+			}).then((plant) => new Plant(plant[0].dataValues.user, JSON.parse(plant[0].dataValues.data)));
 		}
 		return userPlants.findOrCreate({
 			where: {
 				user: msgOrID,
 			},
-		}).then(plant => new Plant(plant[0].dataValues.user, JSON.parse(plant[0].dataValues.data)));
+		}).then((plant) => new Plant(plant[0].dataValues.user, JSON.parse(plant[0].dataValues.data)));
 	},
 	getAllPlants: async function() {
-		return userPlants.findAll().then(plants => {
+		return userPlants.findAll().then((plants) => {
 			plantClasses = plants.map((plantData) => new Plant(plantData.dataValues.user, JSON.parse(plantData.dataValues.data)));
 			return plantClasses;
 		});

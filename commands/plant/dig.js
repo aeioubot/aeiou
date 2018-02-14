@@ -25,7 +25,9 @@ module.exports = class ReplyCommand extends Command {
 				waterAffinity: 10,
 			});
 			return plants.storePlant(plantClass)
-				.then(() => msg.say(added.success ? "You scratch at the floor, finding an extremely poor quality seed. :seedling:" : "Your seed pouch is full, you cannot hold any more seeds. <:seedPouch:411660762470416399>"));
+				.then(() => msg.say(added.success ?
+					"You scratch at the floor, finding an extremely poor quality seed. :seedling:" :
+					"Your seed pouch is full, you cannot hold any more seeds. <:seedPouch:411660762470416399>"));
 		});
 	}
 };

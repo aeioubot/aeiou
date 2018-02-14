@@ -57,7 +57,10 @@ module.exports = class ReplyCommand extends Command {
 				trigger: trigger,
 				content: content,
 			});
-			return msg.say(`Reaction added, **${trigger}** will cause me to say **${content}**.`);
+			return reactDB.addToCache(msg.guild.id, {
+				trigger: trigger,
+				content: content,
+			}).then(() => msg.say(`Reaction added, **${trigger}** will cause me to say **${content}**.`));
 		}
 
 		case 'remove': // 3 acceptable options to delete using fall-through.
@@ -65,9 +68,8 @@ module.exports = class ReplyCommand extends Command {
 		case 'del': {
 			if (!testIfCustomReactionExists) return msg.say(`There are no custom reactions with the trigger **${trigger}**...`); // Does not exist.
 			reactArray.splice(reactArray.indexOf(testIfCustomReactionExists), 1);
-			reactDB.setReacts(msg, reactArray);
-			msg.say(`Reaction deleted, I'll no longer respond to **${trigger}**.`);
-			break;
+			return reactDB.setReacts(msg, reactArray).then(() => reactDB.removeFromCache(msg.guild.id, trigger))
+				.then(msg.say(`Reaction deleted, I'll no longer respond to **${trigger}**.`));
 		}
 		case 'list': { // Lists the triggers in the guild.
 			const triggerArray = [];

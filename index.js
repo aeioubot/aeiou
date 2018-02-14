@@ -6,6 +6,7 @@ const plants = require('./utils/models/plants.js');
 const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
 const msgListeners = require('./utils/messageListeners.js');
+const creacts = require('./utils/models/creact.js');
 
 database.start();
 
@@ -37,6 +38,8 @@ Aeiou.registry
 
 Aeiou.on('ready', () => {
 	plants.startTimer().then(console.log("Plant timers have been started!"));
+	creacts.buildReactCache().then(console.log("Custom reactions db constructed!"));
+
 	console.log(`              _
              (_)
   ____   ___  _   ___   _   _

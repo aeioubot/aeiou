@@ -44,10 +44,19 @@ class Plant {
 	 * @param {seed} seed - Object that has the properties of a seed.
 	 * @return {Object}
 	 */
-	async addToSeeds(seed) {
+	addToSeeds(seed) {
 		if (this.plantData.seeds.length >= 10) return {success: false, seeds: this.plantData.seeds.length};
 		this.plantData.seeds.push(seed);
 		return {success: true, seeds: this.plantData.seeds.length};
+	}
+	/**
+	 * Removes a seed from the pouch.
+	 * @param {int} index - Index of the seed to remove.
+	 * @return {Object}
+	 */
+	removeFromSeeds(index) {
+		if (this.plantData.seeds.splice(index, 1).length == 1) return {success: true, seeds: this.plantData.seeds.length};
+		return {success: false, seeds: this.plantData.seeds.length};
 	}
 	/**
 	 * Gets the plantdata as an object.

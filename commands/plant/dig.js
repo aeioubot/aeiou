@@ -16,17 +16,16 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, args) {
-		return plants.getPlant(msg).then(plantClass => {
-			plantClass.addToSeeds({
+		return plants.getPlant(msg).then((plantClass) => {
+			const added = plantClass.addToSeeds({
 				name: "An unnamed seed",
 				growthRate: 8,
 				leafiness: 10,
 				sleepChance: 60,
 				waterAffinity: 10,
-			}).then((added) => {
-				plants.storePlant(plantClass);
-				msg.say(added.success ? "You scratch at the floor, finding an extremely poor quality seed. :seedling:" : "Your seed pouch is full, you cannot hold any more seeds. <:seedPouch:411660762470416399>");
 			});
+			return plants.storePlant(plantClass)
+				.then(() => msg.say(added.success ? "You scratch at the floor, finding an extremely poor quality seed. :seedling:" : "Your seed pouch is full, you cannot hold any more seeds. <:seedPouch:411660762470416399>"));
 		});
 	}
 };

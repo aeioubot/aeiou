@@ -39,8 +39,8 @@ Aeiou.on('ready', () => {
 	plants.startTimer().then(console.log("Plant timers have been started!"));
 	console.log(`              _
              (_)
-  __ _   ___  _   ___   _   _
- / _ˋ | / _ \\| | / _ \\ | | | |
+  ____   ___  _   ___   _   _
+ / _  | / _ \\| | / _ \\ | | | |
 | (_| ||  __/| || (_) || |_| |
  \\__,_| \\___||_| \\___/  \\__,_|
 
@@ -52,9 +52,9 @@ Aeiou.on('message', async (message) => {
 	msgListeners.plantSeed(message);
 });
 
-Aeiou.on('guildMemberAdd', member => {
-	donors.getDonors(member).then(donors => {
-		const possibleDonor = donors.find(donorObject => member.id === donorObject.id);
+Aeiou.on('guildMemberAdd', (member) => {
+	donors.getDonors(member).then((donors) => {
+		const possibleDonor = donors.find((donorObject) => member.id === donorObject.id);
 		console.log(possibleDonor);
 		if (possibleDonor) {
 			member.addRole(member.guild.roles.get(possibleDonor.role)).catch((e) => {/* nothing because there's nothing to respond to, and its not an important error. */});

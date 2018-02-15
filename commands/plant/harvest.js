@@ -18,8 +18,8 @@ module.exports = class ReplyCommand extends Command {
 		const userPlant = await plants.getPlant(msg);
 		const harvest = await userPlant.harvest();
 		plants.storePlant(userPlant);
-		if (!harvest.success) return msg.say("You don't have anything planted, so there is nothing to harvest.");
-		const result = harvest.grown ? `Your plant was successfully harvested for a total of **${harvest.leaves}** leaves. :blossom:` : "Your poor plant. You killed it before it was finished growing. :skull:";
+		if (!harvest.success) return msg.say('You don\'t have anything planted, so there is nothing to harvest.');
+		const result = harvest.grown ? `Your plant was successfully harvested for a total of **${harvest.leaves}** leaves. :blossom:` : 'Your poor plant. You killed it before it was finished growing. :skull:';
 		return msg.say(result);
 	}
 };

@@ -15,7 +15,7 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg) {
-		return plants.getPlant(msg).then(plantClass => {
+		return plants.getPlant(msg).then((plantClass) => {
 			return msg.say(`You have **${plantClass.getPlantData().leaves}** leaves. :leaves:`);
 		});
 	}

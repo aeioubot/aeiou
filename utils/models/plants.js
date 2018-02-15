@@ -14,7 +14,7 @@ const userPlants = db.define('userPlants', {
 		type: Sequelize.TEXT,
 		defaultValue: '{"progress":null,"activeSeed":null,"leaves":0,"inventory":[],"seeds":[]}',
 	},
-}, {timestamps: false, charset: "utf8mb4"});
+}, {timestamps: false, charset: 'utf8mb4'});
 
 module.exports = {
 	getPlant: async function(msgOrID) {
@@ -38,7 +38,7 @@ module.exports = {
 		});
 	},
 	storePlant: async function(plantClass) {
-		if (plantClass.constructor.name !== "Plant") throw new Error("The argument provided to store a plant must be an instance of the Plant class.");
+		if (plantClass.constructor.name !== 'Plant') throw new Error('The argument provided to store a plant must be an instance of the Plant class.');
 		return userPlants.upsert({
 			user: plantClass.user,
 			data: JSON.stringify(plantClass.getPlantData()),
@@ -46,7 +46,7 @@ module.exports = {
 	},
 	storeAllPlants: async function(plantClasses) {
 		plantClasses.forEach((plant) => {
-			if (plant.constructor.name !== "Plant") throw new Error("The argument provided to store a plant must be an instance of the Plant class.");
+			if (plant.constructor.name !== 'Plant') throw new Error('The argument provided to store a plant must be an instance of the Plant class.');
 			return userPlants.upsert({
 				user: plant.user,
 				data: JSON.stringify(plant.getPlantData()),
@@ -63,7 +63,7 @@ module.exports = {
 		tickPlants();
 		setInterval(() => {
 			tickPlants();
-			console.log("All plants ticked!");
+			console.log('All plants ticked!');
 		}, 3600000);
 	},
 	testTick: async function() {

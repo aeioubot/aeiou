@@ -2,27 +2,27 @@ const {Command} = require('discord.js-commando');
 const plants = require('../../utils/models/plants.js');
 
 const thumbnailURLs = [
-	"https://i.imgur.com/rOaxB9T.png",
-	"https://i.imgur.com/hPHudt2.png",
-	"https://i.imgur.com/Wt1T8SU.png",
-	"https://i.imgur.com/t3wYXfz.png",
-	"https://i.imgur.com/t3wYXfz.png",
-	"https://i.imgur.com/vzUdtko.png",
-	"https://i.imgur.com/5e8GadD.png",
-	"https://i.imgur.com/ioc0nUl.png",
-	"https://i.imgur.com/Ez2Kh9z.png",
-	"https://i.imgur.com/outG7gl.png",
-	"https://i.imgur.com/outG7gl.png",
-	"https://i.imgur.com/L3CnsFc.png",
-	"https://i.imgur.com/RwLniG4.png",
-	"https://i.imgur.com/RUuH9VB.png",
-	"https://i.imgur.com/MvM3Dm4.png",
-	"https://i.imgur.com/vZSPrF6.png",
-	"https://i.imgur.com/oxAfXxY.png",
-	"https://i.imgur.com/oxAfXxY.png",
-	"https://i.imgur.com/s6f2dKa.png",
-	"https://i.imgur.com/MstFtmz.png",
-	"https://i.imgur.com/8vBp8rL.png",
+	'https://i.imgur.com/rOaxB9T.png',
+	'https://i.imgur.com/hPHudt2.png',
+	'https://i.imgur.com/Wt1T8SU.png',
+	'https://i.imgur.com/t3wYXfz.png',
+	'https://i.imgur.com/t3wYXfz.png',
+	'https://i.imgur.com/vzUdtko.png',
+	'https://i.imgur.com/5e8GadD.png',
+	'https://i.imgur.com/ioc0nUl.png',
+	'https://i.imgur.com/Ez2Kh9z.png',
+	'https://i.imgur.com/outG7gl.png',
+	'https://i.imgur.com/outG7gl.png',
+	'https://i.imgur.com/L3CnsFc.png',
+	'https://i.imgur.com/RwLniG4.png',
+	'https://i.imgur.com/RUuH9VB.png',
+	'https://i.imgur.com/MvM3Dm4.png',
+	'https://i.imgur.com/vZSPrF6.png',
+	'https://i.imgur.com/oxAfXxY.png',
+	'https://i.imgur.com/oxAfXxY.png',
+	'https://i.imgur.com/s6f2dKa.png',
+	'https://i.imgur.com/MstFtmz.png',
+	'https://i.imgur.com/8vBp8rL.png',
 ];
 
 const titles = [
@@ -81,8 +81,8 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, {notMe}) {
-		const plantData = await plants.getPlant(notMe ? notMe.id : msg).then(plant => plant.getPlantData());
-		if (!plantData.activeSeed) return msg.say(`${notMe ? `${notMe.displayName} doesnt` : "You don't"} have a seed planted currently.`);
+		const plantData = await plants.getPlant(notMe ? notMe.id : msg).then((plant) => plant.getPlantData());
+		if (!plantData.activeSeed) return msg.say(`${notMe ? `${notMe.displayName} doesnt` : 'You don\'t'} have a seed planted currently.`);
 
 		const embed = {
 			title: plantData.activeSeed.name,
@@ -100,21 +100,21 @@ module.exports = class ReplyCommand extends Command {
 			},
 			fields: [
 				{
-					name: "Last Event:",
+					name: 'Last Event:',
 					value: `${plantData.activeSeed.lastEvent}`,
 				},
 				{
-					name: "Progress:",
+					name: 'Progress:',
 					value: `${plantData.progress}`,
 					inline: true,
 				},
 				{
-					name: "Watered:",
-					value: `${plantData.activeSeed.watered ? "Yes" : "No"}`,
+					name: 'Watered:',
+					value: `${plantData.activeSeed.watered ? 'Yes' : 'No'}`,
 					inline: true,
 				},
 			],
 		};
-		return msg.say("Your currently planted seed:", { embed });
+		return msg.say('Your currently planted seed:', { embed });
 	}
 };

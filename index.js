@@ -37,8 +37,8 @@ Aeiou.registry
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 Aeiou.on('ready', () => {
-	plants.startTimer().then(console.log("Plant timers have been started!"));
-	creacts.buildReactCache().then(console.log("Custom reactions db cached!"));
+	plants.startTimer().then(console.log('Plant timers have been started!'));
+	creacts.buildReactCache().then(console.log('Custom reactions db cached!'));
 	console.log(`              _
              (_)
   ____   ___  _   ___   _   _

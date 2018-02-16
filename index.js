@@ -48,16 +48,15 @@ Ready to be used and abused!`);
 Aeiou.on('message', async (message) => {
 	if (message.author.bot || message.channel.type != 'text') return;
 	const reactionObjects = await reactDB.getReacts(message);
-	const toSay = reactionObjects.find(reactObject => {
+	const toSay = reactionObjects.find((reactObject) => {
 		if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
 	});
 	if (toSay) return message.channel.send(toSay.content);
 });
 
-Aeiou.on('guildMemberAdd', member => {
-	donors.getDonors(member).then(donors => {
-		const possibleDonor = donors.find(donorObject => member.id === donorObject.id);
-		console.log(possibleDonor);
+Aeiou.on('guildMemberAdd', (member) => {
+	donors.getDonors(member).then((donors) => {
+		const possibleDonor = donors.find((donorObject) => member.id === donorObject.id);
 		if (possibleDonor) {
 			member.addRole(member.guild.roles.get(possibleDonor.role)).catch((e) => {/* nothing because there's nothing to respond to, and its not an important error. */});
 		}

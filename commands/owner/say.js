@@ -18,7 +18,7 @@ module.exports = class ReplyCommand extends Command {
 		});
 	}
 	hasPermission(msg) {
-		if (!this.client.isOwner(msg.author)) return "only owners can do that.";
+		if (!this.client.isOwner(msg.author)) return 'only owners can do that.';
 		return true;
 	}
 

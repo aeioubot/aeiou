@@ -18,7 +18,7 @@ module.exports = class ReplyCommand extends Command {
 		const donors = await donorDB.getDonors(msg);
 		if (donors.length < 1) return msg.say('This server has no donor colors.');
 		let message = 'Here are the current donors, and the colors they are assigned to:\n```';
-		donors.forEach(donor => {
+		donors.forEach((donor) => {
 			message += `${msg.guild.members.find('id', donor.id).user.username.padEnd(35)}${msg.guild.roles.find('id', donor.role).name}\n`;
 		});
 		message += '```';

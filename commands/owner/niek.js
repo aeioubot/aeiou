@@ -18,12 +18,12 @@ module.exports = class ReplyCommand extends Command {
 		});
 	}
 	hasPermission(msg) {
-		if (!this.client.isOwner(msg.author)) return "only owners can do that.";
-		return true;
+		if (this.client.isOwner(msg.author) || msg.memeber.hasPermission('MANAGE_NICKNAMES')) return true;
+		return 'only owners can do that.';
 	}
 
 	async run(msg, {niek}) {
-		if (niek.length > 32) return msg.say("That nickname was too long");
+		if (niek.length > 32) return msg.say('That nickname was too long.');
 		msg.guild.me.setNickname(niek).then(() => {
 			msg.say(`hi its me ${niek}`);
 		});

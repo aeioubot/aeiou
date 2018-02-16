@@ -75,7 +75,11 @@ module.exports = class ReplyCommand extends Command {
 				triggerArray.push(item.trigger);
 			});
 			if (triggerArray.length === 0) return msg.say(`There are no custom reaction triggers in **${msg.guild.name}**.`); // No triggers response.
-			msg.say(`The list of custom reaction triggers in **${msg.guild.name}** are: \n\`\`\`${triggerArray.join(', ')}\`\`\``); // Triggers response.
+			return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** are: \n\`\`\`${triggerArray.join(', ')}\`\`\``).catch(() => {
+				return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** are too long to show, but here are the first 20.\n\`\`\`${triggerArray.splice(0, 20).join(', ')}\`\`\``).catch(() => {
+					return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** are too long to show, and I cannot display them.`);
+				});
+			});
 			break;
 		}
 		default: msg.say('That isn\'t a valid option.'); break;

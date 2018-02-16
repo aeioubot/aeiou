@@ -23,10 +23,10 @@ class Plant {
 	 */
 	async tick() {
 		if (!this.plantData.activeSeed) return;
-		if (this.plantData.progress === 100) return this.plantData.activeSeed.lastEvent = "Your plant is fully grown, and ready to be harvested.";
+		if (this.plantData.progress === 100) return this.plantData.activeSeed.lastEvent = 'Your plant is fully grown, and ready to be harvested.';
 		const growth = this.grow(this.plantData.activeSeed.growthRate);
 		this.plantData.progress += growth;
-		this.plantData.activeSeed.lastEvent = `Your plant has grown ${growth}% taller${this.plantData.activeSeed.watered ? ", consuming its water in the process" : ""}.`;
+		this.plantData.activeSeed.lastEvent = `Your plant has grown ${growth}% taller${this.plantData.activeSeed.watered ? ', consuming its water in the process' : ''}.`;
 		this.plantData.activeSeed.watered = false;
 		if (this.plantData.progress > 100) this.plantData.progress = 100;
 	}
@@ -59,6 +59,15 @@ class Plant {
 		return {success: false, seeds: this.plantData.seeds.length};
 	}
 	/**
+	 * Tests to see if a seed exists.
+	 * @param {int} index - Index of the seed to check.
+	 * @return {Object}
+	 */
+	seedExists(index) {
+		if (this.plantData.seeds[index]) return {success: true, seeds: this.plantData.seeds.length};
+		return {success: false, seeds: this.plantData.seeds.length};
+	}
+	/**
 	 * Gets the plantdata as an object.
 	 * @return {Object}
 	 */
@@ -76,7 +85,7 @@ class Plant {
 		this.plantData.activeSeed = this.plantData.seeds.splice(index, 1)[0];
 		this.plantData.activeSeed.watered = false;
 		this.plantData.progress = 0;
-		this.plantData.activeSeed.lastEvent = "This seed was just planted.";
+		this.plantData.activeSeed.lastEvent = 'This seed was just planted.';
 		return {success: true};
 	}
 	/**

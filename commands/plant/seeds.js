@@ -27,6 +27,7 @@ module.exports = class ReplyCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'seeds',
+			aliases: ['seed'],
 			group: 'plant',
 			memberName: 'seeds',
 			description: 'The command to play with all your seeds.',
@@ -63,7 +64,6 @@ module.exports = class ReplyCommand extends Command {
 				name: requested.name,
 				icon_url: 'https://images.emojiterra.com/twitter/512px/1f330.png',
 			},
-			title: `Here are the stats for your seed.`,
 			color: 4353864,
 			fields: [],
 		};

@@ -11,14 +11,14 @@ module.exports = class ReplyCommand extends Command {
 			details: 'Digs at the floor, netting you a poor quality seed. Has a cooldown of 12 hours.',
 			examples: ['dig'],
 			guildOnly: false,
-			throttling: {usages: 1, duration: 43200},
+			throttling: {usages: 1, duration: 1},
 		});
 	}
 
 	async run(msg, args) {
 		return plants.getPlant(msg).then((plantClass) => {
 			const added = plantClass.addToSeeds({
-				name: "An unnamed seed",
+				name: 'An unnamed seed',
 				growthRate: 8,
 				leafiness: 10,
 				sleepChance: 60,
@@ -26,8 +26,8 @@ module.exports = class ReplyCommand extends Command {
 			});
 			return plants.storePlant(plantClass)
 				.then(() => msg.say(added.success ?
-					"You scratch at the floor, finding an extremely poor quality seed. :seedling:" :
-					"Your seed pouch is full, you cannot hold any more seeds. <:seedPouch:411660762470416399>"));
+					'You scratch at the floor, finding an extremely poor quality seed. :seedling:' :
+					'Your seed pouch is full, you cannot hold any more seeds. :seedPouch:'));
 		});
 	}
 };

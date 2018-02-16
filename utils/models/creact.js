@@ -11,7 +11,7 @@ const guildReacts = db.define('guildReacts', {
 	},
 	reactObjects: {
 		type: Sequelize.TEXT,
-		defaultValue: "[]",
+		defaultValue: '[]',
 	},
 }, {
 	charset: 'utf8mb4',

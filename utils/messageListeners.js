@@ -26,7 +26,6 @@ module.exports = {
 								name: `Seed dropped by ${msg.member.displayName}`,
 								growthRate: Math.floor(Math.random() * 10) + 11,
 								leafiness: Math.floor(Math.random() * 15) + 16,
-								sleepChance: 60,
 								waterAffinity: 5,
 							});
 							plants.storePlant(plantClass);

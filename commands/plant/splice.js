@@ -3,7 +3,9 @@ const plants = require('../../utils/models/plants.js');
 const commonWords = require('../../utils/commonWords.js');
 
 function shuffle(array) {
-	let currentIndex = array.length, temporaryValue, randomIndex;
+	let currentIndex = array.length;
+	let temporaryValue;
+	let randomIndex;
 	while (0 !== currentIndex) {
 		randomIndex = Math.floor(Math.random() * currentIndex);
 		currentIndex -= 1;
@@ -12,6 +14,17 @@ function shuffle(array) {
 		array[randomIndex] = temporaryValue;
 	}
 	return array;
+};
+
+function determineSymbol(number) {
+	if (number === 0) return '~';
+	if (number >= 0) return ['+', '++', '++', '+++', '++++', '++++'][number-1] || '+++++';
+	number = Math.abs(number);
+	if (number <= 3) return '-';
+	if (number <= 8) return '--';
+	if (number <= 14) return '---';
+	if (number <= 20) return '----';
+	return '-----';
 }
 
 module.exports = class ReplyCommand extends Command {
@@ -52,13 +65,69 @@ module.exports = class ReplyCommand extends Command {
 		randomScrambleSegment.unshift(randomWord.charAt(0) + '-');
 		randomScrambleSegment.push('-' + randomWord.charAt(randomWord.length-1));
 
-		const timer = await msg.say(`The splicing has begun, unscramble this word to properly splice your seeds. The first and last letters are in their place.\n\`${randomScrambleSegment.join('')}\``);
+		msg.say(`Unscramble this word within 30 seconds to properly splice your seeds. The first and last letters are in their place.\n\`${randomScrambleSegment.join('')}\``);
 		const collector = msg.channel.createMessageCollector((m) => m.cleanContent.toLowerCase() == randomWord, {time: 30000, maxMatches: 1});
 		collector.on('end', (collected) => {
 			if (!collected.first()) {
-				msg.say('the word was: ' + randomWord);
+				const newSeed = {
+					name: `Miserably failed splice `,
+				};
+				const embed = {
+					title: `Splice of "${firstSeedObject.name}" and "${secondSeedObject.name}"`,
+					description: `Compared to the first, this is how your stats have changed.`,
+					color: 4353864,
+					thumbnail: {
+						url: 'https://i.imgur.com/ADn4piz.png',
+					},
+					footer: {
+						text: 'NOTE: Splicing drastically unequal seeds will result in a terrible splice.',
+					},
+					fields: [],
+				};
+				Object.keys(firstSeedObject).forEach((key, i) => {
+					if (key == 'name') return;
+					newSeed[key] = Math.ceil(((firstSeedObject[key] + secondSeedObject[key]) + Math.log(51 - Math.max(firstSeedObject[key], secondSeedObject[key]) / 2) / 0.3) / 3);
+					embed.fields.push({
+						name: key,
+						value: determineSymbol(newSeed[key] - firstSeedObject[key]),
+						inline: true,
+					});
+				});
+				userPlant.removeFromSeeds(Math.max(seedOne, seedTwo));
+				userPlant.removeFromSeeds(Math.min(seedOne, seedTwo));
+				userPlant.addToSeeds(newSeed);
+				userPlant.addToSeeds(newSeed);
+				return plants.storePlant(userPlant).then(msg.say('Your splice went miserably, and you try to recover what you can.', { embed }));
 			}
-			return msg.say('crr');
+			// ============
+			const newSeed = {
+				name: `Successful splice `,
+			};
+			const embed = {
+				title: `Splice of "${firstSeedObject.name}" and "${secondSeedObject.name}"`,
+				description: `Compared to the first, this is how your stats have changed.`,
+				color: 4353864,
+				thumbnail: {
+					url: 'https://i.imgur.com/ADn4piz.png',
+				},
+				footer: {
+					text: 'NOTE: Splicing drastically unequal seeds will result in a terrible splice.',
+				},
+				fields: [],
+			};
+			Object.keys(firstSeedObject).forEach((key, i) => {
+				if (key == 'name') return;
+				newSeed[key] = Math.ceil(((firstSeedObject[key] + secondSeedObject[key]) + Math.log(51 - Math.max(firstSeedObject[key], secondSeedObject[key]) / 2) / 0.3) / 2);
+				embed.fields.push({
+					name: key,
+					value: determineSymbol(newSeed[key] - firstSeedObject[key]),
+					inline: true,
+				});
+			});
+			userPlant.removeFromSeeds(Math.max(seedOne, seedTwo));
+			userPlant.removeFromSeeds(Math.min(seedOne, seedTwo));
+			userPlant.addToSeeds(newSeed);
+			plants.storePlant(userPlant).then(msg.say('Well done!', { embed }));
 		});
 	}
 };

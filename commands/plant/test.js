@@ -26,6 +26,13 @@ module.exports = class ReplyCommand extends Command {
 	async run(msg, args) {
 		await plants.testTick();
 		const myPlant = await plants.getPlant(msg);
+		myPlant.addToSeeds({
+			name: 'asd',
+			growthRate: 100,
+			leafiness: 100,
+			waterAffinity: 100,
+		});
+		plants.storePlant(myPlant);
 		console.log(myPlant);
 	}
 };

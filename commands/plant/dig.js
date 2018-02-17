@@ -21,7 +21,6 @@ module.exports = class ReplyCommand extends Command {
 				name: 'An unnamed seed',
 				growthRate: 8,
 				leafiness: 10,
-				sleepChance: 60,
 				waterAffinity: 10,
 			});
 			return plants.storePlant(plantClass)

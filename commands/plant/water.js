@@ -27,16 +27,16 @@ module.exports = class ReplyCommand extends Command {
 		if (!personToWater) {
 			const userPlant = await plants.getPlant(msg);
 			const userPlantData = userPlant.getPlantData();
-			if (!userPlantData.activeSeed) return msg.say("You water the soil... I guess. :shower:");
+			if (!userPlantData.activeSeed) return msg.say('You water the soil... I guess. :shower:');
 			if (userPlantData.activeSeed.watered) {
 				userPlantData.progress -= Math.floor(Math.random() * 10) + 1;
 				if (userPlantData.progress < 0) userPlantData.progress = 0;
-				userPlantData.activeSeed.lastEvent = "You overwated your plant, undoing some of its effort.";
+				userPlantData.activeSeed.lastEvent = 'You overwated your plant, undoing some of its effort.';
 				return plants.storePlant(userPlant).then(() => msg.say(`You overwatered your plant. It doesn't seem to like it. :shower:`));
 			}
 			userPlantData.activeSeed.watered = true;
-			userPlantData.activeSeed.lastEvent = "You watered your plant.";
-			return plants.storePlant(userPlant).then(() => msg.say("Your plant was watered. :shower:"));
+			userPlantData.activeSeed.lastEvent = 'You watered your plant.';
+			return plants.storePlant(userPlant).then(() => msg.say('Your plant was watered. :shower:'));
 		}
 
 		const notMine = await plants.getPlant(personToWater.id);
@@ -45,7 +45,7 @@ module.exports = class ReplyCommand extends Command {
 		if (notMineData.activeSeed.watered) {
 			notMineData.progress -= Math.floor(Math.random() * 10) + 1;
 			if (notMineData.progress < 0) userPlantData.progress = 0;
-			notMineData.activeSeed.lastEvent = `${msg.member.displayName} overwated your plant, undoing some of its effort.`;
+			notMineData.activeSeed.lastEvent = `${msg.member.displayName} overwatered your plant, undoing some of its effort.`;
 			return plants.storePlant(notMine).then(() => msg.say(`You overwatered ${personToWater.displayName}'s plant. That wasn't very nice. :shower:`));
 		}
 		notMineData.activeSeed.watered = true;

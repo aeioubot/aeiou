@@ -24,10 +24,10 @@ module.exports = class ReplyCommand extends Command {
 
 	async run(msg, {seedNumber}) {
 		const userPlant = await plants.getPlant(msg);
-		if (userPlant.getPlantData().activeSeed) return msg.say("You already have a seed planted, if you wish to harvest or destroy it early, use `!harvest`.");
+		if (userPlant.getPlantData().activeSeed) return msg.say('You already have a seed planted, if you wish to harvest or destroy it early, use `!harvest`.');
 		const planted = await userPlant.plant(seedNumber);
-		if (!planted.success) return msg.say("That isn't a valid seed number! Use `!seeds` to see the seeds you own.");
+		if (!planted.success) return msg.say('That isn\'t a valid seed number! Use `!seeds` to see the seeds you own.');
 		return plants.storePlant(userPlant)
-			.then(() => msg.say("Your seed has been planted. Be sure to water it."));
+			.then(() => msg.say('Your seed has been planted. Be sure to water it.'));
 	}
 };

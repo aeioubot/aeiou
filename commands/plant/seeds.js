@@ -48,7 +48,7 @@ module.exports = class ReplyCommand extends Command {
 
 	async run(msg, {seedNumber}) {
 		const plantClass = await plants.getPlant(msg);
-		if (!seedNumber) {
+		if (seedNumber !== 0 && !seedNumber) {
 			let textContent = ['The seeds you own are:', '```json'];
 			plantClass.getPlantData().seeds.forEach((seed, index) => {
 				textContent.push(`[${index}]  ${seed.name}`);

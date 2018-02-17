@@ -28,9 +28,9 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, {seedIndex, newName}) {
-		return plants.getPlant(msg).then(plantClass => {
-			if (!plantClass.rename(seedIndex, newName).success) return msg.say("You chose an invalid seed number. Use `!seeds` to check your seeds.");
-			plants.storePlant(plantClass).then(() => msg.say("Your seed has been renamed. :seedPouch:"));
+		return plants.getPlant(msg).then((plantClass) => {
+			if (!plantClass.rename(seedIndex, newName).success) return msg.say('You chose an invalid seed number. Use `!seeds` to check your seeds.');
+			plants.storePlant(plantClass).then(() => msg.say('Your seed has been renamed. :seedPouch:'));
 		});
 	}
 };

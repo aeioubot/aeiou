@@ -4,12 +4,13 @@ const donorDB = require('../../utils/models/donor.js');
 module.exports = class ReplyCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'dname',
-			group: 'donor',
-			memberName: 'dname',
-			description: 'Changes the name of a donator\'s role.',
-			details: 'Changes the name of a donator\'s role.',
-			examples: ['dname Cozy', 'dname Terran, destroyer of dirty aliens.'],
+			name: 'cname',
+			group: 'role',
+			memberName: 'cname',
+			aliases: ['dname'],
+			description: 'Changes the name of a user\'s custom role.',
+			details: 'Changes the name of a user\'s custom role.',
+			examples: ['cname Cozy', 'cname Terran, destroyer of dirty aliens.'],
 			format: '[name]',
 			guildOnly: true,
 			args: [
@@ -17,7 +18,6 @@ module.exports = class ReplyCommand extends Command {
 					key: 'name',
 					prompt: 'What would you like your role\'s name to be?',
 					type: 'string',
-					format: '[name]',
 				},
 			],
 		});

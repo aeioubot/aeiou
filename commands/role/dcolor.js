@@ -4,11 +4,12 @@ const donorDB = require('../../utils/models/donor.js');
 module.exports = class ReplyCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'dcolor',
-			group: 'donor',
-			memberName: 'dcolor',
-			description: 'Allows a donator to set their color.',
-			details: 'Allows a donator to set their color using Hex (#FFFFFF) or RGB (255, 255, 255) format.',
+			name: 'ccolor',
+			group: 'role',
+			memberName: 'ccolor',
+			aliases: ['dcolor'],
+			description: 'Allows a user with a custom role to set their color.',
+			details: 'Allows a user with a custom role to set their color using Hex (#FFFFFF) or RGB (255, 255, 255) format.',
 			examples: ['dcolor #FFFFFF', 'dcolor 255, 255, 255', '255 255 255'],
 			format: '[hex or rgb color]',
 			guildOnly: true,
@@ -17,7 +18,6 @@ module.exports = class ReplyCommand extends Command {
 					key: 'color',
 					prompt: 'What color would you like to make your role?',
 					type: 'string',
-					format: '[hex or rgb color]',
 				},
 			],
 		});
@@ -52,7 +52,7 @@ module.exports = class ReplyCommand extends Command {
 		let {color} = args;
 		const donors = await donorDB.getDonors(msg);
 		const donor = donors.find((donor) => donor.id === msg.author.id);
-		if (!donor) return msg.say('You don\'t have a donor color on this server!');
+		if (!donor) return msg.say('You don\'t have a custom role on this server!');
 		const type = this.validateType(color);
 		if (!type) return msg.say('Your color was invalid, please use RGB or hex format.');
 		if (type === 'rgb') {

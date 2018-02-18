@@ -26,6 +26,7 @@ module.exports = class ReplyCommand extends Command {
 		if (niek.length > 32) return msg.say('That nickname was too long.');
 		msg.guild.me.setNickname(niek).then(() => {
 			msg.say(`hi its me ${niek}`);
+			msg.delete();
 		});
 	}
 };

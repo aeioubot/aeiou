@@ -4,32 +4,29 @@ const donorDB = require('../../utils/models/donor.js');
 module.exports = class ReplyCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'donor',
+			name: 'crole',
 			group: 'mod',
-			memberName: 'donor',
-			description: 'Creates or deletes a user and role pair in order to allow them to interact with the name and color.',
-			details: 'Creates or deletes a user and role pair in order to allow them to interact with the name and color.',
-			examples: ['dcolor add <@87723984799399936> real qt korean gamer grill', 'dcolor remove <@245194516460601344> cheese filled'],
+			memberName: 'crole',
+			description: 'Creates or deletes a user and role pair in order to allow them to interact with a custom role.',
+			details: 'Creates or deletes a user and role pair in order to allow them to interact with a custom role.',
+			examples: ['crole add <@87723984799399936> real qt korean gamer grill', 'crole remove <@245194516460601344> cheese filled'],
 			format: '<add or remove> <username/mention> <rolename>',
 			guildOnly: true,
 			args: [
 				{
 					key: 'addOrRemove',
-					prompt: 'Would you like to add or remove a donor color?',
+					prompt: 'Would you like to add or remove a custom color?',
 					type: 'string',
-					format: '[add or remove]',
 				},
 				{
 					key: 'member',
 					prompt: 'Which member do you want to add a role to?',
 					type: 'member',
-					format: '[member]',
 				},
 				{
 					key: 'role',
-					prompt: 'Which role does the user get?',
+					prompt: 'Which role should the user be able to manage?',
 					type: 'role',
-					format: '[role]',
 				},
 			],
 		});

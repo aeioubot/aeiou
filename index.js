@@ -50,8 +50,14 @@ Ready to be used and abused!`);
 });
 
 Aeiou.on('message', async (message) => {
-	msgListeners.creact(message);
-	msgListeners.plantSeed(message);
+	// msgListeners.creact(message);
+	// msgListeners.plantSeed(message);
+	if (message.author.bot || message.channel.type != 'text') return;
+	const reactionObjects = await reactDB.getReacts(message);
+	const toSay = reactionObjects.find((reactObject) => {
+		if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
+	});
+	if (toSay) return message.channel.send(toSay.content);
 });
 
 Aeiou.on('guildMemberAdd', (member) => {

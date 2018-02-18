@@ -22,6 +22,13 @@ module.exports = class ReplyCommand extends Command {
 			],
 		});
 	}
+
+	hasPermission(msg) {
+		if (this.client.isOwner(msg.author)) return true;
+		if (!msg.guild.me.hasPermission('MANAGE_ROLES')) return 'I need permission to manage roles in order to use this command.';
+		return true;
+	}
+
 	validateType(str) {
 		str = str.replace(',', '');
 		if (str.substring(0, 1) === '#' && str.length === 7) return 'hex';
@@ -31,12 +38,6 @@ module.exports = class ReplyCommand extends Command {
 		});
 		if (str.split(' ').length === 3 && allBelow255) return 'rgb';
 		return null;
-	}
-
-	hasPermission(msg) {
-		if (this.client.isOwner(msg.author)) return true;
-		if (!msg.guild.me.hasPermission('MANAGE_ROLES')) return 'I need permission to manage roles in order to use this command.';
-		return true;
 	}
 
 	rgbToHex(rgb) {
@@ -50,13 +51,13 @@ module.exports = class ReplyCommand extends Command {
 	async run(msg, args) {
 		let {color} = args;
 		const donors = await donorDB.getDonors(msg);
-		const donor = donors.find(donor => donor.id === msg.author.id);
+		const donor = donors.find((donor) => donor.id === msg.author.id);
 		if (!donor) return msg.say('You don\'t have a donor color on this server!');
 		const type = this.validateType(color);
 		if (!type) return msg.say('Your color was invalid, please use RGB or hex format.');
 		if (type === 'rgb') {
 			let thisColor = color.replace(/[^0-9\s]/g, '').split(' ');
-			thisColor = thisColor.map(number => this.rgbToHex(number));
+			thisColor = thisColor.map((number) => this.rgbToHex(number));
 			thisColor = `#${thisColor.join('')}`;
 			return msg.guild.roles.find('id', donor.role).setColor(thisColor)
 				.then(() => msg.say('Your role color has been changed.'))

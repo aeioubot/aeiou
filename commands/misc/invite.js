@@ -14,6 +14,6 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg) {
-        msg.say("Here's a link to invite me to your server.\n<https://discord.now.sh/309024868530257920?p268451902>");
+		msg.say('Here\'s a link to invite me to your server.\n<https://discord.now.sh/309024868530257920?p268451902>').catch(() => {});
 	}
 };

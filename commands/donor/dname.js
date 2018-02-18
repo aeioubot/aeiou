@@ -32,7 +32,7 @@ module.exports = class ReplyCommand extends Command {
 	async run(msg, args) {
 		const {name} = args;
 		const donors = await donorDB.getDonors(msg);
-		const donor = donors.find(donor => donor.id === msg.author.id);
+		const donor = donors.find((donor) => donor.id === msg.author.id);
 		if (donor === undefined) return msg.say('You don\'t have a donor color on this server!');
 		msg.guild.roles.find('id', donor.role).setName(name)
 			.then(() => msg.say('Your role name has been changed.'))

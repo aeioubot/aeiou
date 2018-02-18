@@ -12,13 +12,13 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg) {
-		const test = await msg.say("I'm DMing an invite to you!");
-		return msg.author.send("Here's an invite to the support server: \n https://discord.gg/JB8xdT5")
+		const test = await msg.say('I\'m DMing an invite to you!');
+		return msg.author.send('Here\'s an invite to the support server: \n https://discord.gg/JB8xdT5')
 			.then(() => {
-				setTimeout(() => test.delete(), 1000);
+				setTimeout(() => test.delete(), 2000);
 			})
 			.catch(() => {
-				test.edit("I wasn't able to DM you...");
+				test.edit('I wasn\'t able to DM you...');
 			});
 	}
 };

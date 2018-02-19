@@ -21,6 +21,7 @@ module.exports = class ReplyCommand extends Command {
 			name: 'unscramble',
 			group: 'games',
 			memberName: 'unscramble',
+			aliases: ['unscromble', 'unscronch'],
 			description: 'Starts a game of unscramble.',
 			details: 'Starts a game of unscramble.',
 			examples: ['unscramble 3', 'unscramble 200'],

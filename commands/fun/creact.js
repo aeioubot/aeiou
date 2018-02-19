@@ -1,7 +1,7 @@
 const {Command} = require('discord.js-commando');
 const reactDB = require('../../utils/models/creact.js');
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class CReactCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'creact',

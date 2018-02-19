@@ -1,7 +1,7 @@
 const {Command} = require('discord.js-commando');
 const donorDB = require('../../utils/models/donor.js');
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class CColorCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'ccolor',

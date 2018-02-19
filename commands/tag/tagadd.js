@@ -1,6 +1,6 @@
 const {Command} = require('discord.js-commando');
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class TagAddCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'tagadd',

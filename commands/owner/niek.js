@@ -1,6 +1,6 @@
 const {Command} = require('discord.js-commando');
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class NiekCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'niek',
@@ -17,8 +17,9 @@ module.exports = class ReplyCommand extends Command {
 			],
 		});
 	}
+
 	hasPermission(msg) {
-		if (this.client.isOwner(msg.author) || msg.memeber.hasPermission('MANAGE_NICKNAMES')) return true;
+		if (this.client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_NICKNAMES')) return true;
 		return 'only owners can do that.';
 	}
 

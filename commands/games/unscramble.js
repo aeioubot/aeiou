@@ -15,7 +15,7 @@ function shuffle(array) {
 	return array;
 };
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class UnscrambleCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'unscramble',

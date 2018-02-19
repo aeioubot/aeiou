@@ -44,7 +44,7 @@ Aeiou.on('ready', () => {
  \\__,_| \\___||_| \\___/  \\__,_|
 
 Ready to be used and abused!`);
-	// Aeiou.owners.find((e) => e.id == '147604925612818432').send('I\'m back.');
+	Aeiou.owners.find((e) => e.id == '147604925612818432').send('I\'m back.');
 });
 
 Aeiou.on('message', async (message) => {

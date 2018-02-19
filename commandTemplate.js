@@ -17,7 +17,6 @@ module.exports = class ReplyCommand extends Command {
 					prompt: '',
 					type: '',
 					default: '',
-					format: '[]',
 				},
 			],
 		});

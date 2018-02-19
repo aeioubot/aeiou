@@ -32,7 +32,9 @@ module.exports = class ReplyCommand extends Command {
 					label: 'maximum points',
 					prompt: 'dnfiouaspnfininidbusbdau haha lmao frog',
 					type: 'integer',
-					default: '10',
+					default: 10,
+					min: 1,
+					max: 100,
 				},
 			],
 		});
@@ -53,6 +55,7 @@ module.exports = class ReplyCommand extends Command {
 		}
 		for (let player in score) {
 			if (score[player] >= maxPoints) {
+				msg.guild.unscrambleRunning = false;
 				if (angerTest) angerTest.end();
 				return msg.say(`${msg.guild.members.get(player).displayName} has reached ${maxPoints} points and won!\n`);
 				msg.guild.unscrambleRunning = false;

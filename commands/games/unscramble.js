@@ -39,17 +39,23 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, {maxPoints}) {
+		if (msg.guild.unscrambleRunning) return msg.say('Unscramble is already running on this server!');
+		msg.guild.unscrambleRunning = true;
 		this.score = {};
 		this.angerCount = 0;
 		this.game(msg, maxPoints, this.score);
 	}
 
 	async game(msg, maxPoints, score, angerTest) {
-		if (this.angerCount >= 3) return msg.say('Inactivity, game ending.');
+		if (this.angerCount >= 3) {
+			msg.guild.unscrambleRunning = false;
+			return msg.say('Inactivity, game ending.');
+		}
 		for (let player in score) {
 			if (score[player] >= maxPoints) {
 				if (angerTest) angerTest.end();
 				return msg.say(`${msg.guild.members.get(player).displayName} has reached ${maxPoints} points and won!\n`);
+				msg.guild.unscrambleRunning = false;
 			}
 		}
 		const answer = randomWord();
@@ -65,10 +71,17 @@ module.exports = class ReplyCommand extends Command {
 		msg.say('Unscramble the word to earn a point.', { embed });
 		const collector = msg.channel.createMessageCollector((m) => m.cleanContent.toLowerCase() === answer, {time: 30000, maxMatches: 1});
 		angerTest = msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id, {time: 30000});
-		angerTest.on('collect', () => {
+		angerTest.on('collect', (m) => {
+			if (['exit', 'stop', 'shut up', 'shut the fuck up', 'shut the hell up', 'shut the heck up'].includes(m.cleanContent.toLowerCase())) {
+				msg.guild.unscrambleRunning = false;
+				collector.stop('shutUp');
+				angerTest.stop();
+				return msg.say('Game ended.');
+			}
 			this.angerCount = 0;
 		});
-		collector.on('end', (collected) => {
+		collector.on('end', (collected, reason) => {
+			if (reason == 'shutUp') return;
 			if (!collected.first()) {
 				msg.say('Nobody guessed the word. The answer was: ' + answer);
 				this.angerCount += 1;

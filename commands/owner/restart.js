@@ -9,16 +9,19 @@ module.exports = class ReplyCommand extends Command {
 			memberName: 'restart',
 			description: 'Restarts the bot.',
 			details: 'Git pulls, npm installs, and restarts the bot.',
+			guildOnly: true,
 		});
 	}
 
 	async run(msg) {
 		if (!this.client.isOwner(msg.author)) return msg.say('Please don\'t.');
-		console.log('Pulling...');
-		child.execSync('git pull');
-		console.log('Pulling complete! Installing...');
-		child.execSync('npm install');
-		console.log('Install complete! Exiting.');
-		process.exit(0);
+		this.client.owners.find((e) => e.id == '147604925612818432').send('Be right back.').then(() => {
+			console.log('Pulling...');
+			child.execSync('git pull');
+			console.log('Pulling complete! Installing...');
+			child.execSync('npm install --production');
+			console.log('Install complete! Exiting.');
+			process.exit(0);
+		});
 	}
 };

@@ -9,7 +9,6 @@ const msgListeners = require('./utils/messageListeners.js');
 const creacts = require('./utils/models/creact.js');
 
 database.start();
-
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640', '296895991985078272'],
 	commandPrefix: secure.prefix,
@@ -52,14 +51,14 @@ Ready to be used and abused!`);
 });
 
 Aeiou.on('message', async (message) => {
-	// msgListeners.creact(message);
-	// msgListeners.plantSeed(message);
-	if (message.author.bot || message.channel.type != 'text') return;
-	const reactionObjects = await reactDB.getReacts(message);
-	const toSay = reactionObjects.find((reactObject) => {
-		if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
-	});
-	if (toSay) return message.channel.send(toSay.content);
+	msgListeners.creact(message);
+	msgListeners.plantSeed(message);
+	// if (message.author.bot || message.channel.type != 'text') return;
+	// const reactionObjects = await reactDB.getReacts(message);
+	// const toSay = reactionObjects.find((reactObject) => {
+	// 	if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
+	// });
+	// if (toSay) return message.channel.send(toSay.content);
 });
 
 Aeiou.on('guildMemberAdd', (member) => {

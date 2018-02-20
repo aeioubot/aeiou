@@ -13,7 +13,7 @@ module.exports = class IgnoreCommand extends Command {
 	}
 
 	hasPermission(msg) {
-		if (msg.member.hasPermission('ADMINISTRATOR')) return true;
+		if (msg.member.hasPermission('ADMINISTRATOR') || this.client.isOwner(msg.author.id)) return true;
 		return 'You need to be an adminstrator for this.';
 	}
 

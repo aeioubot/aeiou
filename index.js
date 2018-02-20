@@ -1,7 +1,7 @@
 const secure = require('./secure.json');
 const Commando = require('discord.js-commando');
 const path = require('path');
-const SequelizeProvider = require('./providers/Sequelize');
+const SequelizeProvider = require('./utils/Sequelize');
 const reactDB = require('./utils/models/creact.js');
 
 const database = require('./database.js');

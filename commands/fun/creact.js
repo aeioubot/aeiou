@@ -45,7 +45,7 @@ module.exports = class CReactCommand extends Command {
 		});
 		switch (option.toLowerCase()) {
 		case 'add': {
-			if (!msg.member.hasPermission('MANAGE_MESSAGES')) return msg.say('You need permission to manage messages in order to manage custom reacts.');
+			if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
 			if (trigger === '' || content === '') return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
 			if (testIfCustomReactionExists) return msg.say(`There is already a reaction with the trigger **${trigger}**...`); // return the error
 			reactDB.appendToReacts(msg, {
@@ -58,7 +58,7 @@ module.exports = class CReactCommand extends Command {
 		case 'remove': // 3 acceptable options to delete using fall-through.
 		case 'delete':
 		case 'del': {
-			if (!msg.member.hasPermission('MANAGE_MESSAGES')) return msg.say('You need permission to manage messages in order to manage custom reacts.');
+			if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
 			if (!testIfCustomReactionExists) return msg.say(`There are no custom reactions with the trigger **${trigger}**...`); // Does not exist.
 			reactArray.splice(reactArray.indexOf(testIfCustomReactionExists), 1);
 			reactDB.setReacts(msg, reactArray);

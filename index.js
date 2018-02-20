@@ -47,6 +47,12 @@ Ready to be used and abused!`);
 	Aeiou.owners.find((e) => e.id == '147604925612818432').send('I\'m back.');
 });
 
+Aeiou.dispatcher.addInhibitor((msg) => {
+	if (!msg.command) return;
+	if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.author.id) || msg.command.name === 'ignore') return false;
+	return Aeiou.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id);
+});
+
 Aeiou.on('message', async (message) => {
 	if (message.author.bot || message.channel.type != 'text') return;
 	const reactionObjects = await reactDB.getReacts(message);

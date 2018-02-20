@@ -56,13 +56,14 @@ class SequelizeProvider extends SettingProvider {
 		 */
 		this.model = this.db.define('settings', {
 			guild: {
+				/* eslint-disable-next-line */
 				type: Sequelize.STRING(100),
 				allowNull: false,
 				unique: true,
-				primaryKey: true
+				primaryKey: true,
 			},
-			settings: { type: Sequelize.TEXT }
-		}, {timestamps: false, charset: "utf8mb4"});
+			settings: { type: Sequelize.TEXT },
+		}, {timestamps: false, charset: 'utf8mb4'});
 
 		/**
 		 * @external SequelizeModel
@@ -97,18 +98,18 @@ class SequelizeProvider extends SettingProvider {
 			.set('commandPrefixChange', (guild, prefix) => this.set(guild, 'prefix', prefix))
 			.set('commandStatusChange', (guild, command, enabled) => this.set(guild, `cmd-${command.name}`, enabled))
 			.set('groupStatusChange', (guild, group, enabled) => this.set(guild, `grp-${group.id}`, enabled))
-			.set('guildCreate', guild => {
+			.set('guildCreate', (guild) => {
 				const settings = this.settings.get(guild.id);
 				if (!settings) return;
 				this.setupGuild(guild.id, settings);
 			})
-			.set('commandRegister', command => {
+			.set('commandRegister', (command) => {
 				for (const [guild, settings] of this.settings) {
 					if (guild !== 'global' && !client.guilds.has(guild)) continue;
 					this.setupGuildCommand(client.guilds.get(guild), command, settings);
 				}
 			})
-			.set('groupRegister', group => {
+			.set('groupRegister', (group) => {
 				for (const [guild, settings] of this.settings) {
 					if (guild !== 'global' && !client.guilds.has(guild)) continue;
 					this.setupGuildGroup(client.guilds.get(guild), group, settings);
@@ -116,13 +117,13 @@ class SequelizeProvider extends SettingProvider {
 			});
 		for (const [event, listener] of this.listeners) client.on(event, listener);
 	}
-	
+
 	destroy() {
 		// Remove all listeners from the client
 		for (const [event, listener] of this.listeners) this.client.removeListener(event, listener);
 		this.listeners.clear();
 	}
-	
+
 	destroyPromise() {
 		return new Promise((resolve, reject) => {
 			try {

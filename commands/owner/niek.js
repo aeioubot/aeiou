@@ -8,6 +8,7 @@ module.exports = class NiekCommand extends Command {
 			memberName: 'niek',
 			description: 'Changes my nickname on this server.',
 			details: 'Changes my nickname on this server.',
+			guildOnly: true,
 			args: [
 				{
 					key: 'niek',

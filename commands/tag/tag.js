@@ -8,7 +8,7 @@ module.exports = class TagCommand extends Command {
 			group: 'tag',
 			memberName: 'tag',
 			description: 'Show a tag',
-			details: 'coming soon',
+			details: 'Get the content of a tag in this guild.',
 			examples: ['!tag cuteashecky'],
 			format: '[tagname]',
 			guildOnly: true,

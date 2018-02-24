@@ -2,8 +2,7 @@ const secure = require('./secure.json');
 const Commando = require('discord.js-commando');
 const path = require('path');
 const SequelizeProvider = require('./utils/Sequelize');
-const reactDB = require('./utils/models/creact.js');
-
+const messageListeners = require('./utils/messageListeners.js');
 const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
 
@@ -22,6 +21,7 @@ Aeiou.registry
 	.registerGroups([
 		['mod', 'Mod commands'],
 		['games', 'Game commands'],
+		['plant', 'Plant commands'],
 		['role', 'Role commands'],
 		['fun', 'Fun commands'],
 		['tag', 'Tag related commands'],
@@ -36,6 +36,7 @@ Aeiou.registry
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 Aeiou.on('ready', () => {
+	require('./utils/models/creact.js').buildReactCache().then(console.log('Reactions cache built!'));
 	console.log(`              _
              (_)
   __ _   ___  _   ___   _   _
@@ -54,12 +55,7 @@ Aeiou.dispatcher.addInhibitor((msg) => {
 });
 
 Aeiou.on('message', async (message) => {
-	if (message.author.bot || message.channel.type != 'text') return;
-	const reactionObjects = await reactDB.getReacts(message);
-	const toSay = reactionObjects.find((reactObject) => {
-		if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
-	});
-	if (toSay) return message.channel.send(toSay.content).catch(() => {});
+	messageListeners.creact(message);
 });
 
 Aeiou.on('guildMemberAdd', (member) => {

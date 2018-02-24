@@ -11,7 +11,7 @@ const guildReacts = db.define('guildReacts', {
 	},
 	reactObjects: {
 		type: Sequelize.TEXT,
-		defaultValue: "[]",
+		defaultValue: '[]',
 	},
 }, {
 	charset: 'utf8mb4',
@@ -19,7 +19,7 @@ const guildReacts = db.define('guildReacts', {
 
 module.exports = {
 	setReacts: async (msg, reactObjects) => {
-		guildReacts.upsert({
+		return guildReacts.upsert({
 			guild: msg.guild.id,
 			reactObjects: JSON.stringify(reactObjects),
 		});
@@ -29,7 +29,23 @@ module.exports = {
 			where: {
 				guild: msg.guild.id,
 			},
-		}).then(returnedData => JSON.parse(returnedData[0].dataValues.reactObjects));
+		}).then((returnedData) => JSON.parse(returnedData[0].dataValues.reactObjects));
+	},
+	allGuildReactions: {},
+	addToCache: async function(guildID, crObject) {
+		const gr = this.allGuildReactions[guildID] || [];
+		gr.push(crObject);
+	},
+	removeFromCache: async function(guildID, trigger) {
+		const gr = this.allGuildReactions[guildID] || [];
+		gr.splice(gr.findIndex((crObject) => crObject.trigger == trigger), 1);
+	},
+	buildReactCache: async function(msg) {
+		return guildReacts.findAll().then((returnedData) => {
+			returnedData.map((guildReactions) => {
+				this.allGuildReactions[guildReactions.dataValues.guild] = JSON.parse(guildReactions.dataValues.reactObjects);
+			});
+		});
 	},
 	appendToReacts: async function(msg, reactObject) {
 		return this.getReacts(msg).then((reactArray) => {

@@ -3,11 +3,11 @@ const {Command} = require('discord.js-commando');
 module.exports = class RestartCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'restart',
+			name: 'restartall',
 			group: 'owner',
-			memberName: 'restart',
-			description: 'Restarts this shard.',
-			details: 'Restarts this shard.',
+			memberName: 'restartall',
+			description: 'Restarts the bot.',
+			details: 'Git pulls, npm installs, and restarts the bot.',
 		});
 	}
 
@@ -17,7 +17,6 @@ module.exports = class RestartCommand extends Command {
 	}
 
 	async run(msg) {
-		console.log(`Shard ${msg.client.shard.id} restarting...`);
-		msg.react('✅').then(() => process.exit(0));
+		msg.react('✅').then(() => msg.client.shard.send({command: 'restart'}));
 	}
 };

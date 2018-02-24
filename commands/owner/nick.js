@@ -13,7 +13,7 @@ module.exports = class NickCommand extends Command {
 			args: [
 				{
 					key: 'nick',
-					prompt: 'What would you like me to be nicknamed??',
+					prompt: 'What would you like me to be nicknamed?',
 					type: 'string',
 				},
 			],

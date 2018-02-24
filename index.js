@@ -44,7 +44,6 @@ Aeiou.on('ready', () => {
  \\__,_| \\___||_| \\___/  \\__,_|
 
 Ready to be used and abused!`);
-	Aeiou.owners.find((e) => e.id == '147604925612818432').send('I\'m back.');
 });
 
 Aeiou.dispatcher.addInhibitor((msg) => {
@@ -60,7 +59,7 @@ Aeiou.on('message', async (message) => {
 	const toSay = reactionObjects.find((reactObject) => {
 		if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
 	});
-	if (toSay) return message.channel.send(toSay.content);
+	if (toSay) return message.channel.send(toSay.content).catch(() => {});
 });
 
 Aeiou.on('guildMemberAdd', (member) => {

@@ -46,7 +46,7 @@ module.exports = class CReactCommand extends Command {
 		switch (option.toLowerCase()) {
 		case 'add': {
 			if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
-			if (trigger === '' || content === '') return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
+			if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.replace(/ /g, '').length === 0) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
 			if (testIfCustomReactionExists) return msg.say(`There is already a reaction with the trigger **${trigger}**...`); // return the error
 			reactDB.appendToReacts(msg, {
 				trigger: trigger,

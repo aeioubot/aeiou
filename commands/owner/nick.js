@@ -4,6 +4,7 @@ module.exports = class NickCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'nick',
+			aliases: ['niek'],
 			group: 'owner',
 			memberName: 'nick',
 			description: 'Changes my nickname on this server.',
@@ -26,9 +27,9 @@ module.exports = class NickCommand extends Command {
 
 	async run(msg, {nick}) {
 		if (nick.length > 32) return msg.say('That nickname was too long.');
-		msg.guild.me.setNickname(nick).then(() => {
+		return msg.guild.me.setNickname(nick).then(() => {
 			msg.say(`hi its me ${nick}`);
-			msg.delete();
+			return msg.delete().catch(() => {});
 		});
 	}
 };

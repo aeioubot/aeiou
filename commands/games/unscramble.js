@@ -41,6 +41,10 @@ module.exports = class UnscrambleCommand extends Command {
 		});
 	}
 
+	hasPermission(msg) {
+		if (!msg.guild.me.hasPermission('EMBED_LINKS')) return 'I need permission to embed links in order to play unscramble.';
+	}
+
 	async run(msg, {maxPoints}) {
 		if (msg.guild.unscrambleRunning) return msg.say('Unscramble is already running on this server!');
 		msg.guild.unscrambleRunning = true;

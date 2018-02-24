@@ -37,12 +37,6 @@ module.exports = class CReactCommand extends Command {
 		});
 	}
 
-	hasPermission(msg) {
-		if (this.client.isOwner(msg.author)) return true;
-		if (msg.member.hasPermission('MANAGE_MESSAGES')) return true;
-		return 'you need permission to manage messages in order to manage custom reacts.';
-	}
-
 	async run(msg, {option, trigger, content}) {
 		if (option === '') return msg.say('Please select an action.');
 		const reactArray = await reactDB.getReacts(msg);
@@ -51,7 +45,8 @@ module.exports = class CReactCommand extends Command {
 		});
 		switch (option.toLowerCase()) {
 		case 'add': {
-			if (trigger === '' || content === '') return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
+			if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
+			if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.replace(/ /g, '').length === 0) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
 			if (testIfCustomReactionExists) return msg.say(`There is already a reaction with the trigger **${trigger}**...`); // return the error
 			reactDB.appendToReacts(msg, {
 				trigger: trigger,
@@ -66,6 +61,7 @@ module.exports = class CReactCommand extends Command {
 		case 'remove': // 3 acceptable options to delete using fall-through.
 		case 'delete':
 		case 'del': {
+			if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
 			if (!testIfCustomReactionExists) return msg.say(`There are no custom reactions with the trigger **${trigger}**...`); // Does not exist.
 			reactArray.splice(reactArray.indexOf(testIfCustomReactionExists), 1);
 			return reactDB.setReacts(msg, reactArray).then(() => reactDB.removeFromCache(msg.guild.id, trigger))
@@ -78,11 +74,14 @@ module.exports = class CReactCommand extends Command {
 			});
 			if (triggerArray.length === 0) return msg.say(`There are no custom reaction triggers in **${msg.guild.name}**.`); // No triggers response.
 			return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** are: \n\`\`\`${triggerArray.join(', ')}\`\`\``).catch(() => {
-				return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** are too long to show, but here are the first 20.\n\`\`\`${triggerArray.splice(0, 20).join(', ')}\`\`\``).catch(() => {
-					return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** are too long to show, and I cannot display them.`);
-				});
+				const page = parseInt(trigger) || 1;
+				if (page > Math.ceil(triggerArray.length/10)) return msg.say('That is not a valid page number.');
+				let formattedArray = [`Reaction triggers: page ${page} of ${Math.ceil(triggerArray.length/10)}:\n`];
+				for (let i = page*10-9; i<page*10+1; i++) {
+					if (triggerArray[i-1]) formattedArray.push(`${i}. **${triggerArray[i-1]}**`);
+				}
+				return msg.say(formattedArray);
 			});
-			break;
 		}
 		default: msg.say('That isn\'t a valid option.'); break;
 		}

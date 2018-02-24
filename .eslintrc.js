@@ -10,6 +10,7 @@ module.exports = {
         "max-len": 'off',
         "require-jsdoc": 'off',
         "indent": ["error", "tab"],
-        "no-tabs": 'off'
+        "no-tabs": 'off',
+        "no-unreachable": 'error'
     }
 };

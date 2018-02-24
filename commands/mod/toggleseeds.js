@@ -18,7 +18,7 @@ module.exports = class ReplyCommand extends Command {
 		const seedChannels = provider.get(msg.guild.id, 'noSeedChannels', []);
 		if (seedChannels.includes(msg.channel.id)) {
 			seedChannels.splice(seedChannels.indexOf(msg.channel.id), 1);
-			return provider.set(msg.guild.id, 'seedChannels', seedChannels).then(() => {
+			return provider.set(msg.guild.id, 'noSeedChannels', seedChannels).then(() => {
 				msg.say('I\'m now planting seeds in this channel.').then((msg) => msg.delete(3000));
 			});
 		}

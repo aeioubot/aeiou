@@ -1,9 +1,10 @@
 const {Command} = require('discord.js-commando');
 
-module.exports = class SayCommand extends Command {
+module.exports = class SparkleCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'sparkle',
+			aliases: ['sparkles'],
 			group: 'fun',
 			memberName: 'sparkle',
 			description: 'Makes your words :sparkles:_*sparkly*_:sparkles:',
@@ -19,6 +20,8 @@ module.exports = class SayCommand extends Command {
 	}
 
 	async run(msg, {echo}) {
-		msg.say(`:sparkles:_*${echo}*_:sparkles:`).catch(() => {});
+		msg.say(`:sparkles:_~ ${echo} ~_:sparkles:`).catch(() => {
+			msg.say(`:sparkles:_~ ${echo.slice(0, 1900)} ~_:sparkles:`);
+		}).catch(() => {});
 	}
 };

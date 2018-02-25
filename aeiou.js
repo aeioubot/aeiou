@@ -43,6 +43,7 @@ Aeiou.on('ready', () => {
 
 Aeiou.dispatcher.addInhibitor((msg) => {
 	if (!msg.command) return false;
+	console.log(msg.command);
 	if (msg.channel.type == 'dm') return false;
 	if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.author.id) || msg.command.name === 'ignore') return false;
 	return Aeiou.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id);
@@ -63,7 +64,7 @@ Aeiou.on('guildMemberAdd', (member) => {
 	donors.getDonors(member).then((donors) => {
 		const possibleDonor = donors.find((donorObject) => member.id === donorObject.id);
 		if (possibleDonor) {
-			member.addRole(member.guild.roles.get(possibleDonor.role)).catch((e) => {/* nothing because there's nothing to respond to, and its not an important error. */});
+			member.addRole(member.guild.roles.get(possibleDonor.role)).catch(() => {/* nothing because there's nothing to respond to, and its not an important error. */});
 		}
 	});
 });

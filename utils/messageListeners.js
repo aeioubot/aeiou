@@ -10,7 +10,7 @@ module.exports = {
 		});
 		if (toSay) {
 			if (msg.content === msg.content.toUpperCase() && toSay.content.indexOf('<') === -1 && toSay.content.indexOf('>') === -1) return msg.channel.send(toSay.content.toUpperCase());
-			return msg.channel.send(toSay.content);
+			return msg.channel.send(toSay.content).catch(() => {});
 		}
 	},
 };

@@ -7,7 +7,7 @@ module.exports = class TagAddCommand extends Command {
 			group: 'tag',
 			memberName: 'tagadd',
 			description: 'Add a tag',
-			details: '',
+			details: 'Add a tag, usable in this guild only.',
 			examples: ['!tagadd "cuteashecky" "bep"', '!tagadd "cool" "{{args0}} is very cool"'],
 			format: '[trigger] [content]',
 			guildOnly: true,

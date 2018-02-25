@@ -11,7 +11,7 @@ const guildDonors = db.define('guildDonors', {
 	},
 	donors: {
 		type: Sequelize.TEXT,
-		defaultValue: "[]",
+		defaultValue: '[]',
 	},
 });
 
@@ -27,6 +27,6 @@ module.exports = {
 			where: {
 				guild: msg.guild.id,
 			},
-		}).then(returnedData => JSON.parse(returnedData[0].dataValues.donors));
+		}).then((returnedData) => JSON.parse(returnedData[0].dataValues.donors));
 	},
 };

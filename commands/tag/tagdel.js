@@ -6,10 +6,10 @@ module.exports = class TagDelCommand extends Command {
 			name: 'tagdel',
 			group: 'tag',
 			memberName: 'tagdel',
-			description: '',
-			details: '',
-			examples: ['', ''],
-			format: '[]',
+			description: 'Delete a tag',
+			details: 'Delete a tag in the guild.',
+			examples: ['tagdel thing'],
+			format: '[tagname]',
 			guildOnly: true,
 			args: [
 				{
@@ -24,12 +24,12 @@ module.exports = class TagDelCommand extends Command {
 	async run(msg, args) {
 		const {trigger} = args;
 		const provider = this.client.provider;
-		const testIfTagExists = provider.get(msg.guild, 'tags', []).find(x => {
+		const testIfTagExists = provider.get(msg.guild, 'tags', []).find((x) => {
 			if (x.trigger === trigger) return x;
 		});
 		if (!testIfTagExists) return msg.say(`There is no tag with the name **${trigger}**!`);
 		const toBePushedDelete = provider.get(msg.guild, 'tags', []);
-		const toDelete = toBePushedDelete.find(x => {
+		const toDelete = toBePushedDelete.find((x) => {
 			if (x.trigger === trigger) return x;
 		});
 		if (toDelete) {

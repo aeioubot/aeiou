@@ -6,7 +6,7 @@ module.exports = class TagListCommand extends Command {
 			name: 'taglist',
 			group: 'tag',
 			memberName: 'taglist',
-			description: '',
+			description: 'Lists the tags available in the guild.',
 			details: '',
 			examples: ['', ''],
 			format: '[]',
@@ -17,7 +17,7 @@ module.exports = class TagListCommand extends Command {
 	async run(msg) {
 		const provider = this.client.provider;
 		let tags = provider.get(msg.guild, 'tags', []);
-		tags = tags.map(tag => tag.trigger).join(', ');
+		tags = tags.map((tag) => tag.trigger).join(', ');
 		msg.say(`Tag list: \`\`\`fix\n${tags}\`\`\``);
 	}
 };

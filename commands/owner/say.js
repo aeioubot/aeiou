@@ -24,6 +24,6 @@ module.exports = class SayCommand extends Command {
 
 	async run(msg, {echo}) {
 		msg.say(echo);
-		msg.delete();
+		return msg.delete().catch(() => {});
 	}
 };

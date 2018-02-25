@@ -5,8 +5,7 @@ const SequelizeProvider = require('./utils/Sequelize');
 const messageListeners = require('./utils/messageListeners.js');
 const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
-
-database.start();
+const creacts = require('./utils/models/creact.js');
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -14,6 +13,8 @@ const Aeiou = new Commando.Client({
 	unknownCommandResponse: false,
 	disableEveryone: true,
 });
+
+database.start(Aeiou.shard.id);
 
 Aeiou.setProvider(new SequelizeProvider(database.db)).catch(console.error);
 
@@ -36,25 +37,28 @@ Aeiou.registry
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 Aeiou.on('ready', () => {
-	console.log(`              _
-             (_)
-  __ _   ___  _   ___   _   _
- / _ˋ | / _ \\| | / _ \\ | | | |
-| (_| ||  __/| || (_) || |_| |
- \\__,_| \\___||_| \\___/  \\__,_| ${Aeiou.shard.id}
-
-Ready to be used and abused!`);
+	Aeiou.shard.send({command: 'customReacts', data: Array.from(Aeiou.guilds.keys())});
+	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
 });
 
 Aeiou.dispatcher.addInhibitor((msg) => {
 	if (!msg.command) return false;
+	console.log(msg.command);
 	if (msg.channel.type == 'dm') return false;
 	if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.author.id) || msg.command.name === 'ignore') return false;
 	return Aeiou.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id);
 });
 
+process.on('message', (response) => {
+	if (response.command === 'customReacts') {
+		creacts.allGuildReactions = response.data;
+		console.log(`[Shard ${Aeiou.shard.id}] Cached reactions for ${response.guilds} guilds!`);
+	}
+});
+
 Aeiou.on('message', async (message) => {
 	messageListeners.creact(message);
+<<<<<<< HEAD
 	messageListeners.plantSeed(message);
 	// if (message.author.bot || message.channel.type != 'text') return;
 	// const reactionObjects = await reactDB.getReacts(message);
@@ -62,13 +66,15 @@ Aeiou.on('message', async (message) => {
 	// 	if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
 	// });
 	// if (toSay) return message.channel.send(toSay.content).catch(() => {});
+=======
+>>>>>>> master
 });
 
 Aeiou.on('guildMemberAdd', (member) => {
 	donors.getDonors(member).then((donors) => {
 		const possibleDonor = donors.find((donorObject) => member.id === donorObject.id);
 		if (possibleDonor) {
-			member.addRole(member.guild.roles.get(possibleDonor.role)).catch((e) => {/* nothing because there's nothing to respond to, and its not an important error. */});
+			member.addRole(member.guild.roles.get(possibleDonor.role)).catch(() => {/* nothing because there's nothing to respond to, and its not an important error. */});
 		}
 	});
 });

@@ -9,18 +9,13 @@ class AeiouDatabase {
 			host: 'localhost',
 			provider: 'mysql',
 			logging: false,
+			operatorsAliases: false,
 		});
 	}
 
-	start() {
+	start(shardID) {
 		this.db.authenticate()
-			.then(() => console.info('Connection to database has been established successfully.'))
-			.then(() => console.info('Synchronizing database...'))
-			.then(() => this.db.sync()
-				.then(() => console.info('Synchronizing database done!'))
-				.catch((error) => console.error(`Error synchronizing the database: ${error}`))
-			)
-			.then(() => console.log('Connected to database!'))
+			.then(() => console.log(`[Shard ${shardID}] Connected to database!`))
 			.catch((err) => console.log(err));
 	}
 }

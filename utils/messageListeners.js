@@ -9,7 +9,10 @@ module.exports = {
 		const toSay = reactionObjects.find((reactObject) => {
 			if (msg.content.toLowerCase() === reactObject.trigger) return reactObject;
 		});
-		if (toSay) return msg.channel.send(toSay.content);
+		if (toSay) {
+			if (msg.content === msg.content.toUpperCase() && toSay.content.indexOf('<') === -1 && toSay.content.indexOf('>') === -1) return msg.channel.send(toSay.content.toUpperCase());
+			return msg.channel.send(toSay.content).catch(() => {});
+		}
 	},
 	plantSeed: async (msg) => {
 		if (Math.floor(Math.random() * 400) !== 0 || msg.client.provider.get(msg.guild.id, 'noSeedChannels', []).includes(msg.channel.id)) return;
@@ -33,10 +36,14 @@ module.exports = {
 					});
 				}, 10000);
 			})
-			.catch(() => msg.client.provider.set(
-				msg.guild.id,
-				'noSeedChannels',
-				msg.client.provider.get(msg.guild.id, 'noSeedChannels', [])
-			));
+			.catch(() => {
+				let m = msg.client.provider.get(msg.guild.id, 'noSeedChannels', []);
+				m.push(msg.channel.id);
+				msg.client.provider.set(
+					msg.guild.id,
+					'noSeedChannels',
+					m
+				);
+			});
 	},
 };

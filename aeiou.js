@@ -43,7 +43,6 @@ Aeiou.on('ready', () => {
 
 Aeiou.dispatcher.addInhibitor((msg) => {
 	if (!msg.command) return false;
-	console.log(msg.command);
 	if (msg.channel.type == 'dm') return false;
 	if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.author.id) || msg.command.name === 'ignore') return false;
 	return Aeiou.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id);

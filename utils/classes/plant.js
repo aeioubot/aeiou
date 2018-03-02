@@ -121,9 +121,11 @@ class Plant {
 			leaves: this.plantData.progress == 100 ? Math.max(Math.floor(Math.random() * this.plantData.activeSeed.leafiness), 2) : 0,
 		};
 		this.plantData.progress = 0;
-		delete this.plantData.activeSeed.lastEvent;
-		delete this.plantData.activeSeed.watered;
-		this.addToSeeds(this.plantData.activeSeed);
+		if (returnObject.grown) {
+			delete this.plantData.activeSeed.lastEvent;
+			delete this.plantData.activeSeed.watered;
+			this.addToSeeds(this.plantData.activeSeed);
+		}
 		this.plantData.activeSeed = null;
 		this.plantData.leaves += returnObject.leaves;
 		return returnObject;

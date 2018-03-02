@@ -11,7 +11,7 @@ module.exports = class ReplyCommand extends Command {
 			details: 'Digs at the floor, netting you a poor quality seed. Has a cooldown of 12 hours.',
 			examples: ['dig'],
 			guildOnly: true,
-			throttling: {usages: 1, duration: 1},
+			throttling: {usages: 1, duration: 7200},
 		});
 	}
 

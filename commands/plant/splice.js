@@ -70,7 +70,7 @@ module.exports = class ReplyCommand extends Command {
 		collector.on('end', (collected) => {
 			if (!collected.first()) {
 				const newSeed = {
-					name: `Miserably failed splice `,
+					name: `Miserably failed splice`,
 				};
 				const embed = {
 					title: `Splice of "${firstSeedObject.name}" and "${secondSeedObject.name}"`,
@@ -104,7 +104,7 @@ module.exports = class ReplyCommand extends Command {
 			}
 			// ============
 			const newSeed = {
-				name: `Successful splice `,
+				name: `Successful splice`,
 			};
 			const embed = {
 				title: `Splice of "${firstSeedObject.name}" and "${secondSeedObject.name}"`,

@@ -28,5 +28,6 @@ module.exports = class ReplyCommand extends Command {
 		for (let i = 0; i < times; i++) {
 			await plants.testTick();
 		}
+		msg.react('✅');
 	}
 };

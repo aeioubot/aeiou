@@ -1,6 +1,15 @@
 const {Command} = require('discord.js-commando');
 const plants = require('../../utils/models/plants.js');
 
+function componentToHex(c) {
+	let hex = c.toString(16);
+	return hex.length == 1 ? '0' + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+	return componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
 const thumbnailURLs = [
 	'https://i.imgur.com/rOaxB9T.png',
 	'https://i.imgur.com/hPHudt2.png',
@@ -87,7 +96,7 @@ module.exports = class ReplyCommand extends Command {
 		const embed = {
 			title: plantData.activeSeed.name,
 			description: titles[Math.floor(Math.random() * titles.length)],
-			color: 4353864,
+			color: parseInt(rgbToHex(plantData.activeSeed.red, plantData.activeSeed.green, plantData.activeSeed.blue), 16),
 			thumbnail: {
 				url: `${thumbnailURLs[Math.floor(plantData.progress / 5)]}`,
 			},

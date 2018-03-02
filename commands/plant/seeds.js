@@ -1,6 +1,15 @@
 const {Command} = require('discord.js-commando');
 const plants = require('../../utils/models/plants.js');
 
+function componentToHex(c) {
+	let hex = c.toString(16);
+	return hex.length == 1 ? '0' + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+	return componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
 const statWords = [
 	'Terrible',
 	'Not that terrible',
@@ -21,13 +30,16 @@ const translations = {
 	leafiness: 'Leafiness',
 	sleepChance: 'Chance of sleeping',
 	waterAffinity: 'Water affinity',
+	red: 'Red',
+	green: 'Green',
+	blue: 'Blue',
 };
 
 module.exports = class ReplyCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'seeds',
-			aliases: ['seed'],
+			aliases: ['seed', 'stats'],
 			group: 'plant',
 			memberName: 'seeds',
 			description: 'The command to play with all your seeds.',
@@ -64,7 +76,7 @@ module.exports = class ReplyCommand extends Command {
 				name: requested.name,
 				icon_url: 'https://images.emojiterra.com/twitter/512px/1f330.png',
 			},
-			color: 4353864,
+			color: parseInt(rgbToHex(requested.red, requested.green, requested.blue), 16),
 			fields: [],
 		};
 		const seedFields = Object.keys(requested);
@@ -72,7 +84,7 @@ module.exports = class ReplyCommand extends Command {
 		seedFields.map((fieldName) => {
 			embed.fields.push({
 				name: translations[fieldName],
-				value: statWords[Math.round((requested[fieldName] * statWords.length-1) / 100)],
+				value: (fieldName == 'red' || fieldName == 'green' || fieldName == 'blue') ? requested[fieldName] : statWords[Math.round((requested[fieldName] * statWords.length-1) / 100)],
 				inline: true,
 			});
 		});

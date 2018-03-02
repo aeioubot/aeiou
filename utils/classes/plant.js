@@ -1,9 +1,11 @@
 /*
- * growthRate (1-75) - the amount (between 0 and growthRate) a plant will grow every tick.
+ * growthRate (0-100) - the amount (between 0 and growthRate) a plant will grow every tick.
  * leafiness: (0-100) - the amount of leaves that're dropped when the plant is harvested.
- * sleepChance: (0-75) - percent chance the plant will fall asleep every hour
- * waterAffinity (-20-20) - the percent increase that the growthRate will experience when this plant is watered
+ * waterAffinity (0-100) - the percent increase that the growthRate will experience when this plant is watered
  * name (str) - the name of the seed
+ * red (0-100) - How red the plant is.
+ * green (0-100) - How green the plant is.
+ * blue (0-100) - How blue the plant is.
  *
  * Active seed only traits
  *
@@ -59,6 +61,25 @@ class Plant {
 		return {success: false, seeds: this.plantData.seeds.length};
 	}
 	/**
+	 * Adds an item to the inventory
+	 * @param {String} itemName - The name of the item to add to the inventory.
+	 * @return {Object}
+	 */
+	addToInventory(itemName) {
+		if (this.plantData.inventory.length >= 20) return {success: false, inventory: this.plantData.inventory.length};
+		this.plantData.inventory.push(itemName);
+		return {success: true, inventory: this.plantData.inventory.length};
+	}
+	/**
+	 * Removes a seed from the pouch.
+	 * @param {int} index - Index of the item to remove.
+	 * @return {Object}
+	 */
+	removeFromInventory(index) {
+		if (this.plantData.inventory.splice(index, 1).length == 1) return {success: true, inventory: this.plantData.inventory.length};
+		return {success: false, inventory: this.plantData.inventory.length};
+	}
+	/**
 	 * Tests to see if a seed exists.
 	 * @param {int} index - Index of the seed to check.
 	 * @return {Object}
@@ -100,6 +121,9 @@ class Plant {
 			leaves: this.plantData.progress == 100 ? Math.max(Math.floor(Math.random() * this.plantData.activeSeed.leafiness), 2) : 0,
 		};
 		this.plantData.progress = 0;
+		delete this.plantData.activeSeed.lastEvent;
+		delete this.plantData.activeSeed.watered;
+		this.addToSeeds(this.plantData.activeSeed);
 		this.plantData.activeSeed = null;
 		this.plantData.leaves += returnObject.leaves;
 		return returnObject;

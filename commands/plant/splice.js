@@ -86,6 +86,9 @@ module.exports = class ReplyCommand extends Command {
 				};
 				Object.keys(firstSeedObject).forEach((key, i) => {
 					if (key == 'name') return;
+					if (key == 'red' || key == 'green' || key == 'blue') {
+						return newSeed[key] = Math.floor((firstSeedObject[key] + secondSeedObject[key]) / 2);
+					}
 					newSeed[key] = Math.ceil(((firstSeedObject[key] + secondSeedObject[key]) + Math.log(51 - Math.max(firstSeedObject[key], secondSeedObject[key]) / 2) / 0.3) / 3);
 					embed.fields.push({
 						name: key,
@@ -117,6 +120,9 @@ module.exports = class ReplyCommand extends Command {
 			};
 			Object.keys(firstSeedObject).forEach((key, i) => {
 				if (key == 'name') return;
+				if (key == 'red' || key == 'green' || key == 'blue') {
+					return newSeed[key] = Math.floor((firstSeedObject[key] + secondSeedObject[key]) / 2);
+				}
 				newSeed[key] = Math.ceil(((firstSeedObject[key] + secondSeedObject[key]) + Math.log(51 - Math.max(firstSeedObject[key], secondSeedObject[key]) / 2) / 0.3) / 2);
 				embed.fields.push({
 					name: key,

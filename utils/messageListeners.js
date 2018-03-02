@@ -25,11 +25,15 @@ module.exports = {
 					earners.splice(earners.indexOf(msg.client.user.id), 1);
 					earners.forEach((userID) => {
 						plants.getPlant(userID).then((plantClass) => {
+							const color = Math.floor(Math.random() * 3);
 							plantClass.addToSeeds({
 								name: `Seed dropped by ${msg.member.displayName}`,
 								growthRate: Math.floor(Math.random() * 10) + 11,
 								leafiness: Math.floor(Math.random() * 15) + 16,
 								waterAffinity: 5,
+								red: color === 0 ? 255 : 0,
+								green: color === 1 ? 255 : 0,
+								blue: color === 2 ? 255 : 0,
 							});
 							plants.storePlant(plantClass);
 						});

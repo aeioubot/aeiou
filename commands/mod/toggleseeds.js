@@ -15,16 +15,16 @@ module.exports = class ReplyCommand extends Command {
 
 	async run(msg) {
 		const provider = this.client.provider;
-		const seedChannels = provider.get(msg.guild.id, 'noSeedChannels', []);
-		if (seedChannels.includes(msg.channel.id)) {
-			seedChannels.splice(seedChannels.indexOf(msg.channel.id), 1);
-			return provider.set(msg.guild.id, 'noSeedChannels', seedChannels).then(() => {
+		const ignoredChannels = provider.get(msg.guild.id, 'noSeedChannels', []);
+		if (ignoredChannels.includes(msg.channel.id)) {
+			ignoredChannels.splice(ignoredChannels.indexOf(msg.channel.id), 1);
+			return provider.set(msg.guild.id, 'noSeedChannels', ignoredChannels).then(() => {
 				msg.say('I\'m now planting seeds in this channel.').then((msg) => msg.delete(3000));
 			});
 		}
-		if (!seedChannels.includes(msg.channel.id)) {
-			seedChannels.push(msg.channel.id);
-			return provider.set(msg.guild.id, 'noSeedChannels', seedChannels).then(() => {
+		if (!ignoredChannels.includes(msg.channel.id)) {
+			ignoredChannels.push(msg.channel.id);
+			return provider.set(msg.guild.id, 'noSeedChannels', ignoredChannels).then(() => {
 				msg.say('I\'m no longer planting seeds in this channel.').then((msg) => msg.delete(3000));
 			});
 		}

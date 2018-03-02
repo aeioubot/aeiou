@@ -57,16 +57,7 @@ process.on('message', (response) => {
 
 Aeiou.on('message', async (message) => {
 	messageListeners.creact(message);
-<<<<<<< HEAD
 	messageListeners.plantSeed(message);
-	// if (message.author.bot || message.channel.type != 'text') return;
-	// const reactionObjects = await reactDB.getReacts(message);
-	// const toSay = reactionObjects.find((reactObject) => {
-	// 	if (message.content.toLowerCase() === reactObject.trigger) return reactObject;
-	// });
-	// if (toSay) return message.channel.send(toSay.content).catch(() => {});
-=======
->>>>>>> master
 });
 
 Aeiou.on('guildMemberAdd', (member) => {

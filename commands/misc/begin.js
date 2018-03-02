@@ -9,7 +9,7 @@ Once you've collected a seed, you can view it with <!seeds>.
 Now, plant your seed with <!plant [seed number]>, water your plant (or your friends!) with <!water>, and wait for it to grow!
 Once it's fully grown, you can harvest it with <!harvest>.
 
-See the full list of commands avilable with [!help], under "Plant commands".
+See the full list of commands avilable with <!help>, under "Plant commands".
 \`\`\``,
 };
 

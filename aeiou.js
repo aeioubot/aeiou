@@ -6,6 +6,7 @@ const messageListeners = require('./utils/messageListeners.js');
 const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
 const creacts = require('./utils/models/creact.js');
+const memwatch = require('memwatch-next');
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -38,6 +39,10 @@ Aeiou.registry
 
 Aeiou.on('ready', () => {
 	Aeiou.shard.send({command: 'customReacts', data: Array.from(Aeiou.guilds.keys())});
+	memwatch.on('leak', (info) => {
+		info.shard = Aeiou.shard.id;
+		console.log(info);
+	});
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
 });
 

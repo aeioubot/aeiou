@@ -28,7 +28,7 @@ module.exports = class ReplyCommand extends Command {
 		allPlants.sort((a, b) => b.getPlantData().leaves - a.getPlantData().leaves);
 		const idScan = notMe ? notMe.id : msg.member.id;
 		const myIndex = allPlants.findIndex((plant) => idScan == plant.user);
-		const importantPeople = allPlants.splice(0, 9);
+		const importantPeople = allPlants.splice(0, 10);
 		const embed = {
 			title: 'Here are the top leaf holders.',
 			color: 4353864,
@@ -49,6 +49,6 @@ module.exports = class ReplyCommand extends Command {
 				value: plant.getPlantData().leaves,
 			});
 		});
-		return msg.say(`${notMe ? `**${notMe.displayName}'s**` : 'Your'} position on the global leaderboards: ` + (myIndex + 1), {embed});
+		return msg.say(`${notMe ? `**${notMe.displayName}'s**` : 'Your'} position on the **${msg.guild.name}** leaderboards: ` + (myIndex + 1), {embed});
 	}
 };

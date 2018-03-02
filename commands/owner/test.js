@@ -21,7 +21,7 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	hasPermission(msg) {
-		return this.client.isOwner(msg);
+		return this.client.isOwner(msg.author);
 	}
 
 	async run(msg, {times}) {

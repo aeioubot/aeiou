@@ -8,6 +8,8 @@ Once you've collected a seed, you can view it with <!seeds>.
 
 Now, plant your seed with <!plant [seed number]>, water your plant (or your friends!) with <!water>, and wait for it to grow!
 Once it's fully grown, you can harvest it with <!harvest>.
+
+See the full list of commands avilable with [!help], under "Plant commands".
 \`\`\``,
 };
 
@@ -26,6 +28,7 @@ module.exports = class SupportCommand extends Command {
 					prompt: 'yolo pppbbbbt asndasndajdna dasndkajnskjnxajksnd zaop is cool and good heh',
 					default: '',
 					type: 'string',
+					parse: (str) => str.toLowerCase().trim(),
 				},
 			],
 		});

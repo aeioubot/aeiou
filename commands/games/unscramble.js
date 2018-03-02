@@ -43,6 +43,7 @@ module.exports = class UnscrambleCommand extends Command {
 
 	hasPermission(msg) {
 		if (!msg.guild.me.hasPermission('EMBED_LINKS')) return 'I need permission to embed links in order to play unscramble.';
+		return true;
 	}
 
 	async run(msg, {maxPoints}) {

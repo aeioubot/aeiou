@@ -44,7 +44,7 @@ module.exports = class ReplyCommand extends Command {
 		if (!notMineData.activeSeed) return msg.say(`You water ${personToWater.displayName}'s soil... I guess. :shower:`);
 		if (notMineData.activeSeed.watered) {
 			notMineData.progress -= Math.floor(Math.random() * 10) + 1;
-			if (notMineData.progress < 0) userPlantData.progress = 0;
+			if (notMineData.progress < 0) notMineData.progress = 0;
 			notMineData.activeSeed.lastEvent = `${msg.member.displayName} overwatered your plant, undoing some of its effort.`;
 			return plants.storePlant(notMine).then(() => msg.say(`You overwatered ${personToWater.displayName}'s plant. That wasn't very nice. :shower:`));
 		}

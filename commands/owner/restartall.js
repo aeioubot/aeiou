@@ -13,7 +13,7 @@ module.exports = class RestartCommand extends Command {
 
 	hasPermission(msg) {
 		if (this.client.isOwner(msg.author)) return true;
-		return 'Please don\'t.';
+		return 'please don\'t.';
 	}
 
 	async run(msg) {

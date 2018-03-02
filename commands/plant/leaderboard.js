@@ -24,8 +24,8 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, {notMe}) {
-		const allPlants = await plants.getAllPlants();
-		allPlants.filter((plant) => msg.guild.members.get(plant.user) !== null);
+		let allPlants = await plants.getAllPlants();
+		allPlants = allPlants.filter((plant) => msg.guild.members.get(plant.user) !== undefined);
 		allPlants.sort((a, b) => b.getPlantData().leaves - a.getPlantData().leaves);
 		const idScan = notMe ? notMe.id : msg.member.id;
 		const myIndex = allPlants.findIndex((plant) => idScan == plant.user);

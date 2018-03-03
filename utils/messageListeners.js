@@ -6,11 +6,20 @@ module.exports = {
 	creact: async (msg) => {
 		if (msg.author.bot || msg.channel.type != 'text' || msg.client.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id)) return;
 		const reactionObjects = reactDB.allGuildReactions[msg.guild.id] || [];
-		const toSay = reactionObjects.find((reactObject) => {
+		let toSay = reactionObjects.find((reactObject) => {
 			if (msg.content.toLowerCase() === reactObject.trigger) return reactObject;
 		});
 		if (toSay) {
-			if (msg.content === msg.content.toUpperCase() && toSay.content.indexOf('<') === -1 && toSay.content.indexOf('>') === -1) return msg.channel.send(toSay.content.toUpperCase());
+			if (msg.content === msg.content.toUpperCase()) {
+				toSay = toSay.content.split('');
+				let upping = true;
+				for (let i = 0; i < toSay.length; i++) {
+					if (upping) toSay[i] = toSay[i].toUpperCase();
+					if (toSay[i] == '<') upping = false;
+					if (toSay[i] == '>') upping = true;
+				}
+				return msg.channel.send(toSay.join('')).catch(() => {});
+			}
 			return msg.channel.send(toSay.content).catch(() => {});
 		}
 	},

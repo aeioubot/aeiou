@@ -3,7 +3,7 @@ const request = require('request-promise');
 const unescape = require('unescape');
 const unidecode = require('unidecode');
 function decode(str) {
-	return unidecode(unescape(str)).replace(/&#039;/g, '\'');
+	return unidecode(unescape(str)).replace(/&#039;/g, '\'').replace(/&Uuml;/gi, 'u');
 }
 
 module.exports = class TriviaCommand extends Command {

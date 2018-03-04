@@ -13,8 +13,12 @@
     "discord.js-commando": "git+https://github.com/aeioubot/Commando.git",
     "memwatch-next": "^0.3.0",
     "mysql2": "^1.5.2",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
     "sequelize": "^4.35.1",
-    "sqlite": "^2.9.1"
+    "sqlite": "^2.9.1",
+    "unescape": "^1.0.1",
+    "unidecode": "^0.1.8"
   },
   "devDependencies": {
     "eslint": "^4.18.1",

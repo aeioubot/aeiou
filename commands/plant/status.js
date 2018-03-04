@@ -90,10 +90,11 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, {notMe}) {
-		if (notMe.id == '309024868530257920') {
+		if (notMe.id == this.client.user.id) {
 			let embed = {
 				title: 'W̷̝͍̜̩̲̣͓̝͟h̵̢͉̘͍͟a͏̬̯̯̳t̟̭̝̙̀ ̸͔̙̯͎͍̹̗g̸͏̼̯̩̭̠̟͚r̵̲̟̕͘e̷̙̼͓͚̬e̛̦̖̤̺͚͖͓̣͠n̶͔̤̭̕e͍̼͇̰̖̫̤r̹̩̲̮̙̩̰͠ỳ͇̺̘͘?̯̟̦̮̼͔̟͡',
 				description: 'AEIOU NEEDS NO PLANT, FOR AEIOU IS **ALL** THAT IS PLANT.',
+				color: 0xFF0000,
 				image: {
 					url: 'https://i.ytimg.com/vi/hSIzkVdlNBQ/maxresdefault.jpg',
 				},
@@ -102,7 +103,7 @@ module.exports = class ReplyCommand extends Command {
 					icon_url: notMe.user.displayAvatarURL,
 				},
 			};
-			msg.say('You fool.', {embed});
+			return msg.say('You fool.', {embed});
 		}
 		const plantData = await plants.getPlant(notMe ? notMe.id : msg).then((plant) => plant.getPlantData());
 		if (!plantData.activeSeed) return msg.say(`${notMe ? `${notMe.displayName} doesnt` : 'You don\'t'} have a seed planted currently.`);

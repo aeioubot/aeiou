@@ -1,9 +1,11 @@
 const { Command } = require('discord.js-commando');
+const { stripIndent } = require('common-tags');
 
 module.exports = class WizardCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'wizard',
+			aliases: ['wiz', 'lizardwizard', 'lizwiz'],
 			group: 'fun',
 			memberName: 'wizard',
 			description: 'A wizard says your words using his special wizard powers.',
@@ -19,14 +21,10 @@ module.exports = class WizardCommand extends Command {
 	}
 
 	async run(msg, { echo }) {
-		msg.say(`__\\_/\\\\\\___
-(°͜-°)   :sparkles: *${echo}*
- /|\\\\／
-  /\\`).catch(() => {
-			msg.say(`__\\_/\\\\\\___
-(°͜-°)   :sparkles: *${echo}*
- /|\\\\／
-  /\\`);
-		}).catch(() => {});
+		return msg.say(stripIndent`
+							__\\_/\\\\\\___
+							(°͜-°)   :sparkles: *${echo}*
+							/|\\\\／
+							/\\`).catch(() => msg.say('The wizard deems that phrase unworthy.'));
 	}
 };

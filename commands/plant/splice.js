@@ -100,7 +100,7 @@ module.exports = class ReplyCommand extends Command {
 				userPlant.removeFromSeeds(Math.min(seedOne, seedTwo));
 				userPlant.addToSeeds(newSeed);
 				userPlant.addToSeeds(newSeed);
-				return plants.storePlant(userPlant).then(msg.say('Your splice went miserably, and you try to recover what you can.', { embed }));
+				return plants.storePlant(userPlant).then(msg.say(`Your splice went miserably, and you try to recover what you can. The word was ${randomWord}`, { embed }));
 			}
 			// ============
 			const newSeed = {

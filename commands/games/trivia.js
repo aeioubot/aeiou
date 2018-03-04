@@ -3,7 +3,11 @@ const request = require('request-promise');
 const unescape = require('unescape');
 const unidecode = require('unidecode');
 function decode(str) {
-	return unidecode(unescape(str)).replace(/&#039;/g, '\'').replace(/&Uuml;/gi, 'u');
+	return unidecode(unescape(str))
+		.replace(/&#039;/g, '\'')
+		.replace(/&Uuml;/gi, 'u')
+		.replace(/&rsquo;/gi, '"')
+		.replace(/&eacute;/gi, 'e');
 }
 
 module.exports = class TriviaCommand extends Command {
@@ -45,7 +49,7 @@ module.exports = class TriviaCommand extends Command {
 			return;
 		}
 		msg.guild.triviaRunning = true;
-		return request({uri: `https://opentdb.com/api.php?amount=${maxPoints * 20}&type=multiple`, json: true})
+		return request({uri: `https://opentdb.com/api.php?amount=50&type=multiple`, json: true})
 			.then((data) => {
 				if (data.response_code !== 0) throw new Error('opentdb response error');
 				this.questions = data.results.map((q) => ({question: decode(q.question), answer: decode(q.correct_answer)}));
@@ -65,7 +69,19 @@ module.exports = class TriviaCommand extends Command {
 				return msg.say(`${msg.guild.members.get(player).displayName} has reached ${maxPoints} points and won!\n`);
 			}
 		}
-		const question = this.questions.splice(0, 1)[0];
+		let question = this.questions.splice(0, 1)[0];
+		if (!question) {
+			try {
+				request({uri: `https://opentdb.com/api.php?amount=50&type=multiple`, json: true})
+					.then((data) => {
+						if (data.response_code !== 0) throw new Error('opentdb response error');
+						this.questions = data.results.map((q) => ({question: decode(q.question), answer: decode(q.correct_answer)}));
+					});
+				question = this.questions.splice(0, 1)[0];
+			} catch (e) {
+				return msg.say('Something went wrong, and I have run out of questions.');
+			}
+		}
 		this.totalQuestions += 1;
 		const embed = {
 			title: `Question #${this.totalQuestions}!`,

@@ -76,7 +76,7 @@ module.exports = class UnscrambleCommand extends Command {
 			title: 'Unscramble',
 			description: scrambled.join(''),
 			color: 5072583,
-			footer: {text: angerCount == 2 ? 'If nobody speaks soon, the game will end!' : 'Type "aeiou stop" to end the game, and "aeiou next" to skip.'},
+			footer: {text: angerCount == 2 ? 'If nobody speaks soon, the game will end!' : '"aeiou stop" - ends game, "aeiou next" - skip'},
 		};
 		msg.say('Unscramble the word to earn a point.', { embed });
 		const collector = msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id, {time: 30000});

@@ -3,7 +3,7 @@ const request = require('request-promise');
 const unescape = require('unescape');
 const unidecode = require('unidecode');
 function decode(str) {
-	return unidecode(unescape(str)).replace('&#039;', '\'');
+	return unidecode(unescape(str)).replace(/&#039;/g, '\'');
 }
 
 module.exports = class TriviaCommand extends Command {
@@ -71,7 +71,11 @@ module.exports = class TriviaCommand extends Command {
 			title: `Question #${this.totalQuestions}!`,
 			fields: [
 				{
-					name: question.question,
+					name: 'Question:',
+					value: question.question,
+				},
+				{
+					name: 'Hint:',
 					value: question.answer.split('').map((l, i) => {
 						if (i == 0 || i == 1) return '-';
 						if (l == ' ' || /[^a-zA-Z]/.test(l)) return l;
@@ -81,7 +85,7 @@ module.exports = class TriviaCommand extends Command {
 				},
 			],
 			color: 5072583,
-			footer: {text: angerCount == 2 ? 'If nobody speaks soon, the game will end!' : 'Type "aeiou stop" to end the game, and "aeiou next" to skip.'},
+			footer: {text: angerCount == 2 ? 'If nobody speaks soon, the game will end!' : '"aeiou stop" - ends game, "aeiou next" - skip'},
 		};
 		msg.say('Type the correct answer to earn a point.', { embed });
 		const collector = msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id, {time: 30000});

@@ -49,7 +49,8 @@ module.exports = {
 					});
 				}, 10000);
 			})
-			.catch(() => {
+			.catch((e) => {
+				if (e.message == 'Reaction blocked') return;
 				let m = msg.client.provider.get(msg.guild.id, 'noSeedChannels', []);
 				m.push(msg.channel.id);
 				msg.client.provider.set(

@@ -1,7 +1,7 @@
 const {Command} = require('discord.js-commando');
 const plants = require('../../utils/models/plants.js');
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class HarvestCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'harvest',

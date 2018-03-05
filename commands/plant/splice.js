@@ -27,7 +27,7 @@ function determineSymbol(number) {
 	return '-----';
 }
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class SpliceCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'splice',

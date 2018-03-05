@@ -35,7 +35,7 @@ const translations = {
 	blue: 'Blue',
 };
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class SeedsCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'seeds',

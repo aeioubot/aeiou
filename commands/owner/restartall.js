@@ -1,6 +1,6 @@
 const {Command} = require('discord.js-commando');
 
-module.exports = class RestartCommand extends Command {
+module.exports = class RestartAllCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'restartall',

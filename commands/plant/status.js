@@ -71,7 +71,7 @@ const titles = [
 	'This plant appears to be  a s c e n d e d.',
 ];
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class StatusCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'status',

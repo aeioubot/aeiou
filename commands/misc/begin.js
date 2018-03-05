@@ -13,7 +13,7 @@ See the full list of commands avilable with <!help>, under "Plant commands".
 \`\`\``,
 };
 
-module.exports = class SupportCommand extends Command {
+module.exports = class BeginCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'begin',

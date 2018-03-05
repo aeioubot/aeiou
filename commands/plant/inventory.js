@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando');
 const plants = require('../../utils/models/plants.js');
 const items = require('../../utils/classes/plantItems');
 
-module.exports = class ShopCommand extends Command {
+module.exports = class InventoryCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'inventory',

@@ -23,13 +23,14 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, { minutes }) {
-		const sayArray = [`Members that have been active in the past **${minutes}** minutes:\`\`\``];
+		const sayArray = [];
 		const checkMS = minutes * 60000;
 		const now = Date.now();
 		msg.guild.members.forEach((m) => {
 			if (m.lastMessage && !m.user.bot && now - m.lastMessage.createdTimestamp <= checkMS) sayArray.push(m.user.tag);
 		});
+		sayArray.unshift(`${sayArray.length} members have been active in the past **${minutes}** minutes:\`\`\``);
 		sayArray.push('```');
-		sayArray.length === 3 ? msg.say(`Members that have been active in the past **${minutes}** minutes:\n\`\`\`Just you!\`\`\``) : msg.say(sayArray.join('\n'));
+		sayArray.length === 3 ? msg.say(`1 member has been active in the past **${minutes}** minutes:\n\`\`\`Just you!\`\`\``) : msg.say(sayArray.join('\n'));
 	}
 };

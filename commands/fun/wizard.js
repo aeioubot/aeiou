@@ -21,10 +21,19 @@ module.exports = class WizardCommand extends Command {
 	}
 
 	async run(msg, { echo }) {
+		if (echo.length > 24) {
+			return msg.say(`The wizard inhales–\n*:sparkles: "${echo}" :sparkles:*
+                            __\\_/\\\\\\___
+                            (°͜-°)   :sparkles:
+                            /|\\\\／
+                            /\\
+            
+            `);
+		}
 		return msg.say(stripIndent`
-							__\\_/\\\\\\___
-							(°͜-°)   :sparkles: *${echo}*
-							/|\\\\／
-							/\\`).catch(() => msg.say('The wizard deems that phrase unworthy.'));
+                  __\\_/\\\\\\___
+                  (°͜-°):sparkles: *${echo}*
+                  /|\\\\／
+                  /\\`).catch(() => msg.say('The wizard deems that phrase unworthy.'));
 	}
 };

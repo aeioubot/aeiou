@@ -36,7 +36,7 @@ module.exports = class ShopCommand extends Command {
 			displayMessage.push('\nType `!inventory <item number>` to use it on your active plant.');
 			return msg.say(displayMessage.join('\n'));
 		}
-		if (itemNumber >= userPlant.getPlantData().length) return msg.say('You don\'t have an item by that number.');
+		if (itemNumber >= userPlant.getPlantData().inventory.length) return msg.say('You don\'t have an item by that number.');
 		if (!userPlant.getPlantData().activeSeed) return msg.say('You don\'t have an active seed to use this item on.');
 		new items[userPlant.getPlantData().inventory[itemNumber]]().use(userPlant);
 		userPlant.removeFromInventory(itemNumber);

@@ -64,6 +64,11 @@ const titles = [
 	'A calico kitten waddles into the garden, his curiosity getting the best of him.',
 	'You decide to take a break from your hard work gardening and enjoy a sip of water alongside your plant.',
 	'You study your thumb, wondering when it’ll turn green.',
+	'Nani?! Your plant is growing nice and strong!',
+	'Your plant is getting a little older now. It seems to be going through an emo phase.',
+	'Your plant is a dirty, dirty boy',
+	'Do you ever just...plant.',
+	'This plant appears to be  a s c e n d e d.',
 ];
 
 module.exports = class ReplyCommand extends Command {

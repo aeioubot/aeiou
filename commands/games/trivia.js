@@ -108,7 +108,9 @@ module.exports = class TriviaCommand extends Command {
 			color: 5072583,
 			footer: {text: angerCount == 2 ? 'If nobody speaks soon, the game will end!' : '"aeiou stop" - ends game, "aeiou next" - skip'},
 		};
-		msg.say(`${append}\n\nType the correct answer to earn a point.`, { embed });
+		msg.say(`${append}\n\nType the correct answer to earn a point.`, { embed }).catch(() => {
+			this.game(msg, maxPoints, score, angerCount + 1, `I made a mistake and had to skip a question. Call me names.`);
+		});
 		const collector = msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id, {time: 30000});
 		collector.on('collect', (collected) => {
 			angerCount = 0;

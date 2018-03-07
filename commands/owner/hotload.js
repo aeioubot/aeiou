@@ -14,6 +14,11 @@ module.exports = class ReplyCommand extends Command {
 		});
 	}
 
+	hasPermission(msg) {
+		if (this.client.isOwner(msg.author)) return true;
+		return 'please don\'t.';
+	}
+
 	async run(msg, args) {
 		child.execSync('git pull');
 		child.execSync('npm install --production --silent');

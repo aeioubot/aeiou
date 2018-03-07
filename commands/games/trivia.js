@@ -8,7 +8,8 @@ function decode(str) {
 		.replace(/&Uuml;/gi, 'u')
 		.replace(/&rsquo;/gi, '"')
 		.replace(/&eacute;/gi, 'e')
-		.replace(/<i>|<\/i>/gi, '');
+		.replace(/<i>|<\/i>/gi, '')
+		.replace(/\\'/gi, `'`);
 }
 
 module.exports = class TriviaCommand extends Command {

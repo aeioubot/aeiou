@@ -7,7 +7,8 @@ function decode(str) {
 		.replace(/&#039;/g, '\'')
 		.replace(/&Uuml;/gi, 'u')
 		.replace(/&rsquo;/gi, '"')
-		.replace(/&eacute;/gi, 'e');
+		.replace(/&eacute;/gi, 'e')
+		.replace(/<i>|<\/i>/gi, '');
 }
 
 module.exports = class TriviaCommand extends Command {
@@ -51,13 +52,17 @@ module.exports = class TriviaCommand extends Command {
 		msg.guild.triviaRunning = true;
 		return request({uri: `http://jservice.io/api/random?count=100`, json: true})
 			.then((data) => {
-				this.questions = data.results.map((q) => ({question: decode(q.question), answer: decode(q.answer)}));
+				this.questions = data.map((q) => ({question: decode(q.question), answer: decode(q.answer), category: decode(q.category.title)}));
+				this.questions = this.questions.filter((e) => !e.question.toLowerCase().includes('which of'));
 				this.totalQuestions = 0;
-				this.game(msg, maxPoints, {}, 0);
-			}).catch(() => msg.say('I couldn\'t start a game of trivia right now. If this persists, please report the bug with the !support command.'));
+				this.game(msg, maxPoints, {}, 0, `The score limit is ${maxPoints}.`);
+			}).catch((e) => {
+				msg.guild.triviaRunning = false;
+				msg.say('I couldn\'t start a game of trivia right now. If this persists, please report the bug with the !support command.');
+			});
 	}
 
-	async game(msg, maxPoints, score, angerCount) {
+	async game(msg, maxPoints, score, angerCount, append) {
 		if (angerCount >= 3) {
 			msg.guild.triviaRunning = false;
 			return msg.say('Inactivity, game ending.');
@@ -65,25 +70,26 @@ module.exports = class TriviaCommand extends Command {
 		for (let player in score) {
 			if (score[player] >= maxPoints) {
 				msg.guild.triviaRunning = false;
-				return msg.say(`${msg.guild.members.get(player).displayName} has reached ${maxPoints} points and won!\n`);
+				return msg.say(`${msg.guild.members.get(player).displayName} has reached ${maxPoints} points and won!`);
 			}
 		}
 		let question = this.questions.splice(0, 1)[0];
 		if (!question) {
 			try {
-				request({uri: `http://jservice.io/api/random?count=100`, json: true})
+				await request({uri: `http://jservice.io/api/random?count=100`, json: true})
 					.then((data) => {
-						if (data.response_code !== 0) throw new Error('opentdb response error');
-						this.questions = data.results.map((q) => ({question: decode(q.question), answer: decode(q.answer)}));
+						this.questions = data.map((q) => ({question: decode(q.question), answer: decode(q.answer), category: decode(q.category.title)}));
+						this.questions = this.questions.filter((e) => !e.question.toLowerCase().includes('which of'));
 					});
 				question = this.questions.splice(0, 1)[0];
 			} catch (e) {
+				msg.guild.triviaRunning = false;
 				return msg.say('Something went wrong, and I have run out of questions.');
 			}
 		}
 		this.totalQuestions += 1;
 		const embed = {
-			title: `Question #${this.totalQuestions}!`,
+			title: question.category,
 			fields: [
 				{
 					name: 'Question:',
@@ -92,8 +98,8 @@ module.exports = class TriviaCommand extends Command {
 				{
 					name: 'Hint:',
 					value: question.answer.split('').map((l, i) => {
-						if (i == 0 || i == 1) return '-';
 						if (l == ' ' || /[^a-zA-Z]/.test(l)) return l;
+						if (i == 0 || i == 1) return '-';
 						if (Math.floor(Math.random() * 3) == 0) return `${l}`;
 						return '-';
 					}).join(''),
@@ -102,17 +108,16 @@ module.exports = class TriviaCommand extends Command {
 			color: 5072583,
 			footer: {text: angerCount == 2 ? 'If nobody speaks soon, the game will end!' : '"aeiou stop" - ends game, "aeiou next" - skip'},
 		};
-		msg.say('Type the correct answer to earn a point.', { embed });
+		msg.say(`${append}\n\nType the correct answer to earn a point.`, { embed });
 		const collector = msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id, {time: 30000});
 		collector.on('collect', (collected) => {
 			angerCount = 0;
 			if (collected.cleanContent.toLowerCase() === question.answer.toLowerCase()) {
 				score[collected.author.id] = score[collected.author.id] + 1 || 1;
-				if (score[collected.author.id] < maxPoints) msg.say(`${collected.member.displayName} guessed correctly and now has ${score[collected.author.id]} points! The answer was \`${question.answer}\`.`);
 				collector.stop('correct');
-				return this.game(msg, maxPoints, score, angerCount);
+				return this.game(msg, maxPoints, score, angerCount, `${collected.member.displayName} guessed correctly and now has ${score[collected.author.id]} points! The answer was \`${question.answer}\`.`);
 			}
-			if (['aeiou stop', 'shut up', 'shut the fuck up', 'shut the hell up', 'shut the heck up'].includes(collected.cleanContent.toLowerCase())) {
+			if (['aeiou stop', 'aeiou skip', 'shut up', 'shut the fuck up', 'shut the hell up', 'shut the heck up'].includes(collected.cleanContent.toLowerCase())) {
 				msg.guild.triviaRunning = false;
 				collector.stop('shutUp');
 				return msg.say('Game ended.');
@@ -123,8 +128,7 @@ module.exports = class TriviaCommand extends Command {
 		});
 		collector.on('end', (collected, reason) => {
 			if (reason == 'shutUp' || reason == 'correct') return;
-			msg.say('Nobody guessed the word. The answer was: ' + question.answer);
-			return this.game(msg, maxPoints, score, angerCount + 1);
+			return this.game(msg, maxPoints, score, angerCount + 1, `Nobody guessed the word. The answer was: \`${question.answer}\``);
 		});
 	}
 };

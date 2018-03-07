@@ -20,10 +20,11 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, args) {
+		await msg.react('⌛');
 		child.execSync('git pull');
 		child.execSync('npm install --production --silent');
 		reloadRequires().then(() => {
-			msg.say('ok done');
+			msg.say('Done!');
 		});
 	}
 };

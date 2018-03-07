@@ -69,6 +69,14 @@ const titles = [
 	'Your plant is a dirty, dirty boy',
 	'Do you ever just...plant.',
 	'This plant appears to be  a s c e n d e d.',
+	'Your plant becomes more beautiful with every passing day.',
+	'A tiny ladybug catches her breath on a petal.',
+	'Your plant hopes you hit the top of the leaderboard.',
+	'You marvel at how the petals glow in the warm sunset.',
+	'You are thankful for your green thumb.',
+	'Your plant is very lucky to have such a caring gardener.',
+	'Have you visited the shop yet?',
+	'Have you checked the leaderboard yet?',
 ];
 
 module.exports = class StatusCommand extends Command {

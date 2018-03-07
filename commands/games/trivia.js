@@ -49,10 +49,9 @@ module.exports = class TriviaCommand extends Command {
 			return;
 		}
 		msg.guild.triviaRunning = true;
-		return request({uri: `https://opentdb.com/api.php?amount=50&type=multiple`, json: true})
+		return request({uri: `http://jservice.io/api/random?count=100`, json: true})
 			.then((data) => {
-				if (data.response_code !== 0) throw new Error('opentdb response error');
-				this.questions = data.results.map((q) => ({question: decode(q.question), answer: decode(q.correct_answer)}));
+				this.questions = data.results.map((q) => ({question: decode(q.question), answer: decode(q.answer)}));
 				this.totalQuestions = 0;
 				this.game(msg, maxPoints, {}, 0);
 			}).catch(() => msg.say('I couldn\'t start a game of trivia right now. If this persists, please report the bug with the !support command.'));
@@ -72,10 +71,10 @@ module.exports = class TriviaCommand extends Command {
 		let question = this.questions.splice(0, 1)[0];
 		if (!question) {
 			try {
-				request({uri: `https://opentdb.com/api.php?amount=50&type=multiple`, json: true})
+				request({uri: `http://jservice.io/api/random?count=100`, json: true})
 					.then((data) => {
 						if (data.response_code !== 0) throw new Error('opentdb response error');
-						this.questions = data.results.map((q) => ({question: decode(q.question), answer: decode(q.correct_answer)}));
+						this.questions = data.results.map((q) => ({question: decode(q.question), answer: decode(q.answer)}));
 					});
 				question = this.questions.splice(0, 1)[0];
 			} catch (e) {

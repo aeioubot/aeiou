@@ -8,6 +8,14 @@ module.exports = class RestartCommand extends Command {
 			memberName: 'restart',
 			description: 'Restarts this shard.',
 			details: 'Restarts this shard.',
+			args: [
+				{
+					key: 'all',
+					prompt: 'ksrt',
+					type: 'string',
+					default: '',
+				},
+			],
 		});
 	}
 
@@ -16,8 +24,9 @@ module.exports = class RestartCommand extends Command {
 		return 'please don\'t.';
 	}
 
-	async run(msg) {
+	async run(msg, {all}) {
+		if (all == 'all') return msg.react('✅').then(() => msg.client.shard.send({command: 'restart'}));
 		console.log(`Shard ${msg.client.shard.id} restarting...`);
-		msg.react('✅').then(() => process.exit(0));
+		return msg.react('✅').then(() => process.exit(0));
 	}
 };

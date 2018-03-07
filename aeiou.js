@@ -7,6 +7,14 @@ const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
 const creacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
+const hotload = require('hotload');
+module.exports = {
+	reloadRequires: async () => {
+		hotload('./utils/messageListeners.js');
+		hotload('./secure.json');
+		Aeiou.shard.send({command: 'reload'});
+	},
+};
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],

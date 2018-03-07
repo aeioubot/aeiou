@@ -32,6 +32,6 @@ module.exports = class ReplyCommand extends Command {
 		sayArray.unshift(`${sayArray.length} members have been active in the past **${minutes}** minutes:\`\`\``);
 		sayArray.push('```');
 		sayArray.length === 3 ? msg.say(`1 member has been active in the past **${minutes}** minutes:\n\`\`\`Just you!\`\`\``) : msg.say(sayArray.join('\n'))
-			.catch((e) => msg.say(`${sayArray.length} members has been active in the past **${minutes}** minutes:\n\`\`\`Hoo boy that's a lot of members!\`\`\``));
+			.catch((e) => msg.say(`${sayArray.length} members have been active in the past **${minutes}** minutes:\n\`\`\`Hoo boy that's a lot of members!\`\`\``));
 	}
 };

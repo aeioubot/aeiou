@@ -24,7 +24,7 @@ module.exports = {
 		}
 	},
 	plantSeed: async (msg) => {
-		if (Math.floor(Math.random() * 400) !== 0 || msg.client.provider.get(msg.guild.id, 'noSeedChannels', []).includes(msg.channel.id)) return;
+		if (Math.floor(Math.random() * 600) !== 0 || msg.client.provider.get(msg.guild.id, 'noSeedChannels', []).includes(msg.channel.id)) return;
 		msg.react('🌰')
 			.then(() => {
 				setTimeout(async () => {

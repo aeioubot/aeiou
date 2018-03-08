@@ -77,6 +77,7 @@ const titles = [
 	'Your plant is very lucky to have such a caring gardener.',
 	'Have you visited the shop yet?',
 	'Have you checked the leaderboard yet?',
+	'You found a rock near your plant. It was a cool piece of amber.',
 ];
 
 module.exports = class StatusCommand extends Command {

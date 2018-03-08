@@ -12,8 +12,8 @@ function rgbToHex(r, g, b) {
 
 const statWords = [
 	'Terrible',
-	'Not that terrible',
 	'Bad',
+	'Not that terrible',
 	'Passable',
 	'Normal',
 	'Better than normal',

@@ -55,6 +55,7 @@ module.exports = class TriviaCommand extends Command {
 			.then((data) => {
 				this.questions = data.map((q) => ({question: decode(q.question), answer: decode(q.answer), category: decode(q.category.title)}));
 				this.questions = this.questions.filter((e) => !e.question.toLowerCase().includes('which of'));
+				this.questions = this.questions.filter((e) => !e.question.match(/which of|who of/i));
 				this.totalQuestions = 0;
 				this.game(msg, maxPoints, {}, 0, `The score limit is ${maxPoints}.`);
 			}).catch((e) => {

@@ -80,7 +80,7 @@ module.exports = class TriviaCommand extends Command {
 				await request({uri: `http://jservice.io/api/random?count=100`, json: true})
 					.then((data) => {
 						this.questions = data.map((q) => ({question: decode(q.question), answer: decode(q.answer), category: decode(q.category.title)}));
-						this.questions = this.questions.filter((e) => !e.question.toLowerCase().includes('which of'));
+						this.questions = this.questions.filter((e) => !e.question.match(/which of|who of/i));
 					});
 				question = this.questions.splice(0, 1)[0];
 			} catch (e) {

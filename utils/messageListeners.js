@@ -20,16 +20,14 @@ module.exports = {
 		let markdownStart = '';
 		// Run a loop to add the user's markdown (which can contain *, _ and ~ characters) to the markdownStart variable.
 		// This will keep running until the markdown at the start of the message is different from the markdown at the end of the message reversed.
-		for (let i = 0; msg.content[i] == msg.content[msg.content.length - i - 1] && '_*~'.indexOf(msg.content[i]) > -1; i++) {
+		for (i = 0; msg.content[i] == msg.content[msg.content.length - i - 1] && '*_~'.indexOf(msg.content[i]) > -1; i++) {
 			// Add the markdown character to the markdownStart variable.
 			markdownStart += msg.content[i];
 		}
 		// This variable holds the actual custom reaction trigger, without the markdown the user uses.
 		let triggerContent = msg.content.substr(i, msg.content.length - (2 * i));
 		// Find the response for the trigger.
-		let toSay = reactionObjects.find((reactObject) => {
-			if (triggerContent.toLowerCase() === reactObject.trigger) return reactObject;
-		});
+		let toSay = reactionObjects.find((reactObject) => triggerContent.toLowerCase() === reactObject.trigger);
 		if (toSay) {
 			// If the triggerContent is the same as the triggerContent to upper case, send the response in uppercase too.
 			let reactContent = (triggerContent === upify(triggerContent)) ? toSay.content.toUpperCase() : toSay.content;

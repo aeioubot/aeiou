@@ -8,6 +8,8 @@ const donors = require('./utils/models/donor.js');
 const creacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
 const hotload = require('hotload');
+const DmManager = require('./utils/classes/DmManager.js');
+
 module.exports = {
 	reloadRequires: async () => {
 		hotload('./utils/messageListeners.js');
@@ -51,6 +53,7 @@ Aeiou.on('ready', () => {
 		info.shard = Aeiou.shard.id;
 		console.log(info);
 	});
+	if (Aeiou.shard.id == 0) this.client.dmManager = new DmManager(Aeiou);
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
 });
 
@@ -71,6 +74,7 @@ process.on('message', (response) => {
 Aeiou.on('message', async (message) => {
 	messageListeners.creact(message);
 	messageListeners.plantSeed(message);
+	if (msg.channel.type == 'dm' && !msg.command) Aeiou.dmManager.newMessage(msg);
 });
 
 Aeiou.on('guildMemberAdd', (member) => {

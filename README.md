@@ -1,5 +1,5 @@
 # aeiou
-Aeiou is a Discord bot meant for funposting. We've intentionally left out the host of moderation features in order to add things that make being on a server more fun, such as custom reacts or plants.
+Aeiou is a Discord bot meant for funposting. We've intentionally left out the host of moderation features other bots have in order to add things that make being on a server more fun, such as custom reacts or plants.
 
 # How to install?
 Be sure to have a localhost:3306 MySQL server running. Remove the `.template` from secure.template.json and settings.template.sqlite3. Lastly, fill in secure.json with your actual values.

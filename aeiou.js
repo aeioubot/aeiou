@@ -7,16 +7,7 @@ const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
 const creacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
-const hotload = require('hotload');
 const DmManager = require('./utils/classes/DmManager.js');
-
-module.exports = {
-	reloadRequires: async () => {
-		hotload('./utils/messageListeners.js');
-		hotload('./secure.json');
-		Aeiou.shard.send({command: 'reload'});
-	},
-};
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -60,7 +51,7 @@ Aeiou.on('ready', () => {
 Aeiou.dispatcher.addInhibitor((msg) => {
 	if (!msg.command) return false;
 	if (msg.channel.type == 'dm') return false;
-	if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.author.id) || msg.command.name === 'ignore') return false;
+	if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.autr.id) || msg.command.name === 'ignore') return false;
 	return Aeiou.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id);
 });
 

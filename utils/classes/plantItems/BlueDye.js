@@ -7,6 +7,7 @@ module.exports = class BlueDye {
 
 	use(plant, msg) {
 		plant.getPlantData().activeSeed.blue = Math.min((plant.getPlantData().activeSeed.blue + Math.floor(Math.random() * 30)+60), 255);
+		plant.removeFromInventory(itemNumber);
 		return msg.say('Your plant turns more blue, but it isn\'t sad. :sparkles:');
 	}
 };

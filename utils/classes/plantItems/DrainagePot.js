@@ -6,6 +6,6 @@ module.exports = class DrainagePot {
 	}
 
 	use(plant, msg) {
-		return msg.say('The drainage pot is automatically applied. It wont last forever, so check back often.');
+		msg.say('The drainage pot is automatically applied. It wont last forever, so check back often.');
 	}
 };

@@ -40,6 +40,7 @@ module.exports = class InventoryCommand extends Command {
 		if (!userPlant.getPlantData().activeSeed) return msg.say('You don\'t have an active seed to use this item on.');
 		new items[userPlant.getPlantData().inventory[itemNumber]]().use(userPlant, msg);
 		userPlant.removeFromInventory(itemNumber);
-		return plants.storePlant(userPlant);
+		plants.storePlant(userPlant);
+		return;
 	}
 };

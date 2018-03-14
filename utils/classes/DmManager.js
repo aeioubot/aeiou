@@ -46,7 +46,7 @@ class DmManager {
 
 	async reply(replyID, content, msg) {
 		const replyMsg = this.messages.find((m) => replyID == m.replyID);
-		if (!replyMsg) return msg.say('I don\'t have a message by that ID.');
+		if (!replyMsg) return msg.say('I don\'t have a message cached by that ID.');
 		return replyMsg.reply(content.replace('{s}', PERM_SERVER_INVITE), msg.attachments.first() && msg.attachments.first().height ? {embed: {image: {url: msg.attachments.first().url}}} : '').then(msg.react('✅'));
 	}
 }

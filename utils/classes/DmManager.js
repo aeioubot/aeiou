@@ -18,7 +18,7 @@ class DmManager {
 			if (this.messages.push(msg) > TOTAL_CACHE_COUNT) this.messages.splice(0, 1);
 		}
 		if (!this.warnedUsers.includes(msg.author.id)) {
-			msg.reply('**Warning!!!**: The owners of Aeiou have access to **only the DMs** (excluding commands) that you send to me.\n\nPlease do not send sensitive information, but please *do* send feedback or suggestions.');
+			msg.reply('**Notice!!!**: The owners of Aeiou have access to **only the DMs** (excluding commands) that you send to me.\n\nPlease do not send sensitive information, but please *do* send feedback or suggestions.');
 			this.warnedUsers.push(msg.author.id);
 		}
 		const embed = {

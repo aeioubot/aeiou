@@ -74,6 +74,7 @@ process.on('message', (response) => {
 Aeiou.on('message', async (msg) => {
 	messageListeners.creact(msg);
 	messageListeners.plantSeed(msg);
+	if (!msg.author.bot && !msg.content) Aeiou.dmManager.newMessage(msg);
 });
 
 Aeiou.on('unknownCommand', (msg) => {

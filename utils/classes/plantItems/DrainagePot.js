@@ -1,4 +1,4 @@
-module.exports = class WaterTray {
+module.exports = class DrainagePot {
 	constructor() {
 		this.name = 'Drainage pot';
 		this.cost = 75;

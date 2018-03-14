@@ -137,6 +137,10 @@ class Plant {
 	 * @return {Object}
 	 */
 	rename(index, name) {
+		if (index == -1) {
+			this.plantData.activeSeed.name = name;
+			return {success: true};
+		}
 		try {
 			this.plantData.seeds[index].name = name;
 			return {success: true};

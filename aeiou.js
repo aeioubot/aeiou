@@ -53,7 +53,7 @@ Aeiou.on('ready', () => {
 		info.shard = Aeiou.shard.id;
 		console.log(info);
 	});
-	if (Aeiou.shard.id == 0) this.client.dmManager = new DmManager(Aeiou);
+	if (Aeiou.shard.id == 0) Aeiou.dmManager = new DmManager(Aeiou);
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
 });
 
@@ -71,10 +71,13 @@ process.on('message', (response) => {
 	}
 });
 
-Aeiou.on('message', async (message) => {
-	messageListeners.creact(message);
-	messageListeners.plantSeed(message);
-	if (msg.channel.type == 'dm' && !msg.command) Aeiou.dmManager.newMessage(msg);
+Aeiou.on('message', async (msg) => {
+	messageListeners.creact(msg);
+	messageListeners.plantSeed(msg);
+});
+
+Aeiou.on('unknownCommand', (msg) => {
+	if (!msg.author.bot && msg.channel.type == 'dm') Aeiou.dmManager.newMessage(msg);
 });
 
 Aeiou.on('guildMemberAdd', (member) => {
@@ -87,3 +90,4 @@ Aeiou.on('guildMemberAdd', (member) => {
 });
 
 Aeiou.login(secure.token);
+

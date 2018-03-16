@@ -22,11 +22,12 @@ Aeiou.setProvider(new SequelizeProvider(database.db)).catch(console.error);
 
 Aeiou.registry
 	.registerGroups([
-		['mod', 'Mod commands'],
 		['games', 'Game commands'],
 		['plant', 'Plant commands'],
-		['role', 'Role commands'],
 		['fun', 'Fun commands'],
+		['search', 'Search commands'],
+		['role', 'Role commands'],
+		['mod', 'Mod commands'],
 		['tag', 'Tag related commands'],
 		['misc', 'Miscellaneous commands'],
 		['owner', 'Owner commands'],

@@ -7,14 +7,7 @@ const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
 const creacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
-const hotload = require('hotload');
-module.exports = {
-	reloadRequires: async () => {
-		hotload('./utils/messageListeners.js');
-		hotload('./secure.json');
-		Aeiou.shard.send({command: 'reload'});
-	},
-};
+const DmManager = require('./utils/classes/DmManager.js');
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -29,11 +22,12 @@ Aeiou.setProvider(new SequelizeProvider(database.db)).catch(console.error);
 
 Aeiou.registry
 	.registerGroups([
-		['mod', 'Mod commands'],
 		['games', 'Game commands'],
 		['plant', 'Plant commands'],
-		['role', 'Role commands'],
 		['fun', 'Fun commands'],
+		['search', 'Search commands'],
+		['role', 'Role commands'],
+		['mod', 'Mod commands'],
 		['tag', 'Tag related commands'],
 		['misc', 'Miscellaneous commands'],
 		['owner', 'Owner commands'],
@@ -51,6 +45,7 @@ Aeiou.on('ready', () => {
 		info.shard = Aeiou.shard.id;
 		console.log(info);
 	});
+	if (Aeiou.shard.id == 0) Aeiou.dmManager = new DmManager(Aeiou);
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
 });
 
@@ -68,9 +63,14 @@ process.on('message', (response) => {
 	}
 });
 
-Aeiou.on('message', async (message) => {
-	messageListeners.creact(message);
-	messageListeners.plantSeed(message);
+Aeiou.on('message', async (msg) => {
+	messageListeners.creact(msg);
+	messageListeners.plantSeed(msg);
+	if (!msg.author.bot && !msg.content && msg.channel.type == 'dm') Aeiou.dmManager.newMessage(msg);
+});
+
+Aeiou.on('unknownCommand', (msg) => {
+	if (!msg.author.bot && msg.channel.type == 'dm') Aeiou.dmManager.newMessage(msg);
 });
 
 Aeiou.on('guildMemberAdd', (member) => {
@@ -83,3 +83,4 @@ Aeiou.on('guildMemberAdd', (member) => {
 });
 
 Aeiou.login(secure.token);
+

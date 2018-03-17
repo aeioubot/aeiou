@@ -118,7 +118,7 @@ class Plant {
 		const returnObject = {
 			success: true,
 			grown: this.plantData.progress == 100,
-			leaves: this.plantData.progress == 100 ? Math.max(Math.floor(Math.random() * this.plantData.activeSeed.leafiness), 2) : 0,
+			leaves: this.plantData.progress == 100 ? Math.max(Math.floor(Math.random() * this.plantData.activeSeed.leafiness), Math.floor(this.plantData.activeSeed.leafiness / 2)) : 0,
 		};
 		this.plantData.progress = 0;
 		if (returnObject.grown) {
@@ -137,6 +137,10 @@ class Plant {
 	 * @return {Object}
 	 */
 	rename(index, name) {
+		if (index == -1) {
+			this.plantData.activeSeed.name = name;
+			return {success: true};
+		}
 		try {
 			this.plantData.seeds[index].name = name;
 			return {success: true};

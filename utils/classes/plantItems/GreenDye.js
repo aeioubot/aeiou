@@ -5,7 +5,9 @@ module.exports = class GreenDye {
 		this.description = 'Grow some more green on your plant.';
 	}
 
-	use(plant) {
+	use(plant, msg) {
 		plant.getPlantData().activeSeed.green = Math.min((plant.getPlantData().activeSeed.green + Math.floor(Math.random() * 60)), 255);
+		plant.removeFromInventory(itemNumber);
+		return msg.say('Your plant grows more green. :sparkles:');
 	}
 };

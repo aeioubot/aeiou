@@ -38,8 +38,8 @@ module.exports = class InventoryCommand extends Command {
 		}
 		if (itemNumber >= userPlant.getPlantData().inventory.length) return msg.say('You don\'t have an item by that number.');
 		if (!userPlant.getPlantData().activeSeed) return msg.say('You don\'t have an active seed to use this item on.');
-		new items[userPlant.getPlantData().inventory[itemNumber]]().use(userPlant);
-		userPlant.removeFromInventory(itemNumber);
-		return plants.storePlant(userPlant).then(() => msg.say('You used the item. :sparkles:'));
+		new items[userPlant.getPlantData().inventory[itemNumber]]().use(userPlant, msg);
+		plants.storePlant(userPlant);
+		return;
 	}
 };

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const Database = require('../../database.js');
-const Plant = require('../classes/plant.js');
+const Plant = require('../classes/Plant.js');
 
 const db = Database.db;
 

@@ -11,6 +11,7 @@ module.exports = {
         "require-jsdoc": 'off',
         "indent": ["error", "tab"],
         "no-tabs": 'off',
-        "no-unreachable": 'error'
+        "no-unreachable": 'error',
+        "no-multi-spaces": 'off'
     }
 };

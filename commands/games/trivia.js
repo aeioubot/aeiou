@@ -55,7 +55,8 @@ module.exports = class TriviaCommand extends Command {
 		return request({uri: `http://jservice.io/api/random?count=100`, json: true})
 			.then((data) => {
 				this.questions = data.map((q) => ({question: decode(q.question), answer: decode(q.answer), category: decode(q.category.title)}));
-				this.questions = this.questions.filter((e) => !e.question.toLowerCase().includes('which of'));
+				this.questions = this.questions.filter((e) => !(/which of|who of/gi.test(e.question)));
+				console.log(this.questions.length);
 				this.totalQuestions = 0;
 				this.game(msg, maxPoints, {}, 0, `The score limit is ${maxPoints}.`);
 			}).catch((e) => {
@@ -81,7 +82,7 @@ module.exports = class TriviaCommand extends Command {
 				await request({uri: `http://jservice.io/api/random?count=100`, json: true})
 					.then((data) => {
 						this.questions = data.map((q) => ({question: decode(q.question), answer: decode(q.answer), category: decode(q.category.title)}));
-						this.questions = this.questions.filter((e) => !e.question.toLowerCase().includes('which of'));
+						this.questions = this.questions.filter((e) => !e.question.match(/which of|who of/i));
 					});
 				question = this.questions.splice(0, 1)[0];
 			} catch (e) {
@@ -111,7 +112,7 @@ module.exports = class TriviaCommand extends Command {
 			footer: {text: angerCount == 2 ? 'If nobody speaks soon, the game will end!' : '"aeiou stop" - ends game, "aeiou next" - skip'},
 		};
 		msg.say(`${append}\n\nType the correct answer to earn a point.`, { embed }).catch(() => {
-			this.game(msg, maxPoints, score, angerCount + 1, `I made a mistake and had to skip a question. Call me names.`);
+			this.game(msg, maxPoints, score, angerCount, `I made a mistake and had to skip a question. Call me names.`);
 		});
 		const collector = msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id, {time: 30000});
 		collector.on('collect', (collected) => {

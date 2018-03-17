@@ -40,7 +40,12 @@ module.exports = {
 		msg.react('🌰')
 			.then(() => {
 				setTimeout(async () => {
-					const earners = Array.from(msg.reactions.get('🌰').users.keys());
+					let earners;
+					try {
+						earners = Array.from(msg.reactions.get('🌰').users.keys());
+					} catch (e) {
+						return; // Protection against message deletion.
+					}
 					const errorTest = await msg.react('⏰').catch(() => 'error');
 					if (errorTest == 'error') return;
 					earners.splice(earners.indexOf(msg.client.user.id), 1);

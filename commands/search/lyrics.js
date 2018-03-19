@@ -32,9 +32,8 @@ module.exports = class LyricsCommand extends Command {
 					thumbnail: {url: targetResult.song_art_image_thumbnail_url},
 					fields: [{name: 'Link', value: `https://genius.com${targetResult.api_path}`}],
 				};
-
 				msg.say('', {embed});
 			})
-			.catch((e) => console.log(e));
+			.catch((e) => msg.say('I didn\'t find a song by that title, try another.'));
 	}
 };

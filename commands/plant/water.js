@@ -36,7 +36,7 @@ module.exports = class WaterCommand extends Command {
 			}
 
 			if (userPlantData.activeSeed.watered) {
-				userPlantData.progress -= Math.floor(Math.random() * 10) + 1;
+				userPlantData.progress -= Math.floor(Math.random() * 10) + 7;
 				if (userPlantData.progress < 0) userPlantData.progress = 0;
 				userPlantData.activeSeed.lastEvent = 'You overwated your plant, undoing some of its effort.';
 				return plants.storePlant(userPlant).then(() => msg.say(`You overwatered your plant. It doesn't seem to like it. :shower:`));
@@ -57,7 +57,7 @@ module.exports = class WaterCommand extends Command {
 		}
 
 		if (notMineData.activeSeed.watered) {
-			notMineData.progress -= Math.floor(Math.random() * 10) + 1;
+			notMineData.progress -= Math.floor(Math.random() * 10) + 7;
 			if (notMineData.progress < 0) notMineData.progress = 0;
 			notMineData.activeSeed.lastEvent = `${msg.member.displayName} overwatered your plant, undoing some of its effort.`;
 			return plants.storePlant(notMine).then(() => msg.say(`You overwatered ${personToWater.displayName}'s plant. That wasn't very nice. :shower:`));

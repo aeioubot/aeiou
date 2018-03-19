@@ -1,11 +1,11 @@
 const {Command} = require('discord.js-commando');
 const request = require('request-promise');
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class AskCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'ask',
-			group: 'fun',
+			group: 'search',
 			memberName: 'ask',
 			description: 'Grabs a random question from Ask Reddit.',
 			details: 'Grabs a random question from Ask Reddit.',
@@ -21,6 +21,6 @@ module.exports = class ReplyCommand extends Command {
 					.replace(/reddit/gi, 'Discord')
 					.replace(/\[serious\]/gi, '')
 			).then(msg.channel.stopTyping());
-		});
+		}).catch(() => msg.say('Something went wrong, try again later.'));
 	}
 };

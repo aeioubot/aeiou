@@ -20,7 +20,7 @@ module.exports = {
 		let markdownStart = '';
 		// Run a loop to add the user's markdown (which can contain *, _ and ~ characters) to the markdownStart variable.
 		// This will keep running until the markdown at the start of the message is different from the markdown at the end of the message reversed.
-		for (i = 0; msg.content[i] == msg.content[msg.content.length - i - 1] && '*_~'.indexOf(msg.content[i]) > -1; i++) {
+		for (i = 0; msg.content[i] == msg.content[msg.content.length - i - 1] && '`*_~'.indexOf(msg.content[i]) > -1; i++) {
 			// Add the markdown character to the markdownStart variable.
 			markdownStart += msg.content[i];
 		}

@@ -16,7 +16,7 @@ module.exports = class LyricsCommand extends Command {
 					key: 'query',
 					prompt: 'What would you like to search Genius for?',
 					type: 'string',
-					default: 's',
+					default: 'XO Tour Llif3 Uzi',
 				},
 			],
 		});

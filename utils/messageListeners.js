@@ -16,22 +16,12 @@ module.exports = {
 	creact: async (msg) => {
 		if (msg.author.bot || msg.channel.type != 'text' || msg.client.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id)) return;
 		const reactionObjects = reactDB.allGuildReactions[msg.guild.id] || [];
-		// Define the variable used to keep track of the markdown the user uses at the start and end of their message.
 		let markdownStart = '';
-		// Run a loop to add the user's markdown (which can contain *, _ and ~ characters) to the markdownStart variable.
-		// This will keep running until the markdown at the start of the message is different from the markdown at the end of the message reversed.
-		for (i = 0; msg.content[i] == msg.content[msg.content.length - i - 1] && '`*_~'.indexOf(msg.content[i]) > -1; i++) {
-			// Add the markdown character to the markdownStart variable.
-			markdownStart += msg.content[i];
-		}
-		// This variable holds the actual custom reaction trigger, without the markdown the user uses.
-		let triggerContent = msg.content.substr(i, msg.content.length - (2 * i));
-		// Find the response for the trigger.
-		let toSay = reactionObjects.find((reactObject) => triggerContent.toLowerCase() === reactObject.trigger);
+		for (let i = 0; msg.content[i] === msg.content.split('').reverse().join('')[i] && '`*_~'.includes(msg.content[i]); i++) markdownStart += msg.content[i];
+		let messageContent = msg.content.substr(markdownStart.length, msg.content.length - (2 * markdownStart.length));
+		let toSay = reactionObjects.find((reactObject) => messageContent.toLowerCase() === reactObject.trigger);
 		if (toSay) {
-			// If the triggerContent is the same as the triggerContent to upper case, send the response in uppercase too.
-			let reactContent = (triggerContent === upify(triggerContent)) ? toSay.content.toUpperCase() : toSay.content;
-			// Send the custom reaction with the user's markdown around it.
+			let reactContent = (messageContent === upify(messageContent) && toSay.trigger !== toSay.trigger.toUpperCase()) ? toSay.content.toUpperCase() : toSay.content;
 			return msg.channel.send(markdownStart + reactContent + markdownStart.split('').reverse().join(''));
 		}
 	},

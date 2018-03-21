@@ -21,7 +21,7 @@ module.exports = {
 		let messageContent = msg.content.substr(markdownStart.length, msg.content.length - (2 * markdownStart.length));
 		let toSay = reactionObjects.find((reactObject) => messageContent.toLowerCase() === reactObject.trigger);
 		if (toSay) {
-			let reactContent = (messageContent === upify(messageContent) && toSay.trigger !== toSay.trigger.toUpperCase()) ? toSay.content.toUpperCase() : toSay.content;
+			let reactContent = (messageContent === upify(messageContent) && toSay.trigger !== upify(toSay.trigger)) ? toSay.content.toUpperCase() : toSay.content;
 			return msg.channel.send(markdownStart + reactContent + markdownStart.split('').reverse().join(''));
 		}
 	},

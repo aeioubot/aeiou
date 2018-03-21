@@ -24,7 +24,7 @@ module.exports = class CReactCommand extends Command {
 					key: 'trigger',
 					prompt: 'What is the trigger for the reaction?',
 					type: 'string',
-					parse: (trigger) => trigger.toLowerCase().trim().replace(/`|\*|_|~/, ''),
+					parse: (trigger) => trigger.toLowerCase().trim().replace(/`|\*|_|~/gi, ''),
 					default: '', // Default empty arguments for trigger and content, so list doesn't ask for additional arguments.
 				},
 				{

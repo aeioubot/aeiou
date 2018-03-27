@@ -24,30 +24,32 @@ module.exports = class YoutubeCommand extends Command {
 	}
 
 	async run(msg, {query}) {
+		if (msg.member.currentSearch && !msg.member.currentSearch.ended) msg.member.currentSearch.stop();
 		let sayResult = async () => {
 			try {
 				await msg.say('Type "next" for the next search result.', {embed: {
-					title: `Image result for "${this.data.query.query}"`,
+					title: `Image result for "${query}"`,
 					color: 0x4885ED,
 					image: {
-						url: this.data.result.items.splice(0, 1)[0].media,
+						url: this.data.splice(0, 1)[0].url,
 					},
 				}});
 			} catch (e) {
 				return msg.say('There are no more results for this search.').catch(() => {});
 			}
-			return msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id && m.content.toLowerCase() == 'next', {time: 30000, maxMatches: 1})
-				.on('collect', () => sayResult());
+			msg.member.currentSearch = msg.channel.createMessageCollector((m) => m.author.id == msg.author.id && m.channel.id == msg.channel.id && m.content.toLowerCase() == 'next', {time: 30000, maxMatches: 1});
+			msg.member.currentSearch.on('collect', () => sayResult());
+			return;
 		};
 
 		request({
-			uri: `https://api.qwant.com/api/search/images?count=10&offset=1&q=${query}`,
+			uri: `http://api.ababeen.com/api/images.php?&count=10q=${query}`,
 			json: true,
 			headers: {
 				'User-Agent': 'Aeiou Bot',
 			},
 		}).then((d) => {
-			this.data = d.data;
+			this.data = d;
 			sayResult();
 		}).catch((e) => {
 			console.log(e);

@@ -10,7 +10,7 @@ module.exports = class YoutubeCommand extends Command {
 			description: 'Searches for an image.',
 			details: 'Searches for an image.',
 			aliases: ['i', 'img'],
-			examples: ['image kodak black', 'image '],
+			examples: ['image kodak black', 'image weeb stuff'],
 			format: '[query]',
 			guildOnly: false,
 			args: [
@@ -44,7 +44,7 @@ module.exports = class YoutubeCommand extends Command {
 			uri: `https://api.qwant.com/api/search/images?count=10&offset=1&q=${query}`,
 			json: true,
 			headers: {
-				'User-Agent': `${new Date().getTime()}`,
+				'User-Agent': 'Aeiou Bot',
 			},
 		}).then((d) => {
 			this.data = d.data;

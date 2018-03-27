@@ -43,7 +43,7 @@ module.exports = class YoutubeCommand extends Command {
 		};
 
 		request({
-			uri: `http://api.ababeen.com/api/images.php?&count=10q=${query}`,
+			uri: `http://api.ababeen.com/api/images.php?count=10&q=${query}`,
 			json: true,
 			headers: {
 				'User-Agent': 'Aeiou Bot',

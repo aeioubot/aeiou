@@ -34,7 +34,7 @@ module.exports = class YoutubeCommand extends Command {
 					},
 				}});
 			} catch (e) {
-				return msg.say('There are no more results for this search.');
+				return msg.say('There are no more results for this search.').catch(() => {});
 			}
 			return msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id && m.content.toLowerCase() == 'next', {time: 30000, maxMatches: 1})
 				.on('collect', () => sayResult());
@@ -50,7 +50,8 @@ module.exports = class YoutubeCommand extends Command {
 			this.data = d.data;
 			sayResult();
 		}).catch((e) => {
-			return msg.say('Something went wrong with this search.');
+			console.log(e);
+			return msg.say('Something went wrong with this search.').catch(() => {});
 		});
 	}
 };

@@ -21,6 +21,6 @@ module.exports = class AskCommand extends Command {
 					.replace(/reddit/gi, 'Discord')
 					.replace(/\[serious\]/gi, '')
 			).then(msg.channel.stopTyping());
-		}).catch(() => msg.say('Something went wrong, try again later.'));
+		}).catch(() => msg.say('Something went wrong, try again later.')).catch(() => {});
 	}
 };

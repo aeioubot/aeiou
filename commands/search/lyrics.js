@@ -34,6 +34,7 @@ module.exports = class LyricsCommand extends Command {
 				};
 				msg.say('', {embed});
 			})
-			.catch((e) => msg.say('I didn\'t find a song by that title, try another.'));
+			.catch((e) => msg.say('I didn\'t find a song by that title, try another.'))
+			.catch(() => {});
 	}
 };

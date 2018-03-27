@@ -39,6 +39,6 @@ module.exports = class YoutubeCommand extends Command {
 			}});
 		}).catch((e) => {
 			return msg.say('Something went wrong with the search, try again later.');
-		});
+		}).catch(() => {});
 	}
 };

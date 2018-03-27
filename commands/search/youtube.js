@@ -13,7 +13,7 @@ module.exports = class YoutubeCommand extends Command {
 			aliases: ['yt', 'video'],
 			examples: ['youtube kodak black', 'youtube but every time it gets faster'],
 			format: '[query]',
-			guildOnly: true,
+			guildOnly: false,
 			args: [
 				{
 					key: 'query',

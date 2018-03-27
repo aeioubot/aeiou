@@ -25,7 +25,6 @@ module.exports = class YoutubeCommand extends Command {
 
 	async run(msg, {query}) {
 		let sayResult = async () => {
-			msg.channel.startTyping();
 			try {
 				await msg.say('Type "next" for the next search result.', {embed: {
 					title: `Image result for "${this.data.query.query}"`,
@@ -34,9 +33,7 @@ module.exports = class YoutubeCommand extends Command {
 						url: this.data.result.items.splice(0, 1)[0].media,
 					},
 				}});
-				msg.channel.stopTyping();
 			} catch (e) {
-				msg.channel.stopTyping();
 				return msg.say('There are no more results for this search.');
 			}
 			return msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id && m.content.toLowerCase() == 'next', {time: 30000, maxMatches: 1})
@@ -53,7 +50,6 @@ module.exports = class YoutubeCommand extends Command {
 			this.data = d.data;
 			sayResult();
 		}).catch((e) => {
-			console.log(e);
 			return msg.say('Something went wrong with this search.');
 		});
 	}

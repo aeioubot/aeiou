@@ -44,7 +44,7 @@ module.exports = class YoutubeCommand extends Command {
 			uri: `https://api.qwant.com/api/search/images?count=10&offset=1&q=${query}`,
 			json: true,
 			headers: {
-				'User-Agent': 'Aeiou',
+				'User-Agent': `${new Date().getTime()}`,
 			},
 		}).then((d) => {
 			this.data = d.data;

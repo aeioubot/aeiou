@@ -10,7 +10,7 @@ const memwatch = require('memwatch-next');
 const DmManager = require('./utils/classes/DmManager.js');
 
 const Aeiou = new Commando.Client({
-	owner: ['147604925612818432', '94155927032176640'],
+	owner: ['147604925612818432', '94155927032176640', '87723984799399936'],
 	commandPrefix: secure.prefix,
 	unknownCommandResponse: false,
 	disableEveryone: true,

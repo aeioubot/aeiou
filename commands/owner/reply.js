@@ -28,7 +28,7 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	hasPermission(msg) {
-		return this.client.isOwner(msg.author);
+		return (this.client.isOwner(msg.author) || ['87723984799399936', '154353509062541313'].includes(msg.author.id));
 	}
 
 	async run(msg, { id, content }) {

@@ -31,20 +31,20 @@ module.exports = class YoutubeCommand extends Command {
 
 	async run(msg, {query}) {
 		if (msg.member.currentSearch && !msg.member.currentSearch.ended) msg.member.currentSearch.stop();
-		let sayResult = async () => {
+		let sayResult = async (data) => {
 			try {
 				await msg.say('Type "next" for the next search result.', {embed: {
 					title: `Image result for "${query}"`,
 					color: 0x4885ED,
 					image: {
-						url: this.data.splice(0, 1)[0].url,
+						url: data.splice(0, 1)[0].url,
 					},
 				}});
 			} catch (e) {
 				return msg.say('There are no more results for this search.').catch(() => {});
 			}
 			msg.member.currentSearch = msg.channel.createMessageCollector((m) => m.author.id == msg.author.id && m.channel.id == msg.channel.id && m.content.toLowerCase() == 'next', {time: 30000, maxMatches: 1});
-			msg.member.currentSearch.on('collect', () => sayResult());
+			msg.member.currentSearch.on('collect', () => sayResult(data));
 			return;
 		};
 
@@ -55,8 +55,7 @@ module.exports = class YoutubeCommand extends Command {
 				'User-Agent': 'Aeiou Bot',
 			},
 		}).then((d) => {
-			this.data = d;
-			sayResult();
+			sayResult(d);
 		}).catch((e) => {
 			console.log(e);
 			return msg.say('Something went wrong with this search.').catch(() => {});

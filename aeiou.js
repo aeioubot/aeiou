@@ -5,7 +5,6 @@ const SequelizeProvider = require('./utils/Sequelize');
 const messageListeners = require('./utils/messageListeners.js');
 const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
-const creacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
 
 const Aeiou = new Commando.Client({
@@ -18,7 +17,6 @@ const Aeiou = new Commando.Client({
 database.start(Aeiou.shard.id);
 
 Aeiou.setProvider(new SequelizeProvider(database.db)).catch(console.error);
-if (Aeiou.shard.id == 0) Aeiou.dmManager = new (require('./utils/classes/DmManager.js'))(Aeiou);
 Aeiou.gateway = new (require('./utils/Gateway/Gateway.js'))(Aeiou);
 
 Aeiou.registry
@@ -46,6 +44,7 @@ Aeiou.on('ready', () => {
 		info.shard = Aeiou.shard.id;
 		console.log(info);
 	});
+	if (Aeiou.shard.id == 0) Aeiou.dmManager = new (require('./utils/classes/DmManager.js'))(Aeiou);
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
 });
 
@@ -57,10 +56,7 @@ Aeiou.dispatcher.addInhibitor((msg) => {
 });
 
 process.on('message', (response) => {
-	if (response.command === 'customReacts') {
-		creacts.allGuildReactions = response.data;
-		console.log(`[Shard ${Aeiou.shard.id}] Cached reactions for ${response.guilds} guilds!`);
-	}
+	Aeiou.gateway.processMessage(response);
 });
 
 Aeiou.on('message', async (msg) => {

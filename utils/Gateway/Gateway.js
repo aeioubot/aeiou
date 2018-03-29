@@ -1,3 +1,5 @@
+const creacts = require('../models/creact.js');
+
 class Gateway {
 	constructor(client) {
 		this.client = client;
@@ -14,6 +16,13 @@ class Gateway {
 			} catch (e) {
 				return e;
 			}
+		}
+	}
+
+	processMessage(response) {
+		if (response.command === 'customReacts') {
+			creacts.allGuildReactions = response.data;
+			console.log(`[Shard ${this.client.shard.id}] Cached reactions for ${response.guilds} guilds!`);
 		}
 	}
 }

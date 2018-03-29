@@ -12,7 +12,7 @@ module.exports = class YoutubeCommand extends Command {
 			aliases: ['ni', 'nimg', 'ns'],
 			examples: ['nsfwimg kodak black', 'nsfwimg weeb stuff'],
 			format: '[query]',
-			guildOnly: false,
+			guildOnly: true,
 			args: [
 				{
 					key: 'query',

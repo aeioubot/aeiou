@@ -38,16 +38,18 @@ class DmManager {
 			embed.fields.push({name: 'Content', value: msg.content.substring(0, 1024)});
 			embed.fields.push({name: 'Content overflow', value: msg.content.substring(1024)});
 		}
-		this.client.guilds.get(DM_SERVER).channels.get(DM_SERVER_CHANNEL).send('New DM:', {embed});
-		if (msg.attachments.first() && !msg.attachments.first().height) {
-			this.client.guilds.get(DM_SERVER).channels.get(DM_SERVER_CHANNEL).send(`Additional attachment:\n${msg.attachments.first().url}`);
-		}
+		this.client.gateway.callCommand('messageServer', {
+			guild: DM_SERVER,
+			channel: DM_SERVER_CHANNEL,
+			msg: 'New DM:',
+			msgOpts: {embed},
+		});
 	}
 
-	async reply(replyID, content, msg) {
+	async reply(replyID, content, attachment) {
 		const replyMsg = this.messages.find((m) => replyID == m.replyID);
-		if (!replyMsg) return msg.say('I don\'t have a message cached by that ID.');
-		return replyMsg.reply(content.replace('{s}', PERM_SERVER_INVITE), msg.attachments.first() && msg.attachments.first().height ? {embed: {image: {url: msg.attachments.first().url}}} : '').then(msg.react('✅'));
+		if (!replyMsg) return false;
+		return replyMsg.reply(content.replace('{s}', PERM_SERVER_INVITE), attachment ? {embed: {image: {url: attachment}}} : '').then(() => true);
 	}
 }
 

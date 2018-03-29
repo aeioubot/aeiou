@@ -32,6 +32,15 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, { id, content }) {
-		return this.client.dmManager.reply(id, content, msg);
+		return this.client.shard.broadcastEval(`
+			try {
+				if (this.dmManager.messages.find((m) => ${id} == m.replyID)) {
+					this.dmManager.reply('${id}', '${content.replace(/\n/g, '')}', '${msg.attachments.first() ? msg.attachments.first().url : ''}');
+					true;
+				} else {false;}
+			} catch (e) {
+				false;
+			}
+		`).then((b) => b.some((l) => l) ? msg.react('✅') : msg.react('❌')).then(() => undefined);
 	}
 };

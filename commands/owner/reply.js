@@ -35,7 +35,7 @@ module.exports = class ReplyCommand extends Command {
 		return this.client.shard.broadcastEval(`
 			try {
 				if (this.dmManager.messages.find((m) => ${id} == m.replyID)) {
-					this.dmManager.reply('${id}', '${content.replace(/\n/g, '')}', '${msg.attachments.first() ? msg.attachments.first().url : ''}');
+					this.dmManager.reply('${id}', '${content.replace(/\n/g, '\\n').replace(/'/g, '\\\'')}', '${msg.attachments.first() ? msg.attachments.first().url : ''}');
 					true;
 				} else {false;}
 			} catch (e) {

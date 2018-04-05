@@ -1,7 +1,7 @@
-module.exports = async function(client, id) {
+module.exports = async function(client, opts) {
 	return client.shard.broadcastEval(`
 		try {
-			[this.users.get('${id}').username, this.users.get('${id}').discriminator, ${id}];
+			[this.users.get('${opts.id}').username, this.users.get('${opts.id}').discriminator, ${opts.id}];
 		} catch (e) {
 			null;
 		}

@@ -5,15 +5,15 @@ const secure = require('../../secure.json');
 module.exports = class YoutubeCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'img',
+			name: 'image',
 			group: 'search',
-			memberName: 'img',
+			memberName: 'image',
 			description: 'Searches for an image, supports NSFW results and normal results.',
 			details: 'Searches for an image.',
 			aliases: ['i', 'img'],
 			examples: ['img kodak black', 'img weeb stuff'],
 			format: '[query]',
-			guildOnly: false,
+			guildOnly: true,
 			args: [
 				{
 					key: 'query',
@@ -44,7 +44,7 @@ module.exports = class YoutubeCommand extends Command {
 		};
 
 		request({
-			uri: `https://www.googleapis.com/customsearch/v1?searchType=image&cx=017119602772521781611:_sy6ezmcc90&key=${secure.imgSearch}&q=${query}`,
+			uri: `https://www.googleapis.com/customsearch/v1?searchType=image&cx=017119602772521781611:_sy6ezmcc90&key=${secure.imgSearch}&safe=medium&q=${query}`,
 			json: true,
 			headers: {
 				'User-Agent': 'Aeiou Bot',

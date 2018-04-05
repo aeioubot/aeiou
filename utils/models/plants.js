@@ -63,7 +63,6 @@ module.exports = {
 		tickPlants();
 		setInterval(() => {
 			tickPlants();
-			console.log('All plants ticked!');
 		}, 3600000);
 	},
 	testTick: async function() {

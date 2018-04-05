@@ -24,7 +24,6 @@ module.exports = class YoutubeCommand extends Command {
 	}
 
 	hasPermission(msg) {
-		if (msg.member.hasPermission('ADMINISTRATOR') || this.client.isOwner(msg.author.id)) return true;
 		if (msg.channel.nsfw) return true;
 		return 'You can only use this command in NSFW channels.';
 	}

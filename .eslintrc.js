@@ -12,6 +12,7 @@ module.exports = {
         "indent": ["error", "tab"],
         "no-tabs": 'off',
         "no-unreachable": 'error',
-        "no-multi-spaces": 'off'
+        "no-multi-spaces": 'off',
+        "arrow-parens": 'off',
     }
 };

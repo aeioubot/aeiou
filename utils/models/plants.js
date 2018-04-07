@@ -32,10 +32,7 @@ module.exports = {
 		}).then((plant) => new Plant(plant[0].dataValues.user, JSON.parse(plant[0].dataValues.data)));
 	},
 	getAllPlants: async function() {
-		return userPlants.findAll().then((plants) => {
-			plantClasses = plants.map((plantData) => new Plant(plantData.dataValues.user, JSON.parse(plantData.dataValues.data)));
-			return plantClasses;
-		});
+		return userPlants.findAll().then((plants) => plants.map((plantData) => new Plant(plantData.dataValues.user, JSON.parse(plantData.dataValues.data))));
 	},
 	storePlant: async function(plantClass) {
 		if (plantClass.constructor.name !== 'Plant') throw new Error('The argument provided to store a plant must be an instance of the Plant class.');

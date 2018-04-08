@@ -150,7 +150,8 @@ module.exports = {
 	},
 
 	leaveGang: async function(msg) {
-		if (await this.findGangByOwner(msg.author.id)) throw new Error('Owns gang');
+		const t = await this.findGangByOwner(msg.author.id);
+		if (t.user = t.parentUser) throw new Error('Owns gang');
 		return gangs.upsert({
 			parentUser: null,
 			gangCode: null,

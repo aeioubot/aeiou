@@ -1,16 +1,27 @@
 const {Command} = require('discord.js-commando');
+const {stripIndents} = require('common-tags');
+
 const definitions = {
-	plants: `\`\`\`md
-#Welcome to plants!
-Plants is an idling game built into Aeiou to help you grow a flower.
-To begin, you need to collect a seed. This can be done with <!dig> every few hours, or by reacting to messages with '🌰' when Aeiou does every so often.
-Once you've collected a seed, you can view it with <!seeds>.
+	plants: stripIndents`\`\`\`md
+		#Welcome to plants!
+		Plants is an idling game built into Aeiou to help you grow a flower.
+		To begin, you need to collect a seed. This can be done with <!dig> every few hours, or by reacting to messages with '🌰' when Aeiou does every so often.
+		Once you've collected a seed, you can view it with <!seeds>.
 
-Now, plant your seed with <!plant [seed number]>, water your plant (or your friends!) with <!water>, and wait for it to grow!
-Once it's fully grown, you can harvest it with <!harvest>.
+		Now, plant your seed with <!plant [seed number]>, water your plant (or your friends!) with <!water>, and wait for it to grow!
+		Once it's fully grown, you can harvest it with <!harvest>.
 
-See the full list of commands avilable with <!help>, under "Plant commands".
-\`\`\``,
+		See the full list of commands avilable with <!help>, under "Plant commands".
+		\`\`\``,
+	gangs: stripIndents`\`\`\`md
+	#Welcome to gangs!
+	Gangs is a game all about trust. Create a gang using <gang new [name]>, and use <gang code> to get it's invite code.
+	Give this code to your friends, and they can join it using <gang join [code]>.
+	While you're at it, you can customize your gang with <gang title>, <gang desc>, <gang color>, and <gang pic>.
+
+	Be careful, as anyone you invite to your gang can betray you, destroying your whole gang with <gang betray>.
+	Choose to either build a large gang, or attempt to betray the largest gang you can.
+	\`\`\``,
 };
 
 module.exports = class BeginCommand extends Command {

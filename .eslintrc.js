@@ -3,6 +3,10 @@ module.exports = {
     "parserOptions": {
         "ecmaVersion": 2017
     },
+    "env": {
+        "node": true,
+        "es6": true
+    },
     "rules": {
         "object-curly-spacing": 'off',
         "no-const-assign": "warn",
@@ -12,6 +16,8 @@ module.exports = {
         "indent": ["error", "tab"],
         "no-tabs": 'off',
         "no-unreachable": 'error',
-        "no-multi-spaces": 'off'
+        "no-multi-spaces": 'off',
+        "arrow-parens": 'off',
+        "no-undef": "error",
     }
 };

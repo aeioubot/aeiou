@@ -21,6 +21,7 @@ module.exports = class GangCommand extends Command {
 		super(client, {
 			name: 'gang',
 			group: 'games',
+			aliases: ['gangs', 'sphere', 'spheres'],
 			memberName: 'gang',
 			description: 'Command to manage gangs, type "help gang" for all gang subcommands',
 			details: stripIndent`

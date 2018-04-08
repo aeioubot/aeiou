@@ -46,7 +46,7 @@ module.exports = class BeginCommand extends Command {
 	}
 
 	async run(msg, { helpItem }) {
-		if (!helpItem) {
+		if (!helpItem || !definitions[helpItem]) {
 			return msg.say(`You didn\'t provide a valid option, the available help items are: \`\`\`${Object.keys(definitions).join(',')}\`\`\``);
 		}
 		const test = await msg.say('I\'m DMing information to you!');

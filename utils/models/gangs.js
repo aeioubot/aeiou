@@ -44,7 +44,7 @@ const gangs = db.define('gangs', {
 
 module.exports = {
 	newGang: async function(msg, name) {
-		if (await this.findGangByUser(msg).parentUser) throw new Error('In or owns gang');
+		if ((await this.findGangByUser(msg)).parentUser) throw new Error('In or owns gang');
 		return gangs.upsert({
 			user: msg.author.id,
 			parentUser: msg.author.id,

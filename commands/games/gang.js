@@ -37,7 +37,6 @@ module.exports = class GangCommand extends Command {
 			\`view\`: Shows the gang you are a part of.
 			\`card\`: Shows your total and largest betrays.
 			`,
-			examples: ['', ''],
 			format: '[subcommand] [options]',
 			guildOnly: false,
 			args: [
@@ -63,6 +62,7 @@ module.exports = class GangCommand extends Command {
 		switch (subcommand) {
 			case 'new': case 'create': case 'make':
 				if (opt.length < 1) return msg.say(`You must specify your gang name. Use the format \`${msg.guild ? msg.guild.commandPrefix : ''}gang new [name]\``);
+				if (opt.length > 256) return msg.say('Your name must be fewer than 256 characters.');
 				return gangs.newGang(msg, opt).then(() => msg.say(
 					`Your gang **${opt}** has been created!\n\nUse \`${msg.guild ? msg.guild.commandPrefix : ''}gang code\` to see your invite code, or \`${msg.guild ? msg.guild.commandPrefix : ''}gang help\` for how to customize your gang.`
 				)).catch(() => msg.say('You\'re already in a gang, or you already own one.'));
@@ -90,7 +90,7 @@ module.exports = class GangCommand extends Command {
 				return this.code(msg, opt);
 
 			case 'name': case 'title':
-				if (opt.length > 256) return msg.say('Your title must be fewer than 256 characters.');
+				if (opt.length > 256) return msg.say('Your name must be fewer than 256 characters.');
 				return gangs.findGangByOwner(msg.author.id).then(gang => {
 					if (!gang.parentUser) return msg.say('You aren\'t part of a gang!');
 					if (gang.parentUser != gang.user) return msg.say('You cannot edit a gang you don\'t own!');
@@ -155,12 +155,12 @@ module.exports = class GangCommand extends Command {
 				if (!gang.parentUser) return msg.say('You don\'t own a gang.');
 				gang.gangCode = crypto.createHash('whirlpool').update(`${new Date().getTime()}${msg.author.id}`).digest('hex').slice(0, 10);
 				gangs.updateGang(msg, gang);
-				return msg.author.send(`**Code changed!**\nHere is the active secret code to your gang, be careful who you give it to...\nUse\`gang code new\` to delete this code and generate a new one.`).then(() => msg.author.send(`\`${gang.gangCode}\``))
+				return msg.author.send(`**Code changed!**\nHere is the active secret code to your gang, be careful who you give it to...\nUse \`gang code new\` to delete this code and generate a new one.`).then(() => msg.author.send(`\`${gang.gangCode}\``))
 					.catch(() => msg.say('I couldn\'t DM you your code, do you have me blocked?'));
 			});
 		}
 		return gangs.findGangByOwner(msg.author.id).then(gang => {
-			if (!gang) return msg.say('You don\'t own a gang.');
+			if (!gang.parentUser) return msg.say('You don\'t own a gang.');
 			return msg.author.send(`Here is the active secret code to your gang, be careful who you give it to...\nUse\`gang code new\` to delete this code and generate a new one.`).then(() => msg.author.send(`\`${gang.gangCode}\``))
 				.catch(() => msg.say('I couldn\'t DM you your code, do you have me blocked?'));
 		});
@@ -173,7 +173,7 @@ module.exports = class GangCommand extends Command {
 					title: `${msg.author.username}'s betrayal card`,
 					color: 0xffa500,
 					thumbnail: {
-						url: msg.author.displayAvatarURL,
+						url: msg.author.displayAvatarURL ? msg.author.displayAvatarURL : 'https://cdn.drawception.com/images/panels/2017/10-22/RwwgkkS5qQ-10.png',
 					},
 					fields: [
 						{
@@ -216,6 +216,26 @@ module.exports = class GangCommand extends Command {
 						},
 					],
 				},
+			}).catch(async e => {
+				return msg.say('Here is the gang you\'re a part of.', {
+					embed: {
+						title: d.gangName,
+						description: d.gangDescription,
+						color: d.gangColor,
+						fields: [
+							{
+								name: 'Members',
+								value: await gangs.getMemberCount(d.parentUser),
+								inline: true,
+							},
+							{
+								name: 'Owner',
+								value: msg.guild && msg.guild.members.get(d.parentUser) ? msg.guild.members.get(d.parentUser).displayName : d.parentUser,
+								inline: true,
+							},
+						],
+					},
+				});
 			});
 		});
 	}

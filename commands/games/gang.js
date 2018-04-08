@@ -81,7 +81,13 @@ module.exports = class GangCommand extends Command {
 					});
 
 			case 'leave':
-				return gangs.leaveGang(msg).then(destroyed => msg.say(destroyed ? 'You\'ve left the gang peacefully.' : 'You\'re not part of a gang.')).catch(() => msg.say('You cannot leave a gang you own!'));
+				return gangs.leaveGang(msg).then(destroyed => msg.say(destroyed ? 'You\'ve left the gang peacefully.' : 'You\'re not part of a gang.'))
+					.catch(e => {
+						if (e.message == 'Owns gang') return msg.say('You cannot leave a gang you own!');
+						if (e.message == 'Not in gang') return msg.say('You cannot leave a gang if you are not in one!');
+						console.log(e);
+						return msg.say('Something unexpected happened.');
+					});
 
 			case 'betray': case 'shootout': case 'end': case 'kill': case 'nuke':
 				return gangs.destroyGang(msg).then(destroyed => msg.say(destroyed ? generateKillMessage(destroyed) : 'You\'re not part of a gang.'))
@@ -93,7 +99,7 @@ module.exports = class GangCommand extends Command {
 			case 'name': case 'title':
 				if (opt.length > 256) return msg.say('Your name must be fewer than 256 characters.');
 				return gangs.findGangByOwner(msg.author.id).then(gang => {
-					if (!gang.parentUser) return msg.say('You aren\'t part of a gang!');
+					if (!gang || !gang.parentUser) return msg.say('You aren\'t part of a gang!');
 					if (gang.parentUser != gang.user) return msg.say('You cannot edit a gang you don\'t own!');
 					gang.gangName = opt;
 					return gangs.updateGang(msg, gang).then(() => {
@@ -103,7 +109,7 @@ module.exports = class GangCommand extends Command {
 
 			case 'desc': case 'description': case 'bio': case 'phrase': case 'motto':
 				return gangs.findGangByOwner(msg.author.id).then(gang => {
-					if (!gang.parentUser) return msg.say('You aren\'t part of a gang!');
+					if (!gang || !gang.parentUser) return msg.say('You aren\'t part of a gang!');
 					if (gang.parentUser != gang.user) return msg.say('You cannot edit a gang you don\'t own!');
 					gang.gangDescription = opt;
 					return gangs.updateGang(msg, gang).then(() => {
@@ -112,7 +118,7 @@ module.exports = class GangCommand extends Command {
 				});
 			case 'color': case 'colour':
 				return gangs.findGangByOwner(msg.author.id).then(gang => {
-					if (!gang.parentUser) return msg.say('You aren\'t part of a gang!');
+					if (!gang || !gang.parentUser) return msg.say('You aren\'t part of a gang!');
 					if (gang.parentUser != gang.user) return msg.say('You cannot edit a gang you don\'t own!');
 					gang.gangColor = parseInt(opt, 16);
 					if (!gang.gangColor && gang.gangColor != 0) return msg.say('The colour you provided was invalid. Please use hex format, and don\'t include the #.');
@@ -124,7 +130,7 @@ module.exports = class GangCommand extends Command {
 			case 'pic': case 'picture': case 'image': case 'img':
 				if (msg.attachments.first() && msg.attachments.first().height) {
 					return gangs.findGangByOwner(msg.author.id).then(gang => {
-						if (!gang.parentUser) return msg.say('You aren\'t part of a gang!');
+						if (!gang || !gang.parentUser) return msg.say('You aren\'t part of a gang!');
 						if (gang.parentUser != gang.user) return msg.say('You cannot edit a gang you don\'t own!');
 						gang.gangImage = msg.attachments.first().url;
 						return gangs.updateGang(msg, gang).then(() => {
@@ -134,7 +140,8 @@ module.exports = class GangCommand extends Command {
 				}
 				if (!/^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(opt)) return msg.say('That isn\'t a valid URL.');
 				return gangs.findGangByOwner(msg.author.id).then(gang => {
-					if (!gang) return msg.say('You don\'t own a gang to do that with!');
+					if (!gang || !gang.parentUser) return msg.say('You aren\'t part of a gang!');
+					if (gang.parentUser != gang.user) return msg.say('You cannot edit a gang you don\'t own!');
 					gang.gangImage = opt;
 					return gangs.updateGang(msg, gang).then(() => {
 						return msg.say('Your gang has been edited.');
@@ -153,7 +160,7 @@ module.exports = class GangCommand extends Command {
 	async code(msg, opt) {
 		if (opt.toLowerCase() == 'new') {
 			return gangs.findGangByOwner(msg.author.id).then(gang => {
-				if (!gang.parentUser) return msg.say('You don\'t own a gang.');
+				if (!gang || !gang.parentUser) return msg.say('You don\'t own a gang.');
 				gang.gangCode = crypto.createHash('whirlpool').update(`${new Date().getTime()}${msg.author.id}`).digest('hex').slice(0, 10);
 				gangs.updateGang(msg, gang);
 				return msg.author.send(`**Code changed!**\nHere is the active secret code to your gang, be careful who you give it to...\nUse \`gang code new\` to delete this code and generate a new one.`).then(() => msg.author.send(`\`${gang.gangCode}\``))
@@ -161,7 +168,7 @@ module.exports = class GangCommand extends Command {
 			});
 		}
 		return gangs.findGangByOwner(msg.author.id).then(gang => {
-			if (!gang.parentUser) return msg.say('You don\'t own a gang.');
+			if (!gang || !gang.parentUser) return msg.say('You don\'t own a gang.');
 			return msg.author.send(`Here is the active secret code to your gang, be careful who you give it to...\nUse\`gang code new\` to delete this code and generate a new one.`).then(() => msg.author.send(`\`${gang.gangCode}\``))
 				.catch(() => msg.say('I couldn\'t DM you your code, do you have me blocked?'));
 		});

@@ -150,15 +150,16 @@ module.exports = {
 	},
 
 	leaveGang: async function(msg) {
-		const t = await this.findGangByOwner(msg.author.id);
-		if (t.user = t.parentUser) throw new Error('Owns gang');
-		return gangs.upsert({
+		const t = await this.getUserRow(msg);
+		if (!t || !t.parentUser) throw new Error('Not in gang');
+		if (t.user == t.parentUser) throw new Error('Owns gang');
+		return gangs.update({
 			parentUser: null,
 			gangCode: null,
 			gangDescription: null,
 			gangColor: null,
 			gangImage: null,
 			gangMembers: null,
-		}, {where: {user: msg.user.id}});
+		}, {where: {user: msg.author.id}});
 	},
 };

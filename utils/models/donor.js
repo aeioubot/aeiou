@@ -13,7 +13,7 @@ const guildDonors = db.define('guildDonors', {
 		type: Sequelize.TEXT,
 		defaultValue: '[]',
 	},
-});
+}, {timestamps: false, charset: 'utf8mb4'});
 
 module.exports = {
 	setDonors: async (msg, donors) => {

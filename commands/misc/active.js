@@ -24,6 +24,7 @@ module.exports = class ReplyCommand extends Command {
 
 	async run(msg, { minutes }) {
 		const sayArray = [];
+		if (minutes > Math.floor(this.client.uptime / 60000))  minutes = Math.floor(this.client.uptime / 60000);
 		const checkMS = minutes * 60000;
 		const now = Date.now();
 		msg.guild.members.forEach((m) => {

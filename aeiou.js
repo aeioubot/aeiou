@@ -60,8 +60,6 @@ process.on('message', (response) => {
 	Aeiou.gateway.processMessage(response);
 });
 
-process.on('uncaughtException', (e) => console.log(e.stack))
-
 Aeiou.on('message', async (msg) => {
 	messageListeners.creact(msg);
 	messageListeners.plantSeed(msg);

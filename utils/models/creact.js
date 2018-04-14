@@ -13,7 +13,7 @@ const guildReacts = db.define('guildReacts', {
 		type: Sequelize.TEXT,
 		defaultValue: '[]',
 	},
-});
+}, {charset: 'utf8mb4'});
 
 module.exports = {
 	setReacts: async (msg, reactObjects) => {

@@ -43,6 +43,7 @@ module.exports = class UnscrambleCommand extends Command {
 
 	hasPermission(msg) {
 		if (!msg.guild.me.hasPermission('EMBED_LINKS')) return 'I need permission to embed links in order to play unscramble.';
+		return true;
 	}
 
 	async run(msg, {maxPoints}) {
@@ -53,13 +54,11 @@ module.exports = class UnscrambleCommand extends Command {
 			return;
 		}
 		msg.guild.unscrambleRunning = true;
-		this.score = {};
-		this.angerCount = 0;
-		this.game(msg, maxPoints, this.score);
+		this.game(msg, maxPoints, {}, 0);
 	}
 
-	async game(msg, maxPoints, score) {
-		if (this.angerCount >= 3) {
+	async game(msg, maxPoints, score, angerCount) {
+		if (angerCount >= 3) {
 			msg.guild.unscrambleRunning = false;
 			return msg.say('Inactivity, game ending.');
 		}
@@ -76,13 +75,13 @@ module.exports = class UnscrambleCommand extends Command {
 		const embed = {
 			title: 'Unscramble',
 			description: scrambled.join(''),
-			color: 16429195,
-			footer: {text: this.angerCount == 2 ? 'If nobody speaks soon, the game will end!' : ''},
+			color: 5072583,
+			footer: {text: angerCount == 2 ? 'If nobody speaks soon, the game will end!' : '"aeiou stop" - ends game, "aeiou next" - skip'},
 		};
 		msg.say('Unscramble the word to earn a point.', { embed });
 		const collector = msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id, {time: 30000});
 		collector.on('collect', (collected) => {
-			this.angerCount = 0;
+			angerCount = 0;
 			if (['exit', 'stop', 'aeiou stop', 'shut up', 'shut the fuck up', 'shut the hell up', 'shut the heck up'].includes(collected.cleanContent.toLowerCase())) {
 				msg.guild.unscrambleRunning = false;
 				collector.stop('shutUp');
@@ -92,14 +91,17 @@ module.exports = class UnscrambleCommand extends Command {
 				score[collected.author.id] = score[collected.author.id] + 1 || 1;
 				if (score[collected.author.id] < maxPoints) msg.say(`${collected.member.displayName} guessed correctly and now has ${score[collected.author.id]} points! The word was ${answer}.`);
 				collector.stop('correct');
-				return this.game(msg, maxPoints, score);
+				return this.game(msg, maxPoints, score, angerCount);
+			}
+			if (collected.cleanContent.toLowerCase() == 'aeiou next') {
+				collector.stop();
 			}
 		});
 		collector.on('end', (collected, reason) => {
 			if (reason == 'shutUp' || reason == 'correct') return;
 			msg.say('Nobody guessed the word. The answer was: ' + answer);
-			this.angerCount += 1;
-			return this.game(msg, maxPoints, score);
+			angerCount += 1;
+			return this.game(msg, maxPoints, score, angerCount);
 		});
 	}
 };

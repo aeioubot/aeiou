@@ -13,8 +13,9 @@ class AeiouDatabase {
 		});
 	}
 
-	start(shardID) {
-		this.db.authenticate()
+	async start(shardID) {
+		await this.db.authenticate();
+		this.db.sync()
 			.then(() => console.log(`[Shard ${shardID}] Connected to database!`))
 			.catch((err) => console.log(err));
 	}

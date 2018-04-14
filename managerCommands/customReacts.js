@@ -1,7 +1,7 @@
 const creacts = require('../utils/models/creact.js');
 
 module.exports = (manager, shard, guildsArray) => {
-	sendCRs = {};
+	let sendCRs = {};
 	guildsArray.forEach((id) => {
 		sendCRs[id] = creacts.allGuildReactions[id];
 		delete creacts.allGuildReactions[id];

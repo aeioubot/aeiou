@@ -13,9 +13,7 @@ const guildReacts = db.define('guildReacts', {
 		type: Sequelize.TEXT,
 		defaultValue: '[]',
 	},
-}, {
-	charset: 'utf8mb4',
-});
+}, {charset: 'utf8mb4'});
 
 module.exports = {
 	setReacts: async (msg, reactObjects) => {
@@ -40,12 +38,19 @@ module.exports = {
 		const gr = this.allGuildReactions[guildID] || [];
 		gr.splice(gr.findIndex((crObject) => crObject.trigger == trigger), 1);
 	},
-	buildReactCache: async function(msg) {
-		return guildReacts.findAll().then((returnedData) => {
-			returnedData.map((guildReactions) => {
-				this.allGuildReactions[guildReactions.dataValues.guild] = JSON.parse(guildReactions.dataValues.reactObjects);
-			});
-		});
+	buildReactCache: async function(guildArray, shardID) {
+		const temp = {};
+		return guildReacts.findAll()
+			.then((returnedData) => {
+				returnedData.forEach(i => temp[i.guild] = JSON.parse(i.reactObjects));
+				return;
+			})
+			.then(() => {
+				guildArray.forEach((id) => {
+					this.allGuildReactions[id] = temp[id];
+				});
+			})
+			.then(() => console.log(`[Shard ${shardID}] Cached reactions for ${guildArray.length} guilds!`));
 	},
 	appendToReacts: async function(msg, reactObject) {
 		return this.getReacts(msg).then((reactArray) => {

@@ -24,7 +24,7 @@ module.exports = class CReactCommand extends Command {
 					key: 'trigger',
 					prompt: 'What is the trigger for the reaction?',
 					type: 'string',
-					parse: (trigger) => trigger.toLowerCase().trim(),
+					parse: (trigger) => trigger.toLowerCase().trim().replace(/`|\*|_|~/gi, ''),
 					default: '', // Default empty arguments for trigger and content, so list doesn't ask for additional arguments.
 				},
 				{
@@ -40,14 +40,14 @@ module.exports = class CReactCommand extends Command {
 	async run(msg, {option, trigger, content}) {
 		if (option === '') return msg.say('Please select an action.');
 		const reactArray = await reactDB.getReacts(msg);
-		const testIfCustomReactionExists = reactArray.find((x) => {
+		const crExists = reactArray.find((x) => {
 			if (x.trigger === trigger) return true;
 		});
 		switch (option.toLowerCase()) {
 		case 'add': {
 			if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
 			if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.replace(/ /g, '').length === 0) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
-			if (testIfCustomReactionExists) return msg.say(`There is already a reaction with the trigger **${trigger}**...`); // return the error
+			if (crExists) return msg.say(`There is already a reaction with the trigger **${trigger}**...`); // return the error
 			reactDB.appendToReacts(msg, {
 				trigger: trigger,
 				content: content,
@@ -62,8 +62,8 @@ module.exports = class CReactCommand extends Command {
 		case 'delete':
 		case 'del': {
 			if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
-			if (!testIfCustomReactionExists) return msg.say(`There are no custom reactions with the trigger **${trigger}**...`); // Does not exist.
-			reactArray.splice(reactArray.indexOf(testIfCustomReactionExists), 1);
+			if (!crExists) return msg.say(`There are no custom reactions with the trigger **${trigger}**...`); // Does not exist.
+			reactArray.splice(reactArray.indexOf(crExists), 1);
 			return reactDB.setReacts(msg, reactArray).then(() => reactDB.removeFromCache(msg.guild.id, trigger))
 				.then(msg.say(`Reaction deleted, I'll no longer respond to **${trigger}**.`));
 		}

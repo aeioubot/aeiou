@@ -5,7 +5,8 @@ const SequelizeProvider = require('./utils/Sequelize');
 const messageListeners = require('./utils/messageListeners.js');
 const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
-const creacts = require('./utils/models/creact.js');
+const reacts = require('./utils/models/creact.js');
+const memwatch = require('memwatch-next');
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -17,14 +18,16 @@ const Aeiou = new Commando.Client({
 database.start(Aeiou.shard.id);
 
 Aeiou.setProvider(new SequelizeProvider(database.db)).catch(console.error);
+Aeiou.gateway = new (require('./utils/Gateway/Gateway.js'))(Aeiou);
 
 Aeiou.registry
 	.registerGroups([
-		['mod', 'Mod commands'],
 		['games', 'Game commands'],
 		['plant', 'Plant commands'],
-		['role', 'Role commands'],
 		['fun', 'Fun commands'],
+		['search', 'Search commands'],
+		['role', 'Role commands'],
+		['mod', 'Mod commands'],
 		['tag', 'Tag related commands'],
 		['misc', 'Miscellaneous commands'],
 		['owner', 'Owner commands'],
@@ -37,27 +40,34 @@ Aeiou.registry
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 Aeiou.on('ready', () => {
-	Aeiou.shard.send({command: 'customReacts', data: Array.from(Aeiou.guilds.keys())});
+	reacts.buildReactCache(Array.from(Aeiou.guilds.keys()), Aeiou.shard.id);
+	memwatch.on('leak', (info) => {
+		info.shard = Aeiou.shard.id;
+		console.log(info);
+	});
+	if (Aeiou.shard.id == 0) Aeiou.dmManager = new (require('./utils/classes/DmManager.js'))(Aeiou);
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
 });
 
 Aeiou.dispatcher.addInhibitor((msg) => {
 	if (!msg.command) return false;
-	console.log(msg.command);
 	if (msg.channel.type == 'dm') return false;
 	if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.author.id) || msg.command.name === 'ignore') return false;
 	return Aeiou.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id);
 });
 
 process.on('message', (response) => {
-	if (response.command === 'customReacts') {
-		creacts.allGuildReactions = response.data;
-		console.log(`[Shard ${Aeiou.shard.id}] Cached reactions for ${response.guilds} guilds!`);
-	}
+	Aeiou.gateway.processMessage(response);
 });
 
-Aeiou.on('message', async (message) => {
-	messageListeners.creact(message);
+Aeiou.on('message', async (msg) => {
+	messageListeners.creact(msg);
+	messageListeners.plantSeed(msg);
+	if (!msg.author.bot && !msg.content && msg.channel.type == 'dm') Aeiou.dmManager.newMessage(msg);
+});
+
+Aeiou.on('unknownCommand', (msg) => {
+	if (!msg.author.bot && msg.channel.type == 'dm') Aeiou.dmManager.newMessage(msg);
 });
 
 Aeiou.on('guildMemberAdd', (member) => {
@@ -70,3 +80,4 @@ Aeiou.on('guildMemberAdd', (member) => {
 });
 
 Aeiou.login(secure.token);
+

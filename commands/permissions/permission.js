@@ -22,6 +22,7 @@ module.exports = class PermissionCommand extends Command {
 					key: 'command',
 					prompt: 'Please specify the command.',
 					type: 'string',
+					default: '',
 				}, {
 					key: 'targetType',
 					prompt: 'Please specify the type.', // user, role, channel, guild
@@ -39,7 +40,8 @@ module.exports = class PermissionCommand extends Command {
 
 	async run (msg, args) {
 		let {action, command, targetType, target} = args;
-		if (![...this.client.registry.commands.keys()].includes(command)) return msg.say(`**${command}** is not recognised. Please check that you are not using an alias.`);
+		if (!command && action !== 'list') return msg.say('Please specify the command and try again');
+		if (action !== 'list' && ![...this.client.registry.commands.keys()].includes(command)) return msg.say(`**${command}** is not recognised. Please check that you are not using an alias.`);
 		if (action == 'deny' || action == 'allow') {
 			if (!targetType || !['user', 'role', 'channel', 'guild'].includes(targetType)) return msg.say('Please specify the target type: **user**, **role**, **channel**, **guild**');
 			if (!target && targetType !== 'guild') return msg.say('Please specify the target: a user, a role, or a channel');
@@ -62,7 +64,6 @@ module.exports = class PermissionCommand extends Command {
 				if (!channel) return msg.say('channel not found, please use a channel mention or ID.');
 				target = channelid;
 			}
-
 
 			permissions.setPermission(msg, {
 				guild: msg.guild.id,
@@ -116,6 +117,10 @@ module.exports = class PermissionCommand extends Command {
 				};
 				if (res.length > 0) msg.say('Here are the configured permissions for **' + command + '**:\n\n' + res.join('\n'));
 				else msg.say(`There are no configured permissions for **${command}**.`);
+			});
+		} else if (action == 'list') {
+			permissions.getList(msg).then((list) => {
+				msg.say('There are permissions set up for: **' + list.join(', ') + '**');
 			});
 		} else {
 			msg.say('Unknown action! Please choose **allow**, **deny** or **show**.');

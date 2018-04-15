@@ -23,6 +23,16 @@ const permissions = db.define('permissions', {
 }, { timestamps: false, charset: 'utf8mb4' });
 
 module.exports = {
+	getList: async function (msg) {
+		return permissions.findAll({
+			where: {
+				guild: msg.guild.id,
+			},
+		}).then((r) => {
+			return [...new Set(r.map(perm => perm.dataValues.command))];
+		});
+	},
+
 	setPermission: async function (msg, settings) {
 		permissions.find({
 			where: {

@@ -50,7 +50,7 @@ Aeiou.on('ready', () => {
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
 });
 
-Aeiou.dispatcher.addInhibitor((msg) => {
+Aeiou.dispatcher.addInhibitor(async (msg) => {
 	if (!msg.command) return false;
 	if (msg.channel.type == 'dm') return false;
 	if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.author.id) || msg.command.name === 'ignore') return false;

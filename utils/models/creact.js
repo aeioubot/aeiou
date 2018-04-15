@@ -38,6 +38,10 @@ module.exports = {
 		const gr = this.allGuildReactions[guildID] || [];
 		gr.splice(gr.findIndex((crObject) => crObject.trigger == trigger), 1);
 	},
+	replaceInCache: async function(guildID, trigger, content) {
+		const gr = this.allGuildReactions[guildID] || [];
+		gr.find(x => x.trigger == trigger).content = content;
+	},
 	buildReactCache: async function(guildArray, shardID) {
 		const temp = {};
 		return guildReacts.findAll()

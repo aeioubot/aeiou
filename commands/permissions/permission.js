@@ -5,18 +5,18 @@ module.exports = class PermissionCommand extends Command {
 	constructor (client) {
 		super(client, {
 			name: 'permission',
-			aliases: ['perms', 'pp'],
+			aliases: ['perms', 'perm'],
 			group: 'permissions',
 			memberName: 'permission',
-			description: 'Allow or deny command permissions to a channel or role.',
-			details: 'read the description lmao',
-			examples: [''],
-			format: '[]',
+			description: 'Allow or deny command permissions to a user, role, channel or the entire guild.',
+			details: 'The order of importance (more to less) is: user, role, channel, guild. For example, if a command is allowed to [role], but denied to [user], the user will not be able to use it.',
+			examples: ['perms deny image guild', 'perms allow image channel #bot-commands', 'perms deny ping user @user#1234'],
+			format: '[allow|deny|show] <command> [user|role|channel|guild] <target>',
 			guildOnly: true,
 			args: [
 				{
 					key: 'action',
-					prompt: 'Please specify allow or deny.',
+					prompt: 'Please specify allow, deny or show.',
 					type: 'string',
 				}, {
 					key: 'command',

@@ -10,7 +10,7 @@ module.exports = class PtestCommand extends Command {
 			memberName: 'ptest',
 			description: 'test.',
 			details: 'testtest',
-			examples: [''],
+			examples: ['ptest'],
 			format: '[]',
 		});
 	}

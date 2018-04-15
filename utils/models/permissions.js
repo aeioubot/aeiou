@@ -9,13 +9,16 @@ const permissions = db.define('permissions', {
 		type: Sequelize.STRING(25),
 	},
 	targetType: { // 'guild', 'channel', 'role', 'user'
-		type: Sequelize.TEXT,
+		/* eslint-disable-next-line */
+		type: Sequelize.STRING(25),
 	},
 	target: { // 'guild', channelID, roleID, userID
-		type: Sequelize.TEXT,
+		/* eslint-disable-next-line */
+		type: Sequelize.STRING(25),
 	},
 	command: {
-		type: Sequelize.TEXT,
+		/* eslint-disable-next-line */
+		type: Sequelize.STRING(50),
 	},
 	allow: {
 		type: Sequelize.BOOLEAN,

@@ -19,5 +19,6 @@ module.exports = {
         "no-multi-spaces": 'off',
         "arrow-parens": 'off',
         "no-undef": "error",
+        "space-before-function-paren": ["off", "always"]
     }
 };

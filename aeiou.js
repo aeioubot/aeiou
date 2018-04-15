@@ -31,6 +31,7 @@ Aeiou.registry
 		['tag', 'Tag related commands'],
 		['misc', 'Miscellaneous commands'],
 		['owner', 'Owner commands'],
+		['permissions', 'Permission related commands'],
 	])
 	.registerDefaultTypes()
 	.registerDefaultGroups()

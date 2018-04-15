@@ -5,6 +5,7 @@ const SequelizeProvider = require('./utils/Sequelize');
 const messageListeners = require('./utils/messageListeners.js');
 const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
+const reacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
 
 const Aeiou = new Commando.Client({
@@ -39,7 +40,7 @@ Aeiou.registry
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 Aeiou.on('ready', () => {
-	Aeiou.shard.send({command: 'customReacts', data: Array.from(Aeiou.guilds.keys())});
+	reacts.buildReactCache(Array.from(Aeiou.guilds.keys()), Aeiou.shard.id);
 	memwatch.on('leak', (info) => {
 		info.shard = Aeiou.shard.id;
 		console.log(info);

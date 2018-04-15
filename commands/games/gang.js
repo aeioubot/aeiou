@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const gangs = require('../../utils/models/gangs.js');
 const crypto = require('crypto');
 const { stripIndent } = require('common-tags');
@@ -58,7 +59,8 @@ module.exports = class GangCommand extends Command {
 		});
 	}
 
-	async run(msg, {subcommand, opt}) {
+	async run(msg, { subcommand, opt }) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		/* eslint-disable indent*/
 		switch (subcommand) {
 			case 'new': case 'create': case 'make':

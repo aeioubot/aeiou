@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const request = require('request-promise');
 
 module.exports = class LyricsCommand extends Command {
@@ -22,7 +23,8 @@ module.exports = class LyricsCommand extends Command {
 		});
 	}
 
-	async run(msg, {query}) {
+	async run(msg, { query }) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		return request(`https://api.genius.com/search?access_token=${require('../../secure.json').genius}&q=${query}`, {json: true})
 			.then(async (d) => {
 				const targetResult = d.response.hits[0].result;

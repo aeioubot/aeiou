@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const donorDB = require('../../utils/models/donor.js');
 
 module.exports = class CNameCommand extends Command {
@@ -30,6 +31,7 @@ module.exports = class CNameCommand extends Command {
 	}
 
 	async run(msg, args) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const {name} = args;
 		const donors = await donorDB.getDonors(msg);
 		const donor = donors.find((donor) => donor.id === msg.author.id);

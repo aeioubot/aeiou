@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const plants = require('../../utils/models/plants.js');
 
 module.exports = class LeaderboardCommand extends Command {
@@ -23,7 +24,8 @@ module.exports = class LeaderboardCommand extends Command {
 		});
 	}
 
-	async run(msg, {notMe}) {
+	async run(msg, { notMe }) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		let allPlants = await plants.getAllPlants();
 		allPlants = allPlants.filter((plant) => msg.guild.members.get(plant.user) !== undefined);
 		allPlants.sort((a, b) => b.getPlantData().leaves - a.getPlantData().leaves);

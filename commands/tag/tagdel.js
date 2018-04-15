@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 
 module.exports = class TagDelCommand extends Command {
 	constructor(client) {
@@ -22,6 +23,7 @@ module.exports = class TagDelCommand extends Command {
 	}
 
 	async run(msg, args) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const {trigger} = args;
 		const provider = this.client.provider;
 		const testIfTagExists = provider.get(msg.guild, 'tags', []).find((x) => {

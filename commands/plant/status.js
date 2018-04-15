@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const plants = require('../../utils/models/plants.js');
 
 function componentToHex(c) {
@@ -103,7 +104,8 @@ module.exports = class StatusCommand extends Command {
 		});
 	}
 
-	async run(msg, {notMe}) {
+	async run(msg, { notMe }) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		if (notMe.id == this.client.user.id) {
 			let embed = {
 				title: 'W̷̝͍̜̩̲̣͓̝͟h̵̢͉̘͍͟a͏̬̯̯̳t̟̭̝̙̀ ̸͔̙̯͎͍̹̗g̸͏̼̯̩̭̠̟͚r̵̲̟̕͘e̷̙̼͓͚̬e̛̦̖̤̺͚͖͓̣͠n̶͔̤̭̕e͍̼͇̰̖̫̤r̹̩̲̮̙̩̰͠ỳ͇̺̘͘?̯̟̦̮̼͔̟͡',

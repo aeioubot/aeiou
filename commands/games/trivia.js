@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const request = require('request-promise');
 const unescape = require('unescape');
 const unidecode = require('unidecode');
@@ -44,7 +45,8 @@ module.exports = class TriviaCommand extends Command {
 		return true;
 	}
 
-	async run(msg, {maxPoints}) {
+	async run(msg, { maxPoints }) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		if (msg.guild.triviaRunning) return msg.say('Trivia is already running on this server!');
 		try {
 			await msg.say('Starting game...');

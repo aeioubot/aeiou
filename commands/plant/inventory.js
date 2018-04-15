@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const plants = require('../../utils/models/plants.js');
 const items = require('../../utils/classes/plantItems');
 
@@ -25,6 +26,7 @@ module.exports = class InventoryCommand extends Command {
 	}
 
 	async run(msg, { itemNumber }) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const userPlant = await plants.getPlant(msg);
 		if (itemNumber == -1) {
 			const displayMessage = ['```md', '# Item'];

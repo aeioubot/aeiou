@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const plants = require('../../utils/models/plants.js');
 
 module.exports = class HarvestCommand extends Command {
@@ -15,6 +16,7 @@ module.exports = class HarvestCommand extends Command {
 	}
 
 	async run(msg) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const userPlant = await plants.getPlant(msg);
 		const harvest = await userPlant.harvest();
 		plants.storePlant(userPlant);

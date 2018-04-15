@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const plants = require('../../utils/models/plants.js');
 
 function componentToHex(c) {
@@ -58,7 +59,8 @@ module.exports = class SeedsCommand extends Command {
 		});
 	}
 
-	async run(msg, {seedNumber}) {
+	async run(msg, { seedNumber }) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const plantClass = await plants.getPlant(msg);
 		if (seedNumber !== 0 && !seedNumber) {
 			let textContent = ['The seeds you own are:', '```json'];

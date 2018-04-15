@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const request = require('request-promise');
 
 module.exports = class AskCommand extends Command {
@@ -14,6 +15,7 @@ module.exports = class AskCommand extends Command {
 	}
 
 	async run(msg, args) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		return request('http://www.reddit.com/r/askReddit/hot/.json?count=50', {json: true}).then((questions) => {
 			msg.channel.startTyping();
 			return msg.say(

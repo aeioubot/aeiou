@@ -16,7 +16,7 @@ module.exports = class PtestCommand extends Command {
 	}
 
 	async run(msg, args) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this.`);
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		msg.say('Hello! This command is running :-)');
 	}
 };

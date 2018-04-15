@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const request = require('request-promise');
 const secure = require('../../secure.json');
 
@@ -24,7 +25,8 @@ module.exports = class YoutubeCommand extends Command {
 		});
 	}
 
-	async run(msg, {query}) {
+	async run(msg, { query }) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		request({uri: `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${query}&key=${secure.youtube}`, json: true}).then((d) => {
 			return msg.say('', {embed: {
 				title: d.items[0].snippet.title,

@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 const donorDB = require('../../utils/models/donor.js');
 
 module.exports = class CListCommand extends Command {
@@ -16,6 +17,7 @@ module.exports = class CListCommand extends Command {
 	}
 
 	async run(msg) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const donors = await donorDB.getDonors(msg);
 		if (donors.length < 1) return msg.say('This server has no donor colors.');
 		let message = 'Here are the current custom role owners, and the colors they are assigned to:\n```';

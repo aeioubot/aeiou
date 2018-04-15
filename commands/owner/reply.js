@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 
 module.exports = class ReplyCommand extends Command {
 	constructor(client) {

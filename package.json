@@ -10,8 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "common-tags": "^1.7.2",
-    "discord.js": "git+https://github.com/aeioubot/discord.js.git#11.3-dev",
-    "discord.js-commando": "git+https://github.com/aeioubot/Commando.git",
+    "discord.js": "git://github.com/aeioubot/discord.js.git#11.3-dev",
+    "discord.js-commando": "git://github.com/aeioubot/Commando.git",
     "memwatch-next": "^0.3.0",
     "mysql2": "^1.5.3",
     "request": "^2.83.0",

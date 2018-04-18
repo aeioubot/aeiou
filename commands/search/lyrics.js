@@ -23,6 +23,7 @@ module.exports = class LyricsCommand extends Command {
 	}
 
 	async run(msg, {query}) {
+		if (msg.member.currentSearch && !msg.member.currentSearch.ended) msg.member.currentSearch.stop();
 		let sayFunction = async (resultsArray) => {
 			try {
 				let targetResult = resultsArray.splice(0, 1)[0].result;

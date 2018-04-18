@@ -10,7 +10,7 @@ module.exports = class YoutubeCommand extends Command {
 			memberName: 'image',
 			description: 'Searches for an image, supports NSFW results and normal results.',
 			details: 'Searches for an image.',
-			aliases: ['i', 'img'],
+			aliases: ['img'],
 			examples: ['img kodak black', 'img weeb stuff'],
 			format: '[query]',
 			guildOnly: true,

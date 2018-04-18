@@ -23,18 +23,24 @@ module.exports = class LyricsCommand extends Command {
 	}
 
 	async run(msg, {query}) {
-		return request(`https://api.genius.com/search?access_token=${require('../../secure.json').genius}&q=${query}`, {json: true})
-			.then(async (d) => {
-				const targetResult = d.response.hits[0].result;
+		let sayFunction = async (resultsArray) => {
+			try {
+				let targetResult = resultsArray.splice(0, 1)[0].result;
 				const embed = {
 					color: 0xFFFF64,
 					title: `${targetResult.primary_artist.name} - ${targetResult.title}`,
 					thumbnail: {url: targetResult.song_art_image_thumbnail_url},
 					fields: [{name: 'Link', value: `https://genius.com${targetResult.api_path}`}],
 				};
-				msg.say('', {embed});
-			})
-			.catch((e) => msg.say('I didn\'t find a song by that title, try another.'))
-			.catch(() => {});
+				msg.say('Type "next" for the next search result.', {embed});
+			} catch (e) {
+				return msg.say('There are no more results for this search.');
+			}
+			msg.member.currentSearch = msg.channel.createMessageCollector((m) => m.author.id == msg.author.id && m.channel.id == msg.channel.id && m.content.toLowerCase() == 'next', {time: 30000, maxMatches: 1});
+			msg.member.currentSearch.on('collect', () => sayFunction(resultsArray));
+		};
+		return request(`https://api.genius.com/search?access_token=${require('../../secure.json').genius}&q=${query}`, {json: true})
+			.then(async (d) => sayFunction(d.response.hits.filter((e) => e.result.primary_artist.is_verified)))
+			.catch((e) => msg.say('I didn\'t find a song by that title, try another.'));
 	}
 };

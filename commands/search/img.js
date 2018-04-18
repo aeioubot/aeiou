@@ -36,7 +36,7 @@ module.exports = class YoutubeCommand extends Command {
 					},
 				}});
 			} catch (e) {
-				return msg.say('There are no more results for this search.').catch(() => {});
+				return msg.say('There are no more results for this search.');
 			}
 			msg.member.currentSearch = msg.channel.createMessageCollector((m) => m.author.id == msg.author.id && m.channel.id == msg.channel.id && m.content.toLowerCase() == 'next', {time: 30000, maxMatches: 1});
 			msg.member.currentSearch.on('collect', () => sayResult(data));

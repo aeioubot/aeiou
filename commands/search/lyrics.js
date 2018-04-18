@@ -40,7 +40,10 @@ module.exports = class LyricsCommand extends Command {
 			msg.member.currentSearch.on('collect', () => sayFunction(resultsArray));
 		};
 		return request(`https://api.genius.com/search?access_token=${require('../../secure.json').genius}&q=${query}`, {json: true})
-			.then(async (d) => sayFunction(d.response.hits.filter((e) => e.result.primary_artist.is_verified)))
+			.then(async (d) => {
+				let test = d.response.hits.filter((e) => e.result.primary_artist.is_verified);
+				sayFunction(test.length == 0 ? d.response.hits : test);
+			})
 			.catch((e) => msg.say('I didn\'t find a song by that title, try another.'));
 	}
 };

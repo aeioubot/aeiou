@@ -1,5 +1,8 @@
+const GatewayCommand = require('../classes/GatewayCommand.js');
+
 class Gateway {
 	constructor(client) {
+		this.pending = {};
 		this.client = client;
 		this.commands = require('require-all')({
 			dirname: __dirname,
@@ -7,18 +10,30 @@ class Gateway {
 		});
 	}
 
-	async callCommand(name, opts) {
-		if (this.commands[name]) {
-			try {
-				return this.commands[name](this.client, opts);
-			} catch (e) {
-				return e;
-			}
-		}
+	sendMessage(gcmd) {
+		if (!gcmd instanceof GatewayCommand) throw new Error('A gateway command must use the GatewayCommand class.');
+		this.pending[gcmd.time] = new Promise();
+		return this.pending[gcmd.time];
 	}
 
-	processMessage(response) {
-
+	async processMessage(m) {
+		try {
+			process.send(new GatewayCommand(
+				this.client.shard.id,
+				'response',
+				m.source,
+				await this.commands[m.command](this.client, m.payload),
+				m.time,
+			));
+		} catch (e) {
+			process.send(new GatewayCommand(
+				this.client.shard.id,
+				'response',
+				m.source,
+				e,
+				m.time,
+			));
+		}
 	}
 }
 

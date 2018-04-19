@@ -1,5 +1,8 @@
 {
     "token": "token here",
 	"prefix": "prefix here",
-    "dbPassword": "local MySQL database pass"
+    "dbPassword": "local MySQL database pass",
+    "genius": "genius api token",
+    "youtube": "youtube search api token",
+    "imgSearch": "google image search api key"
 }

@@ -61,7 +61,7 @@ module.exports = class CReactCommand extends Command {
 				guild: msg.guild.id,
 				trigger: trigger,
 				content: content,
-			}).then(msg.say(`Reaction edited! I will now say ${content} in response to ${trigger}.`));
+			}).then(msg.say(`Reaction edited! I will now say **${content}** in response to **${trigger}**.`));
 		}
 		case 'remove': // 3 acceptable options to delete using fall-through.
 		case 'delete':
@@ -76,7 +76,9 @@ module.exports = class CReactCommand extends Command {
 		}
 		case 'list': { // Lists the triggers in the guild.
 			let reactArray = await reactDB.findAllForGuild(msg.guild.id);
-			const triggerArray = Object.keys(reactArray);
+			const triggerArray = reactArray.map((react) => {
+				return react.trigger;
+			});
 			if (triggerArray.length === 0) return msg.say(`There are no custom reaction triggers in **${msg.guild.name}**.`); // No triggers response.
 			return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** is: \n\`\`\`${triggerArray.join(', ')}\`\`\``).catch(() => {
 				const page = parseInt(trigger) || 1;

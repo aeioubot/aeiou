@@ -104,42 +104,44 @@ module.exports = {
 			};
 		});
 	},
-	findReact: async (msg, trigger) => { // from cache
+	findReact: (msg, trigger) => { // from cache
 		if (!allReactions) return null;
 		if (!allReactions[msg.guild.id]) return null;
-		if (!allReactions[msg.guild.id][trigger]) return null;
-		return allReactions[msg.guild.id][trigger];
+		return allReactions[msg.guild.id].find((react) => {
+			return react.trigger === trigger;
+		});
 	},
 	findAllForGuild: (guild) => { // from cache
-		return allReactions[guild] || {};
+		return allReactions[guild] || [];
 	},
 	addToCache: async function(reactionToAdd) {
-		allReactions[reactionToAdd.guild] = allReactions[reactionToAdd.guild] || {};
-		allReactions[reactionToAdd.guild][reactionToAdd.trigger] = reactionToAdd.content;
+		allReactions[reactionToAdd.guild] = allReactions[reactionToAdd.guild] || [];
+		allReactions[reactionToAdd.guild].push({trigger: reactionToAdd.trigger, content: reactionToAdd.content});
 	},
 	removeFromCache: async function(reactionToRemove) {
-		allReactions[reactionToRemove.guild] = allReactions[reactionToRemove.guild] || {};
-		// allReactions.splice(allReactions.findIndex((reaction) => reaction.trigger === reactionToRemove.trigger), 1);
-		delete allReactions[reactionToRemove.guild][reactionToRemove.trigger];
+		allReactions[reactionToRemove.guild] = allReactions[reactionToRemove.guild] || [];
+		allReactions.splice(allReactions.findIndex((reaction) => reaction.trigger === reactionToRemove.trigger), 1);
+		// delete allReactions[reactionToRemove.guild][reactionToRemove.trigger];
 	},
 	editInCache: async function(reactionToEdit) {
-		allReactions[reactionToEdit.guild] = allReactions[reactionToEdit.guild] || {};
-		// allReactions.find((reaction) => reaction.trigger === reactionToEdit.trigger).content = reactionToEdit.content;
-		allReactions[reactionToEdit.guild][reactionToEdit.trigger] = reactionToEdit.content;
+		allReactions[reactionToEdit.guild] = allReactions[reactionToEdit.guild] || [];
+		allReactions[reactionToEdit.guild].find((reaction) => reaction.trigger === reactionToEdit.trigger).content = reactionToEdit.content;
+		// allReactions[reactionToEdit.guild][reactionToEdit.trigger] = reactionToEdit.content;
 	},
 	buildReactCache: async function(guildArray, shardID) {
 		return reacts.findAll().then((returnedData) => {
 			let temp = {};
+			let count = 0;
 			returnedData = returnedData.map((r) => r.dataValues);
 			returnedData = returnedData.forEach((reaction) => {
 				if (guildArray.includes(reaction.guild)) {
-					if (!temp[reaction.guild]) temp[reaction.guild] = {};
-					temp[reaction.guild][reaction.trigger] = reaction.content;
+					if (!temp[reaction.guild]) temp[reaction.guild] = [];
+					temp[reaction.guild].push({ trigger: reaction.trigger, content: reaction.content });
+					count++;
 				}
 			});
-			console.log('tempy', temp);
 			allReactions = temp;
-			console.log(`[Shard ${shardID}] Cached ${allReactions.length} reactions for ${guildArray.length} guilds!`);
+			console.log(`[Shard ${shardID}] Cached ${count} reactions for ${guildArray.length} guilds!`);
 		});
 	},
 };

@@ -23,7 +23,7 @@ module.exports = {
 		let messageContent = msg.content.substr(markdownStart.length, msg.content.length - (2 * markdownStart.length));
 
 		let toSay = reactions.find((reaction) => {
-			return reaction.trigger === messageContent.toLowerCase() && reaction.guild === msg.guild.id;
+			return reaction.trigger === messageContent.toLowerCase();
 		});
 
 		if (toSay) {

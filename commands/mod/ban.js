@@ -30,7 +30,7 @@ module.exports = class BanCommand extends Command {
 	}
 
 	async run(msg, { user }) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
+
 		user.ban().then(() => {
 			msg.say(`**${user.displayName}** has been banned.`);
 		}).catch(() => {

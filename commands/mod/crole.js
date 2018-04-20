@@ -40,7 +40,7 @@ module.exports = class CRoleCommand extends Command {
 	}
 
 	async run(msg, { addOrRemove, member, role }) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
+
 		addOrRemove = addOrRemove.toLowerCase();
 
 		if (['add', 'plus', 'give', 'create'].includes(addOrRemove)) {

@@ -16,7 +16,7 @@ module.exports = class TagListCommand extends Command {
 	}
 
 	async run(msg) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
+
 		const provider = this.client.provider;
 		let tags = provider.get(msg.guild, 'tags', []);
 		tags = tags.map((tag) => tag.trigger).join(', ');

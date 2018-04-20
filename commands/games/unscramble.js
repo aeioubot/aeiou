@@ -48,7 +48,7 @@ module.exports = class UnscrambleCommand extends Command {
 	}
 
 	async run(msg, { maxPoints }) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
+
 		if (msg.guild.unscrambleRunning) return msg.say('Unscramble is already running on this server!');
 		try {
 			await msg.say('Starting game...');

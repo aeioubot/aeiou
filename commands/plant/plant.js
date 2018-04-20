@@ -24,7 +24,7 @@ module.exports = class PlantCommand extends Command {
 	}
 
 	async run(msg, { seedNumber }) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
+
 		const userPlant = await plants.getPlant(msg);
 		if (userPlant.getPlantData().activeSeed) return msg.say('You already have a seed planted, if you wish to harvest or destroy it early, use `!harvest`.');
 		const planted = await userPlant.plant(seedNumber);

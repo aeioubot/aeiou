@@ -16,7 +16,7 @@ module.exports = class LeavesCommand extends Command {
 	}
 
 	async run(msg) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
+
 		return plants.getPlant(msg).then((plantClass) => {
 			return msg.say(`You have **${plantClass.getPlantData().leaves}** leaves. :leaves:`);
 		});

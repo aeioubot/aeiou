@@ -16,7 +16,7 @@ module.exports = class PingCommand extends commando.Command {
 	}
 
 	async run(msg) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
+
 		try {
 			const placeholder = await msg.say('Pinging...');
 			return placeholder.edit(`Pong! Aeiou's ping is \`${placeholder.createdTimestamp - msg.createdTimestamp}ms\`. ${this.client.ping ? `The websocket ping is \`${Math.round(this.client.ping)}ms.\`` : ''}`);

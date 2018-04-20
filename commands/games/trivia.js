@@ -46,7 +46,7 @@ module.exports = class TriviaCommand extends Command {
 	}
 
 	async run(msg, { maxPoints }) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
+
 		if (msg.guild.triviaRunning) return msg.say('Trivia is already running on this server!');
 		try {
 			await msg.say('Starting game...');

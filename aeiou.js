@@ -7,6 +7,7 @@ const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
 const reacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
+const permissions = require('./utils/models/permissions');
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -50,11 +51,16 @@ Aeiou.on('ready', () => {
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
 });
 
-Aeiou.dispatcher.addInhibitor((msg) => {
+Aeiou.dispatcher.addInhibitor(async (msg) => {
 	if (!msg.command) return false;
 	if (msg.channel.type == 'dm') return false;
 	if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.author.id) || msg.command.name === 'ignore') return false;
 	return Aeiou.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id);
+});
+
+Aeiou.dispatcher.addInhibitor(async msg => {
+	if (!msg.command) return false;
+	permissions.hasPermission(msg.command.name, msg);
 });
 
 process.on('message', (response) => {

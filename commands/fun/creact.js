@@ -39,20 +39,15 @@ module.exports = class CReactCommand extends Command {
 
 	async run(msg, {option, trigger, content}) {
 		if (option === '') return msg.say('Please select an action.');
-		const reactArray = await reactDB.getReacts(msg);
-		const crExists = reactArray.find((x) => {
-			if (x.trigger === trigger) return true;
-		});
+		const crExists = reactDB.findReact(msg, trigger);
 		switch (option.toLowerCase()) {
 		case 'add': {
 			if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
 			if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.replace(/ /g, '').length === 0) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
 			if (crExists) return msg.say(`There is already a reaction with the trigger **${trigger}**.`); // return the error
-			reactDB.appendToReacts(msg, {
-				trigger: trigger,
-				content: content,
-			});
-			return reactDB.addToCache(msg.guild.id, {
+			reactDB.addReact(msg, trigger, content);
+			return reactDB.addToCache({
+				guild: msg.guild.id,
 				trigger: trigger,
 				content: content,
 			}).then(() => msg.say(`Reaction added, **${trigger}** will cause me to say **${content}**.`));
@@ -61,25 +56,38 @@ module.exports = class CReactCommand extends Command {
 			if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
 			if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.replace(/ /g, '').length === 0) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
 			if (!crExists) return msg.say(`There is no custom reaction with the trigger **${trigger}**. Please add it with \`!creact add\` first.`);
-			reactArray[reactArray.indexOf(crExists)].content = content;
-			return reactDB.setReacts(msg, reactArray).then(() => reactDB.replaceInCache(msg.guild.id, trigger, content)).then(msg.say(`Reaction edited! I will now say ${content} in response to ${trigger}.`));
+			reactDB.editReact(msg, trigger, content);
+			return reactDB.editInCache({
+				guild: msg.guild.id,
+				trigger: trigger,
+				content: content,
+			}).then(msg.say(`Reaction edited! I will now say ${content} in response to ${trigger}.`));
 		}
 		case 'remove': // 3 acceptable options to delete using fall-through.
 		case 'delete':
 		case 'del': {
 			if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
 			if (!crExists) return msg.say(`There are no custom reactions with the trigger **${trigger}**...`); // Does not exist.
-			reactArray.splice(reactArray.indexOf(crExists), 1);
-			return reactDB.setReacts(msg, reactArray).then(() => reactDB.removeFromCache(msg.guild.id, trigger))
-				.then(msg.say(`Reaction deleted, I'll no longer respond to **${trigger}**.`));
+			reactDB.deleteReact(msg, trigger);
+			return reactDB.removeFromCache({
+				guild: msg.guild.id,
+				trigger: trigger,
+			}).then(msg.say(`Reaction deleted, I'll no longer respond to **${trigger}**.`));
 		}
 		case 'list': { // Lists the triggers in the guild.
+			let reactArray = await reactDB.findAllForGuild(msg.guild.id);
+			reactArray.map(react => {
+				return {
+					trigger: react.trigger,
+					content: react.content,
+				};
+			});
 			const triggerArray = [];
 			reactArray.map((item) => {
 				triggerArray.push(item.trigger);
 			});
 			if (triggerArray.length === 0) return msg.say(`There are no custom reaction triggers in **${msg.guild.name}**.`); // No triggers response.
-			return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** are: \n\`\`\`${triggerArray.join(', ')}\`\`\``).catch(() => {
+			return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** is: \n\`\`\`${triggerArray.join(', ')}\`\`\``).catch(() => {
 				const page = parseInt(trigger) || 1;
 				if (page > Math.ceil(triggerArray.length/10)) return msg.say('That is not a valid page number.');
 				let formattedArray = [`Reaction triggers: page ${page} of ${Math.ceil(triggerArray.length/10)}:\n`];

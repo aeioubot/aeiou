@@ -14,7 +14,7 @@ module.exports = class ShardsCommand extends Command {
 	}
 
 	async run(msg, args) {
-
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		return this.client.shard.broadcastEval(
 			`({
 				id: this.shard.id,

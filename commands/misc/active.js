@@ -24,7 +24,7 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	async run(msg, { minutes }) {
-
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const sayArray = [];
 		if (minutes > Math.floor(this.client.uptime / 60000)) minutes = Math.floor(this.client.uptime / 60000);
 		const now = Date.now();

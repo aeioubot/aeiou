@@ -60,7 +60,7 @@ module.exports = class GangCommand extends Command {
 	}
 
 	async run(msg, { subcommand, opt }) {
-
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		/* eslint-disable indent*/
 		switch (subcommand) {
 			case 'new': case 'create': case 'make':

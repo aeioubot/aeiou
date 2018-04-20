@@ -13,7 +13,7 @@ module.exports = class SupportCommand extends Command {
 	}
 
 	async run(msg) {
-
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const test = await msg.say('I\'m DMing an invite to you!');
 		return msg.author.send('Here\'s an invite to the support server: \n https://discord.gg/JB8xdT5')
 			.then(() => {

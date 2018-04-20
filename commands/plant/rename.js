@@ -30,7 +30,7 @@ module.exports = class RenameCommand extends Command {
 	}
 
 	async run(msg, { seedIndex, newName }) {
-
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		if (isNaN(parseInt(seedIndex))) seedIndex = -1;
 		return plants.getPlant(msg).then((plantClass) => {
 			if (!plantClass.rename(parseInt(seedIndex), newName).success) return msg.say('You chose an invalid seed number. Use `!seeds` to check your seeds.');

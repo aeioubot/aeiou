@@ -26,7 +26,7 @@ module.exports = class TossCommand extends Command {
 	}
 
 	async run(msg, { seedNumber }) {
-
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		plants.getPlant(msg).then((plant) => {
 			if (plant.removeFromSeeds(seedNumber).success) {
 				plants.storePlant(plant);

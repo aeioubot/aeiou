@@ -39,6 +39,7 @@ module.exports = class CReactCommand extends Command {
 	}
 
 	async run(msg, { option, trigger, content }) {
+		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		if (option === '') return msg.say('Please select an action.');
 		const reactArray = await reactDB.getReacts(msg);
 		const crExists = reactArray.find((x) => {

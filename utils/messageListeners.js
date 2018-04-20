@@ -17,17 +17,22 @@ module.exports = {
 		if (msg.author.bot || msg.channel.type != 'text' || msg.client.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id)) return;
 
 		const reactions = reactDB.findAllForGuild(msg.guild.id);
+		console.log('reactions', reactions)
 
 		let markdownStart = '';
 		for (let i = 0; msg.content[i] === msg.content.split('').reverse().join('')[i] && '`*_~'.includes(msg.content[i]); i++) markdownStart += msg.content[i];
 		let messageContent = msg.content.substr(markdownStart.length, msg.content.length - (2 * markdownStart.length));
 
+		let reactTrigger = messageContent.toLowerCase();
+
+		let toSay = reactions[reactTrigger];
+/*
 		let toSay = reactions.find((reaction) => {
 			return reaction.trigger === messageContent.toLowerCase() && reaction.guild === msg.guild.id;
 		});
-
+*/
 		if (toSay) {
-			let reactContent = (messageContent === upify(messageContent) && toSay.trigger !== upify(toSay.trigger)) ? toSay.content.toUpperCase() : toSay.content;
+			let reactContent = (messageContent === upify(messageContent)) ? toSay.toUpperCase() : toSay;
 			return msg.channel.send(markdownStart + reactContent + markdownStart.split('').reverse().join(''));
 		}
 	},

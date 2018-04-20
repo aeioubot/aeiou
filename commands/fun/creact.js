@@ -76,16 +76,7 @@ module.exports = class CReactCommand extends Command {
 		}
 		case 'list': { // Lists the triggers in the guild.
 			let reactArray = await reactDB.findAllForGuild(msg.guild.id);
-			reactArray.map(react => {
-				return {
-					trigger: react.trigger,
-					content: react.content,
-				};
-			});
-			const triggerArray = [];
-			reactArray.map((item) => {
-				triggerArray.push(item.trigger);
-			});
+			const triggerArray = Object.keys(reactArray);
 			if (triggerArray.length === 0) return msg.say(`There are no custom reaction triggers in **${msg.guild.name}**.`); // No triggers response.
 			return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** is: \n\`\`\`${triggerArray.join(', ')}\`\`\``).catch(() => {
 				const page = parseInt(trigger) || 1;

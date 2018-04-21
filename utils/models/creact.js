@@ -19,30 +19,10 @@ let allReactions = {};
 
 module.exports = {
 	addReact: async (msg, trigger, content) => {
-		return reacts.find({
-			where: {
-				guild: msg.guild.id,
-				trigger: trigger,
-			},
-		}).then((result) => {
-			if (result) { // cr trigger exists -> reply wuhwuh.
-				return {
-					found: true,
-					added: false,
-				};
-			} else {
-				// cr trigger does not exist -> add
-				reacts.upsert({
-					guild: msg.guild.id,
-					trigger: trigger,
-					content: content,
-				}).then((res) => {
-					return {
-						found: false,
-						added: true,
-					};
-				});
-			};
+		return reacts.upsert({
+			guild: msg.guild.id,
+			trigger: trigger,
+			content: content,
 		});
 	},
 	deleteReact: async (msg, trigger) => {
@@ -58,23 +38,12 @@ module.exports = {
 						guild: msg.guild.id,
 						trigger: trigger,
 					},
-				}).then((res) => {
-					return {
-						found: true,
-						deleted: true,
-					};
 				});
-			} else {
-				// cr trigger does not exist -> reply wuhwuh.
-				return {
-					found: false,
-					deleted: false,
-				};
 			};
 		});
 	},
 	editReact: async (msg, trigger, content) => {
-		reacts.find({
+		return reacts.find({
 			where: {
 				guild: msg.guild.id,
 				trigger: trigger,
@@ -89,19 +58,8 @@ module.exports = {
 						guild: msg.guild.id,
 						trigger: trigger,
 					},
-				}).then((res) => {
-					return {
-						found: true,
-						edited: true,
-					};
 				});
-			} else {
-				// cr trigger does not exist -> reply wuhwuh.
-				return {
-					found: false,
-					edited: false,
-				};
-			};
+			}
 		});
 	},
 	findReact: (msg, trigger) => { // from cache
@@ -121,12 +79,10 @@ module.exports = {
 	removeFromCache: async function(reactionToRemove) {
 		allReactions[reactionToRemove.guild] = allReactions[reactionToRemove.guild] || [];
 		allReactions.splice(allReactions.findIndex((reaction) => reaction.trigger === reactionToRemove.trigger), 1);
-		// delete allReactions[reactionToRemove.guild][reactionToRemove.trigger];
 	},
 	editInCache: async function(reactionToEdit) {
 		allReactions[reactionToEdit.guild] = allReactions[reactionToEdit.guild] || [];
 		allReactions[reactionToEdit.guild].find((reaction) => reaction.trigger === reactionToEdit.trigger).content = reactionToEdit.content;
-		// allReactions[reactionToEdit.guild][reactionToEdit.trigger] = reactionToEdit.content;
 	},
 	buildReactCache: async function(guildArray, shardID) {
 		return reacts.findAll().then((returnedData) => {

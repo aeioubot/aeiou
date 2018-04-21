@@ -78,7 +78,7 @@ module.exports = {
 	},
 	removeFromCache: async function(reactionToRemove) {
 		allReactions[reactionToRemove.guild] = allReactions[reactionToRemove.guild] || [];
-		allReactions.splice(allReactions.findIndex((reaction) => reaction.trigger === reactionToRemove.trigger), 1);
+		allReactions[reactionToRemove.guild].splice(allReactions[reactionToRemove.guild].findIndex((reaction) => reaction.trigger === reactionToRemove.trigger), 1);
 	},
 	editInCache: async function(reactionToEdit) {
 		allReactions[reactionToEdit.guild] = allReactions[reactionToEdit.guild] || [];

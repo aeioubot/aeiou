@@ -13,9 +13,9 @@ const reacts = db.define('reacts', {
 	content: {
 		type: Sequelize.STRING(2000), // eslint-disable-line
 	},
-}, {charset: 'utf8mb4'});
+}, {timestamps: false, charset: 'utf8mb4'});
 
-let allReactions = {};
+const allReacts = {};
 
 module.exports = {
 	addReact: async (msg, trigger, content) => {
@@ -63,40 +63,38 @@ module.exports = {
 		});
 	},
 	findReact: (msg, trigger) => { // from cache
-		if (!allReactions) return null;
-		if (!allReactions[msg.guild.id]) return null;
-		return allReactions[msg.guild.id].find((react) => {
+		if (!allReacts) return null;
+		if (!allReacts[msg.guild.id]) return null;
+		return allReacts[msg.guild.id].find((react) => {
 			return react.trigger === trigger;
 		});
 	},
 	findAllForGuild: (guild) => { // from cache
-		return allReactions[guild] || [];
+		return allReacts[guild] || [];
 	},
-	addToCache: async function(reactionToAdd) {
-		allReactions[reactionToAdd.guild] = allReactions[reactionToAdd.guild] || [];
-		allReactions[reactionToAdd.guild].push({trigger: reactionToAdd.trigger, content: reactionToAdd.content});
+	addToCache: async function(toAdd) {
+		allReacts[toAdd.guild] = allReacts[toAdd.guild] || [];
+		allReacts[toAdd.guild].push({trigger: toAdd.trigger, content: toAdd.content});
 	},
-	removeFromCache: async function(reactionToRemove) {
-		allReactions[reactionToRemove.guild] = allReactions[reactionToRemove.guild] || [];
-		allReactions[reactionToRemove.guild].splice(allReactions[reactionToRemove.guild].findIndex((reaction) => reaction.trigger === reactionToRemove.trigger), 1);
+	removeFromCache: async function(toRemove) {
+		allReacts[toRemove.guild] = allReacts[toRemove.guild] || [];
+		allReacts[toRemove.guild].splice(allReacts[toRemove.guild].findIndex((reaction) => reaction.trigger === toRemove.trigger), 1);
 	},
-	editInCache: async function(reactionToEdit) {
-		allReactions[reactionToEdit.guild] = allReactions[reactionToEdit.guild] || [];
-		allReactions[reactionToEdit.guild].find((reaction) => reaction.trigger === reactionToEdit.trigger).content = reactionToEdit.content;
+	editInCache: async function(toEdit) {
+		allReacts[toEdit.guild] = allReacts[toEdit.guild] || [];
+		allReacts[toEdit.guild].find((reaction) => reaction.trigger === toEdit.trigger).content = toEdit.content;
 	},
 	buildReactCache: async function(guildArray, shardID) {
 		return reacts.findAll().then((returnedData) => {
-			let temp = {};
 			let count = 0;
 			returnedData = returnedData.map((r) => r.dataValues);
 			returnedData = returnedData.forEach((reaction) => {
 				if (guildArray.includes(reaction.guild)) {
-					if (!temp[reaction.guild]) temp[reaction.guild] = [];
-					temp[reaction.guild].push({ trigger: reaction.trigger, content: reaction.content });
-					count++;
+					if (!allReacts[reaction.guild]) allReacts[reaction.guild] = [];
+					allReacts[reaction.guild].push({ trigger: reaction.trigger, content: reaction.content });
+					count += 1;
 				}
 			});
-			allReactions = temp;
 			console.log(`[Shard ${shardID}] Cached ${count} reactions for ${guildArray.length} guilds!`);
 		});
 	},

@@ -68,7 +68,7 @@ module.exports = class TriviaCommand extends Command {
 			msg.guild.triviaRunning = false;
 			return msg.say('Inactivity, game ending.');
 		}
-		for (let player in score) {
+		for (const player in score) {
 			if (score[player] >= maxPoints) {
 				msg.guild.triviaRunning = false;
 				return msg.say(`${msg.guild.members.get(player).displayName} has reached ${maxPoints} points and won!`);
@@ -112,7 +112,7 @@ module.exports = class TriviaCommand extends Command {
 		msg.say(`${append}\n\nType the correct answer to earn a point.`, { embed }).catch((e) => {
 			console.log(currQuestion);
 			console.log(e);
-			this.game(msg, maxPoints, score, angerCount, `I made a mistake and had to skip a question. Call me names.`, questions, totalQuestions);
+			return this.game(msg, maxPoints, score, angerCount, `I made a mistake and had to skip a question. Call me names.`, questions, totalQuestions);
 		});
 		const collector = msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id && m.channel.id == msg.channel.id, {time: 30000});
 		collector.on('collect', (collected) => {

@@ -40,7 +40,7 @@ module.exports = class PingCommand extends commando.Command {
 			group: 'fun',
 			memberName: 'ping',
 			description: 'Checks the bot\'s ping to the Discord server.',
-			aliases: ['hey', 'hi', 'yo', 'hello', 'pong', 'pyong'],
+			aliases: ['pong', 'pyong'],
 			throttling: {
 				usages: 5,
 				duration: 10,

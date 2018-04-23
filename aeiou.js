@@ -18,7 +18,7 @@ const Aeiou = new Commando.Client({
 database.start(Aeiou.shard.id);
 
 Aeiou.setProvider(new SequelizeProvider(database.db)).catch(console.error);
-Aeiou.gateway = new (require('./utils/gateway/Gateway.js'))(Aeiou);
+Aeiou.gateway = new (require('./utils/Gateway/Gateway.js'))(Aeiou);
 
 Aeiou.registry
 	.registerGroups([

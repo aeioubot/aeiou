@@ -12,28 +12,41 @@ class Gateway {
 
 	sendMessage(gcmd) {
 		if (!gcmd instanceof GatewayCommand) throw new Error('A gateway command must use the GatewayCommand class.');
-		this.pending[gcmd.time] = new Promise();
-		return this.pending[gcmd.time];
+		process.send(gcmd);
+		return new Promise((resolve, reject) => {
+			this.pending[gcmd.time] = {data: [], resolve: resolve, reject: reject};
+		});
 	}
 
-	async processMessage(m) {
-		try {
-			process.send(new GatewayCommand(
-				this.client.shard.id,
-				'response',
-				m.source,
-				await this.commands[m.command](this.client, m.payload),
-				m.time,
-			));
-		} catch (e) {
-			process.send(new GatewayCommand(
-				this.client.shard.id,
-				'response',
-				m.source,
-				e,
-				m.time,
-			));
+	async processMessage(gcmd) {
+		// Response handler
+		if (gcmd.command == 'response') { // If recieving data from a command
+			const thisCommand = this.pending[gcmd.time].data;
+			thisCommand[gcmd.source] = gcmd.payload;
+			for (let i = 0; i < thisCommand.length; i += 1) if (thisCommand[i] === undefined) return; // Returns if the responses are not all here yet.
+			return this.pending[gcmd.time].resolve(this.pending[gcmd.time].data);
 		}
+
+		// Response sender
+		this.commands[gcmd.command](this.client, gcmd.payload).then(data => {
+			process.send(new GatewayCommand(
+				this.client.shard.count,
+				this.client.shard.id,
+				'response',
+				[gcmd.source],
+				data,
+				gcmd.time,
+			));
+		}).catch(e => {
+			process.send(new GatewayCommand(
+				this.client.shard.count,
+				this.client.shard.id,
+				'response',
+				[gcmd.source],
+				null,
+				gcmd.time,
+			));
+		});
 	}
 }
 

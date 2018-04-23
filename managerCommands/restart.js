@@ -7,10 +7,10 @@ module.exports = async (manager) => {
 	console.log('[Manager] Pulling complete! Installing...');
 	child.execSync('npm install --production --silent');
 	console.log('[Manager] Install complete! Killing children.');
-	manager.shards.map((value, index) => {
+	manager.shards.map((shard, index) => {
 		setTimeout(() => {
 			console.log(`[Shard ${index}] Restarting...`);
-			value.eval('process.exit(0)');
+			shard.eval('process.exit(0)');
 		}, index * 3000);
 	});
 };

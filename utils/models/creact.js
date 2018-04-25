@@ -87,15 +87,14 @@ module.exports = {
 	buildReactCache: async function(guildArray, shardID) {
 		return reacts.findAll().then((returnedData) => {
 			let count = 0;
-			returnedData = returnedData.map((r) => r.dataValues);
-			returnedData = returnedData.forEach((reaction) => {
-				if (guildArray.includes(reaction.guild)) {
+			returnedData.forEach((reaction) => {
+				if (allReacts[reaction.guild] || guildArray.includes(reaction.guild)) {
 					if (!allReacts[reaction.guild]) allReacts[reaction.guild] = [];
 					allReacts[reaction.guild].push({ trigger: reaction.trigger, content: reaction.content });
 					count += 1;
 				}
 			});
-			console.log(`[Shard ${shardID}] Cached ${count} reactions for ${guildArray.length} guilds!`);
+			return count;
 		});
 	},
 };

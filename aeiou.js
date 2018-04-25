@@ -40,8 +40,11 @@ Aeiou.registry
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 Aeiou.on('ready', () => {
-	reacts.buildReactCache(Array.from(Aeiou.guilds.keys()), Aeiou.shard.id);
+	reacts.buildReactCache(Array.from(Aeiou.guilds.keys()), Aeiou.shard.id).then(c => {
+		console.log(`[Shard ${Aeiou.shard.id}] Cached ${c} reactions for ${Array.from(Aeiou.guilds.keys()).length} guilds!`);
+	});
 	memwatch.on('leak', (info) => {
+		info.time = new Date().toLocaleString();
 		info.shard = Aeiou.shard.id;
 		console.log(info);
 	});

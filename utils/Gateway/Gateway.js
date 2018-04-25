@@ -19,7 +19,6 @@ class Gateway {
 	}
 
 	async processMessage(gcmd) {
-		console.log(this.pending[gcmd.time]);
 		// Response handler
 		if (gcmd.command == 'response') { // If recieving data from a command
 			const thisCommand = this.pending[gcmd.time].data;

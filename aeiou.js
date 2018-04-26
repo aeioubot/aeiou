@@ -13,6 +13,7 @@ const Aeiou = new Commando.Client({
 	commandPrefix: secure.prefix,
 	unknownCommandResponse: false,
 	disableEveryone: true,
+	messageCacheMaxSize: 50,
 });
 
 database.start(Aeiou.shard.id);

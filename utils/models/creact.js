@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const {Op} = require('sequelize');
 const Database = require('../../database.js');
 
 const db = Database.db;
@@ -85,14 +86,18 @@ module.exports = {
 		allReacts[toEdit.guild].find((reaction) => reaction.trigger === toEdit.trigger).content = toEdit.content;
 	},
 	buildReactCache: async function(guildArray, shardID) {
-		return reacts.findAll().then((returnedData) => {
+		return reacts.findAll({
+			where: {
+				guild: {
+					[Op.or]: guildArray,
+				},
+			},
+		}).then((returnedData) => {
 			let count = 0;
 			returnedData.forEach((reaction) => {
-				if (allReacts[reaction.guild] || guildArray.includes(reaction.guild)) {
-					if (!allReacts[reaction.guild]) allReacts[reaction.guild] = [];
-					allReacts[reaction.guild].push({ trigger: reaction.trigger, content: reaction.content });
-					count += 1;
-				}
+				if (!allReacts[reaction.guild]) allReacts[reaction.guild] = [];
+				allReacts[reaction.guild].push({ trigger: reaction.trigger, content: reaction.content });
+				count += 1;
 			});
 			return count;
 		});

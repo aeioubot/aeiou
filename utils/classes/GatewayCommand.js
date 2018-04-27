@@ -3,7 +3,7 @@ class GatewayCommand {
 		this.source = source;
 		this.command = command;
 		this.destinations = destinations;
-		this.totalDestinations = destinations.length === 0 ? totalShards : destinations.length;
+		this.totalDestinations = !destinations || destinations.length === 0 ? totalShards : destinations.length;
 		this.payload = payload;
 		this.time = time ? time : (new Date()).getTime().toString(16);
 	}

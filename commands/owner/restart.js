@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const GatewayCommand = require('../../utils/classes/GatewayCommand.js');
 
 module.exports = class RestartCommand extends Command {
 	constructor(client) {
@@ -25,7 +26,13 @@ module.exports = class RestartCommand extends Command {
 	}
 
 	async run(msg, {all}) {
-		if (all == 'all') return msg.react('✅').then(() => msg.client.shard.send({command: 'restart'}));
+		if (all == 'all') {
+			return msg.react('✅').then(() => process.send(new GatewayCommand(
+				this.client.shard.count,
+				this.client.shard.id,
+				'restart',
+			)));
+		}
 		console.log(`Shard ${msg.client.shard.id} restarting...`);
 		return msg.react('✅').then(() => process.exit(0));
 	}

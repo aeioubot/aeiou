@@ -17,7 +17,7 @@
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "require-all": "^2.2.0",
-    "sequelize": "^4.35.1",
+    "sequelize": "^4.37.6",
     "sqlite": "^2.9.1",
     "unescape": "^1.0.1",
     "unidecode": "^0.1.8"
@@ -25,6 +25,6 @@
   "devDependencies": {
     "eslint": "^4.18.1",
     "eslint-config-google": "^0.9.1",
-    "eslint-plugin-import": "^2.9.0"
+    "eslint-plugin-import": "^2.11.0"
   }
 }

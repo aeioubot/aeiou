@@ -1,65 +1,105 @@
 const Sequelize = require('sequelize');
+const {Op} = require('sequelize');
 const Database = require('../../database.js');
 
 const db = Database.db;
 
-const guildReacts = db.define('guildReacts', {
+const reacts = db.define('reacts', {
 	guild: {
-		// eslint-disable-next-line
-		type: Sequelize.STRING(25),
-		unique: true,
+		type: Sequelize.STRING(25), // eslint-disable-line
 	},
-	reactObjects: {
-		type: Sequelize.TEXT,
-		defaultValue: '[]',
+	trigger: {
+		type: Sequelize.STRING(2000), // eslint-disable-line
 	},
-}, {charset: 'utf8mb4'});
+	content: {
+		type: Sequelize.STRING(2000), // eslint-disable-line
+	},
+}, {timestamps: false, charset: 'utf8mb4'});
+
+const allReacts = {};
 
 module.exports = {
-	setReacts: async (msg, reactObjects) => {
-		return guildReacts.upsert({
+	addReact: async (msg, trigger, content) => {
+		return reacts.upsert({
 			guild: msg.guild.id,
-			reactObjects: JSON.stringify(reactObjects),
+			trigger: trigger,
+			content: content,
 		});
 	},
-	getReacts: async (msg) => {
-		return guildReacts.findOrCreate({
+	deleteReact: async (msg, trigger) => {
+		return reacts.find({
 			where: {
 				guild: msg.guild.id,
+				trigger: trigger,
 			},
-		}).then((returnedData) => JSON.parse(returnedData[0].dataValues.reactObjects));
+		}).then((result) => {
+			if (result) { // cr trigger exists -> delete.
+				reacts.destroy({
+					where: {
+						guild: msg.guild.id,
+						trigger: trigger,
+					},
+				});
+			};
+		});
 	},
-	allGuildReactions: {},
-	addToCache: async function(guildID, crObject) {
-		const gr = this.allGuildReactions[guildID] || [];
-		gr.push(crObject);
+	editReact: async (msg, trigger, content) => {
+		return reacts.find({
+			where: {
+				guild: msg.guild.id,
+				trigger: trigger,
+			},
+		}).then((result) => {
+			if (result) { // cr trigger exists -> edit.
+				reacts.update({
+					trigger: trigger,
+					content: content,
+				}, {
+					where: {
+						guild: msg.guild.id,
+						trigger: trigger,
+					},
+				});
+			}
+		});
 	},
-	removeFromCache: async function(guildID, trigger) {
-		const gr = this.allGuildReactions[guildID] || [];
-		gr.splice(gr.findIndex((crObject) => crObject.trigger == trigger), 1);
+	findReact: (msg, trigger) => { // from cache
+		if (!allReacts) return null;
+		if (!allReacts[msg.guild.id]) return null;
+		return allReacts[msg.guild.id].find((react) => {
+			return react.trigger === trigger;
+		});
 	},
-	replaceInCache: async function(guildID, trigger, content) {
-		const gr = this.allGuildReactions[guildID] || [];
-		gr.find(x => x.trigger == trigger).content = content;
+	findAllForGuild: (guild) => { // from cache
+		return allReacts[guild] || [];
+	},
+	addToCache: async function(toAdd) {
+		allReacts[toAdd.guild] = allReacts[toAdd.guild] || [];
+		allReacts[toAdd.guild].push({trigger: toAdd.trigger, content: toAdd.content});
+	},
+	removeFromCache: async function(toRemove) {
+		allReacts[toRemove.guild] = allReacts[toRemove.guild] || [];
+		allReacts[toRemove.guild].splice(allReacts[toRemove.guild].findIndex((reaction) => reaction.trigger === toRemove.trigger), 1);
+	},
+	editInCache: async function(toEdit) {
+		allReacts[toEdit.guild] = allReacts[toEdit.guild] || [];
+		allReacts[toEdit.guild].find((reaction) => reaction.trigger === toEdit.trigger).content = toEdit.content;
 	},
 	buildReactCache: async function(guildArray, shardID) {
-		const temp = {};
-		return guildReacts.findAll()
-			.then((returnedData) => {
-				returnedData.forEach(i => temp[i.guild] = JSON.parse(i.reactObjects));
-				return;
-			})
-			.then(() => {
-				guildArray.forEach((id) => {
-					this.allGuildReactions[id] = temp[id];
-				});
-			})
-			.then(() => console.log(`[Shard ${shardID}] Cached reactions for ${guildArray.length} guilds!`));
-	},
-	appendToReacts: async function(msg, reactObject) {
-		return this.getReacts(msg).then((reactArray) => {
-			reactArray.push(reactObject);
-			this.setReacts(msg, reactArray);
+		return reacts.findAll({
+			where: {
+				guild: {
+					[Op.or]: guildArray,
+				},
+			},
+		}).then((returnedData) => {
+			let count = 0;
+			returnedData.forEach((reaction) => {
+				if (!allReacts[reaction.guild]) allReacts[reaction.guild] = [];
+				allReacts[reaction.guild].push({ trigger: reaction.trigger, content: reaction.content });
+				count += 1;
+			});
+			return count;
 		});
 	},
 };

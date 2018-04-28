@@ -1,6 +1,6 @@
 
 const {Command} = require('discord.js-commando');
-const permissions = require('../../utils/models/permissions.js');
+const GatewayCommand = require('../../utils/classes/GatewayCommand.js');
 
 module.exports = class ShardsCommand extends Command {
 	constructor(client) {
@@ -14,17 +14,14 @@ module.exports = class ShardsCommand extends Command {
 	}
 
 	async run(msg, args) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
-		return this.client.shard.broadcastEval(
-			`({
-				id: this.shard.id,
-				totalMembers: this.guilds.map((g) => g.memberCount).reduce((a, b) => a + b, 0),
-				totalGuilds: this.guilds.size,
-				totalChannels: this.channels.size,
-			})`
-		).then((data) => {
+		return this.client.gateway.sendMessage(new GatewayCommand(
+			this.client.shard.count,
+			this.client.shard.id,
+			'shardStats',
+			[],
+		)).then((data) => {
 			const message = ['```md\n#Shard          Members          Guilds          Channels'];
-			let totals = {
+			const totals = {
 				Members: 0,
 				Guilds: 0,
 				Channels: 0,

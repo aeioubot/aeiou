@@ -1,3 +1,4 @@
+const GatewayCommand = require('../../utils/classes/GatewayCommand.js');
 const TOTAL_CACHE_COUNT = 10;
 const DM_SERVER = '399999769159663628';
 const DM_SERVER_CHANNEL = '423201568549240842';
@@ -38,18 +39,25 @@ class DmManager {
 			embed.fields.push({name: 'Content', value: msg.content.substring(0, 1024)});
 			embed.fields.push({name: 'Content overflow', value: msg.content.substring(1024)});
 		}
-		this.client.gateway.callCommand('messageServer', {
-			guild: DM_SERVER,
-			channel: DM_SERVER_CHANNEL,
-			msg: 'New DM:',
-			msgOpts: {embed},
-		});
+		this.client.gateway.sendMessage(new GatewayCommand(
+			this.client.shard.count,
+			this.client.shard.id,
+			'messageServer',
+			[],
+			{
+				guild: DM_SERVER,
+				channel: DM_SERVER_CHANNEL,
+				msg: 'New DM:',
+				opts: {embed},
+			},
+			null,
+		));
 	}
 
 	async reply(replyID, content, attachment) {
 		const replyMsg = this.messages.find((m) => replyID == m.replyID);
 		if (!replyMsg) return false;
-		return replyMsg.reply(content.replace('{s}', PERM_SERVER_INVITE), attachment ? {embed: {image: {url: attachment}}} : '').then(() => true);
+		return replyMsg.reply(content.replace('{s}', PERM_SERVER_INVITE), attachment.image ? {embed: {image: {url: attachment.image}}} : '').then(() => true);
 	}
 }
 

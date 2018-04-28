@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const permissions = require('../../utils/models/permissions.js');
+const GatewayCommand = require('../../utils/classes/GatewayCommand.js');
 
 module.exports = class ReplyCommand extends Command {
 	constructor(client) {
@@ -29,19 +29,26 @@ module.exports = class ReplyCommand extends Command {
 	}
 
 	hasPermission(msg) {
-		return (this.client.isOwner(msg.author) || ['87723984799399936', '154353509062541313'].includes(msg.author.id));
+		return (this.client.isOwner(msg.author) || ['87723984799399936', '154353509062541313', '158188142124335104'].includes(msg.author.id));
 	}
 
 	async run(msg, { id, content }) {
-		return this.client.shard.broadcastEval(`
-			try {
-				if (this.dmManager.messages.find((m) => ${id} == m.replyID)) {
-					this.dmManager.reply('${id}', '${content.replace(/\n/g, '\\n').replace(/'/g, '\\\'')}', '${msg.attachments.first() ? msg.attachments.first().url : ''}');
-					true;
-				} else {false;}
-			} catch (e) {
-				false;
-			}
-		`).then((b) => b.some((l) => l) ? msg.react('✅') : msg.react('❌')).then(() => undefined);
+		if (!content && !(msg.attachments.first() && msg.attachments.first().height)) return msg.say('You must include content or an image.');
+		const remoteMsg = {
+			replyID: id,
+			msg: content,
+			opts: {
+				image: msg.attachments.first() && msg.attachments.first().height ? msg.attachments.first().url : null,
+			},
+		};
+
+		return this.client.gateway.sendMessage(new GatewayCommand(
+			this.client.shard.count,
+			this.client.shard.id,
+			'acceptDM',
+			[0],
+			remoteMsg,
+			null,
+		)).then((b) => b.some((l) => l) ? msg.react('✅') : msg.react('❌')).then(() => undefined);
 	}
 };

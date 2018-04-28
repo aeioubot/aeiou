@@ -29,6 +29,10 @@ module.exports = class IgnoreCommand extends Command {
 			});
 		}
 		if (!ignoredChannels.includes(msg.channel.id)) {
+			msg.guild.members.map(m => {
+				if (m.currentSearch) m.currentSearch.stop();
+				delete m.currentSearch;
+			});
 			ignoredChannels.push(msg.channel.id);
 			return provider.set(msg.guild.id, 'ignoredChannels', ignoredChannels).then(() => {
 				msg.say('I\'m no longer listening to this channel.').then((msg) => msg.delete(3000));

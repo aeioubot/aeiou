@@ -15,13 +15,17 @@ function upify(msgContent) {
 module.exports = {
 	creact: async (msg) => {
 		if (msg.author.bot || msg.channel.type != 'text' || msg.client.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id)) return;
-		const reactionObjects = reactDB.allGuildReactions[msg.guild.id] || [];
+
 		let markdownStart = '';
 		for (let i = 0; msg.content[i] === msg.content.split('').reverse().join('')[i] && '`*_~'.includes(msg.content[i]); i++) markdownStart += msg.content[i];
-		let messageContent = msg.content.substr(markdownStart.length, msg.content.length - (2 * markdownStart.length));
-		let toSay = reactionObjects.find((reactObject) => messageContent.toLowerCase() === reactObject.trigger);
+		const messageContent = msg.content.substr(markdownStart.length, msg.content.length - (2 * markdownStart.length));
+
+		const toSay = reactDB.findAllForGuild(msg.guild.id).find((reaction) => {
+			return reaction.trigger === messageContent.toLowerCase();
+		});
+
 		if (toSay) {
-			let reactContent = (messageContent === upify(messageContent) && toSay.trigger !== upify(toSay.trigger)) ? toSay.content.toUpperCase() : toSay.content;
+			const reactContent = (messageContent === upify(messageContent) && toSay.trigger !== upify(toSay.trigger)) ? toSay.content.toUpperCase() : toSay.content;
 			return msg.channel.send(markdownStart + reactContent + markdownStart.split('').reverse().join(''));
 		}
 	},
@@ -58,7 +62,7 @@ module.exports = {
 			})
 			.catch((e) => {
 				if (e.message == 'Reaction blocked') return;
-				let m = msg.client.provider.get(msg.guild.id, 'noSeedChannels', []);
+				const m = msg.client.provider.get(msg.guild.id, 'noSeedChannels', []);
 				m.push(msg.channel.id);
 				msg.client.provider.set(
 					msg.guild.id,

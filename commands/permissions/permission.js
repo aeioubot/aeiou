@@ -18,11 +18,21 @@ module.exports = class PermissionCommand extends Command {
 					key: 'action',
 					prompt: 'Please specify allow, deny or show.',
 					type: 'string',
+					validate: (s) => {
+						if (!s) return false;
+						return ['allow', 'deny', 'show'].includes(s.toLowerCase());
+					},
+					parse: (s) => s.toLowerCase(),
 				}, {
 					key: 'command',
 					prompt: 'Please specify the command.',
 					type: 'string',
 					default: '',
+					validate: (value, msg, currArg, prevArgs) => {
+						if (prevArgs.option === 'list') return true;
+						return value;
+					},
+					parse: (s) => s.toLowerCase(),
 				}, {
 					key: 'targetType',
 					prompt: 'Please specify the type.', // user, role, channel, guild

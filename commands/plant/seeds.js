@@ -3,7 +3,7 @@ const permissions = require('../../utils/models/permissions.js');
 const plants = require('../../utils/models/plants.js');
 
 function componentToHex(c) {
-	let hex = c.toString(16);
+	const hex = c.toString(16);
 	return hex.length == 1 ? '0' + hex : hex;
 }
 
@@ -63,7 +63,7 @@ module.exports = class SeedsCommand extends Command {
 		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const plantClass = await plants.getPlant(msg);
 		if (seedNumber !== 0 && !seedNumber) {
-			let textContent = ['The seeds you own are:', '```json'];
+			const textContent = ['The seeds you own are:', '```json'];
 			plantClass.getPlantData().seeds.forEach((seed, index) => {
 				textContent.push(`[${index}]  ${seed.name}`);
 			});

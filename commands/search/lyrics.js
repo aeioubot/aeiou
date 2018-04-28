@@ -24,9 +24,9 @@ module.exports = class LyricsCommand extends Command {
 
 	async run(msg, {query}) {
 		if (msg.member.currentSearch && !msg.member.currentSearch.ended) msg.member.currentSearch.stop();
-		let sayFunction = async (resultsArray) => {
+		const sayFunction = async (resultsArray) => {
 			try {
-				let targetResult = resultsArray.splice(0, 1)[0].result;
+				const targetResult = resultsArray.splice(0, 1)[0].result;
 				const embed = {
 					color: 0xFFFF64,
 					title: `${targetResult.primary_artist.name} - ${targetResult.title}`,
@@ -42,7 +42,7 @@ module.exports = class LyricsCommand extends Command {
 		};
 		return request(`https://api.genius.com/search?access_token=${require('../../secure.json').genius}&q=${query}`, {json: true})
 			.then(async (d) => {
-				let test = d.response.hits.filter((e) => e.result.primary_artist.is_verified);
+				const test = d.response.hits.filter((e) => e.result.primary_artist.is_verified);
 				sayFunction(test.length == 0 ? d.response.hits : test);
 			})
 			.catch((e) => msg.say('I didn\'t find a song by that title, try another.'));

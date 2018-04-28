@@ -32,7 +32,7 @@ module.exports = class YoutubeCommand extends Command {
 	async run(msg, { query }) {
 		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		if (msg.member.currentSearch && !msg.member.currentSearch.ended) msg.member.currentSearch.stop();
-		let sayResult = async (data) => {
+		const sayResult = async (data) => {
 			try {
 				await msg.say('Type "next" for the next search result.', {embed: {
 					title: `Image result for "${query}"`,

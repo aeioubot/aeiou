@@ -40,7 +40,8 @@ module.exports = class CReactCommand extends Command {
 					prompt: 'What should be said in response to the trigger?',
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
-						if (prevArgs.option === 'list' || 'remove') return true;
+						if (prevArgs.option === 'list' || prevArgs.option === 'remove') return true;
+						if (prevArgs.option === 'add' && !value) return false;
 						return value && value.length > 1;
 					},
 				},

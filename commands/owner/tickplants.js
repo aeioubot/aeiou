@@ -1,5 +1,4 @@
 const {Command} = require('discord.js-commando');
-const permissions = require('../../utils/models/permissions.js');
 const plants = require('../../utils/models/plants.js');
 
 module.exports = class TickPlantsCommand extends Command {

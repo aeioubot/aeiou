@@ -40,6 +40,7 @@ module.exports = class CReactCommand extends Command {
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
 						if (prevArgs.option === 'list' || prevArgs.option === 'remove') return true;
+						if (prevArgs.option === 'add' && !value) return false;
 						return value && value.length > 1;
 					},
 				},

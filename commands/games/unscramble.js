@@ -62,7 +62,7 @@ module.exports = class UnscrambleCommand extends Command {
 			msg.guild.unscrambleRunning = false;
 			return msg.say('Inactivity, game ending.');
 		}
-		for (let player in score) {
+		for (const player in score) {
 			if (score[player] >= maxPoints) {
 				msg.guild.unscrambleRunning = false;
 				return msg.say(`${msg.guild.members.get(player).displayName} has reached ${maxPoints} points and won!\n`);

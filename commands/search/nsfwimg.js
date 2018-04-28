@@ -30,7 +30,7 @@ module.exports = class YoutubeCommand extends Command {
 
 	async run(msg, {query}) {
 		if (msg.member.currentSearch && !msg.member.currentSearch.ended) msg.member.currentSearch.stop();
-		let sayResult = async (data) => {
+		const sayResult = async (data) => {
 			try {
 				await msg.say('Type "next" for the next search result.', {embed: {
 					title: `Image result for "${query}"`,

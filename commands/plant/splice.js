@@ -60,7 +60,7 @@ module.exports = class SpliceCommand extends Command {
 		const firstSeedObject = userPlant.getPlantData().seeds[seedOne];
 		const secondSeedObject = userPlant.getPlantData().seeds[seedTwo];
 		const randomWord = commonWords.randomWord();
-		let randomScrambleSegment = randomWord.split('').splice(1, randomWord.length-2);
+		const randomScrambleSegment = randomWord.split('').splice(1, randomWord.length-2);
 		shuffle(randomScrambleSegment);
 		randomScrambleSegment.unshift(randomWord.charAt(0) + '-');
 		randomScrambleSegment.push('-' + randomWord.charAt(randomWord.length-1));

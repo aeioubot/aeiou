@@ -29,7 +29,7 @@ module.exports = class ShopCommand extends Command {
 		msg.say(allItemsMessage.join('\n'));
 		const itemSelection = msg.channel.createMessageCollector((m) => m.author.id === msg.author.id && m.channel.id == msg.channel.id, {maxMatches: 1, time: 30000});
 		itemSelection.on('collect', (collectedMessage) => {
-			let classIndex = parseInt(collectedMessage.cleanContent.replace(/[^0-9]/gi, ''));
+			const classIndex = parseInt(collectedMessage.cleanContent.replace(/[^0-9]/gi, ''));
 			if (classIndex < Object.keys(items).length) {
 				/* eslint-disable-next-line */
 				const itemClass = new allClasses[classIndex];
@@ -51,7 +51,7 @@ module.exports = class ShopCommand extends Command {
 						},
 					],
 				};
-				let affordable = userPlant.getPlantData().leaves >= itemClass.cost;
+				const affordable = userPlant.getPlantData().leaves >= itemClass.cost;
 				if (!affordable) return msg.say('You don\'t have enough leaves to buy this item, but feel free to look.', { embed });
 				msg.say('Is this the item you would like to purchase? `Y/N`', { embed }).then(() => {
 					const buyConfirm = msg.channel.createMessageCollector((m) =>
@@ -62,7 +62,7 @@ module.exports = class ShopCommand extends Command {
 							m.cleanContent.substring(0, 1).toLowerCase() == 'y'
 						),
 						/* eslint-disable-next-line */
-						{maxMatches: 1, time: 30000}
+					{maxMatches: 1, time: 30000}
 					);
 					buyConfirm.on('collect', (buyOrNot) => {
 						const buying = buyOrNot.cleanContent.substring(0, 1).toLowerCase() == 'y' ? true : false;

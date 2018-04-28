@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando');
 const plants = require('../../utils/models/plants.js');
 
 function componentToHex(c) {
-	let hex = c.toString(16);
+	const hex = c.toString(16);
 	return hex.length == 1 ? '0' + hex : hex;
 }
 
@@ -61,7 +61,7 @@ module.exports = class SeedsCommand extends Command {
 	async run(msg, {seedNumber}) {
 		const plantClass = await plants.getPlant(msg);
 		if (seedNumber !== 0 && !seedNumber) {
-			let textContent = ['The seeds you own are:', '```json'];
+			const textContent = ['The seeds you own are:', '```json'];
 			plantClass.getPlantData().seeds.forEach((seed, index) => {
 				textContent.push(`[${index}]  ${seed.name}`);
 			});

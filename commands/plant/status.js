@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando');
 const plants = require('../../utils/models/plants.js');
 
 function componentToHex(c) {
-	let hex = c.toString(16);
+	const hex = c.toString(16);
 	return hex.length == 1 ? '0' + hex : hex;
 }
 
@@ -105,7 +105,7 @@ module.exports = class StatusCommand extends Command {
 
 	async run(msg, {notMe}) {
 		if (notMe.id == this.client.user.id) {
-			let embed = {
+			const embed = {
 				title: 'W̷̝͍̜̩̲̣͓̝͟h̵̢͉̘͍͟a͏̬̯̯̳t̟̭̝̙̀ ̸͔̙̯͎͍̹̗g̸͏̼̯̩̭̠̟͚r̵̲̟̕͘e̷̙̼͓͚̬e̛̦̖̤̺͚͖͓̣͠n̶͔̤̭̕e͍̼͇̰̖̫̤r̹̩̲̮̙̩̰͠ỳ͇̺̘͘?̯̟̦̮̼͔̟͡',
 				description: 'AEIOU NEEDS NO PLANT, FOR AEIOU IS **ALL** THAT IS PLANT.',
 				color: 0xFF0000,

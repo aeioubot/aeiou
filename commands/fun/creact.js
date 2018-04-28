@@ -16,22 +16,32 @@ module.exports = class CReactCommand extends Command {
 			args: [
 				{
 					key: 'option',
-					prompt: 'Would you like to add or remove a custom reaction, or list available ones?',
+					prompt: 'Would you like to `add`, `remove`, or `list` a custom reaction?',
 					type: 'string',
-					default: '',
+					validate: (s) => {
+						if (!s) return false;
+						return ['add', 'remove', 'list'].includes(s.toLowerCase());
+					},
+					parse: (s) => s.toLowerCase(),
 				},
 				{
 					key: 'trigger',
 					prompt: 'What is the trigger for the reaction?',
 					type: 'string',
 					parse: (trigger) => trigger.toLowerCase().trim().replace(/`|\*|_|~/gi, ''),
-					default: '', // Default empty arguments for trigger and content, so list doesn't ask for additional arguments.
+					validate: (value, msg, currArg, prevArgs) => {
+						if (prevArgs.option === 'list') return true;
+						return value && value.length > 1;
+					},
 				},
 				{
 					key: 'content',
 					prompt: 'What should be said in response to the trigger?',
 					type: 'string',
-					default: '',
+					validate: (value, msg, currArg, prevArgs) => {
+						if (prevArgs.option === 'list') return true;
+						return value && value.length > 1;
+					},
 				},
 			],
 		});
@@ -75,7 +85,7 @@ module.exports = class CReactCommand extends Command {
 			}).then(msg.say(`Reaction deleted, I'll no longer respond to **${trigger}**.`));
 		}
 		case 'list': { // Lists the triggers in the guild.
-			let reactArray = await reactDB.findAllForGuild(msg.guild.id);
+			const reactArray = await reactDB.findAllForGuild(msg.guild.id);
 			const triggerArray = reactArray.map((react) => {
 				return react.trigger;
 			});
@@ -83,7 +93,7 @@ module.exports = class CReactCommand extends Command {
 			return msg.say(`The list of custom reaction triggers in **${msg.guild.name}** is: \n\`\`\`${triggerArray.join(', ')}\`\`\``).catch(() => {
 				const page = parseInt(trigger) || 1;
 				if (page > Math.ceil(triggerArray.length/10)) return msg.say('That is not a valid page number.');
-				let formattedArray = [`Reaction triggers: page ${page} of ${Math.ceil(triggerArray.length/10)}:\n`];
+				const formattedArray = [`Reaction triggers: page ${page} of ${Math.ceil(triggerArray.length/10)}:\n`];
 				for (let i = page*10-9; i<page*10+1; i++) {
 					if (triggerArray[i-1]) formattedArray.push(`${i}. **${triggerArray[i-1]}**`);
 				}

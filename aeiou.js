@@ -67,6 +67,11 @@ Aeiou.dispatcher.addInhibitor(async msg => {
 	permissions.hasPermission(msg.command.name, msg);
 });
 
+Aeiou.dispatcher.addInhibitor(async msg => {
+	if (!msg.command) return false;
+	return permissions.hasPermission(msg.command.name, msg).then(r => !r);
+});
+
 process.on('message', (response) => {
 	Aeiou.gateway.processMessage(response);
 });

@@ -26,7 +26,7 @@ const permissions = db.define('permissions', {
 }, { timestamps: false, charset: 'utf8mb4' });
 
 module.exports = {
-	getList: async function (msg) {
+	getList: async function(msg) {
 		return permissions.findAll({
 			where: {
 				guild: msg.guild.id,
@@ -36,7 +36,7 @@ module.exports = {
 		});
 	},
 
-	setPermission: async function (msg, settings) {
+	setPermission: async function(msg, settings) {
 		permissions.find({
 			where: {
 				guild: msg.guild.id,
@@ -46,7 +46,6 @@ module.exports = {
 			},
 		}).then((r) => {
 			if (r) { // Permission exists --> update
-				console.log('r is yes');
 				permissions.update({
 					allow: settings.allow,
 				}, {
@@ -56,27 +55,20 @@ module.exports = {
 						target: settings.target || 'guild',
 						command: settings.command,
 					},
-				}).then((created) => {
-					console.log('created:', created);
-					permissions.all().then(r => console.log(r.map(x => x.dataValues)));
 				});
 			} else {
-				console.log('r is no');
 				permissions.upsert({
 					guild: msg.guild.id,
 					targetType: settings.targetType || 'guild',
 					target: settings.target || 'guild',
 					command: settings.command,
 					allow: settings.allow,
-				}).then((created) => {
-					console.log('created:', created);
-					permissions.all().then(r => console.log(r.map(x => x.dataValues)));
 				});
 			}
 		});
 	},
 
-	clearPermission: async function (msg, settings) {
+	clearPermission: async function(msg, settings) {
 		permissions.destroy({
 			where: {
 				guild: msg.guild.id,
@@ -87,16 +79,16 @@ module.exports = {
 		});
 	},
 
-	hasPermission: async function (command, msg) {
+	hasPermission: async function(command, msg) {
 		return permissions.findAll({
 			where: {
 				command: command,
 				guild: msg.guild.id,
 			},
 		}).then((r) => {
-			let perms = r.map((p) => p.dataValues);
+			const perms = r.map((p) => p.dataValues);
 			for (let i = 0; i < perms.length; i++) {
-				let perm = perms[i];
+				const perm = perms[i];
 				if (perm.targetType === 'user') {
 					if (perm.target == msg.author.id) {
 						// msg.say((perm.allow ? 'ALLOW' : 'DENY') + ' for USER');
@@ -105,7 +97,7 @@ module.exports = {
 				}
 			};
 			for (let i = 0; i < perms.length; i++) {
-				let perm = perms[i];
+				const perm = perms[i];
 				if (perm.targetType === 'role') {
 					if ([...msg.member.roles.keys()].indexOf(perm.target) > -1) {
 						// msg.say((perm.allow ? 'ALLOW' : 'DENY') + ' for ROLE');
@@ -114,7 +106,7 @@ module.exports = {
 				}
 			};
 			for (let i = 0; i < perms.length; i++) {
-				let perm = perms[i];
+				const perm = perms[i];
 				if (perm.targetType === 'channel') {
 					if (perm.target == msg.channel.id) {
 						// msg.say((perm.allow ? 'ALLOW' : 'DENY') + ' for CHANNEL');
@@ -123,7 +115,7 @@ module.exports = {
 				}
 			};
 			for (let i = 0; i < perms.length; i++) {
-				let perm = perms[i];
+				const perm = perms[i];
 				if (perm.targetType === 'guild') {
 					// msg.say((perm.allow ? 'ALLOW' : 'DENY') + ' for GUILD');
 					return perm.allow;
@@ -133,15 +125,14 @@ module.exports = {
 		});
 	},
 
-	showPermissions: async function (msg, command) {
+	showPermissions: async function(msg, command) {
 		return permissions.findAll({
 			where: {
 				command: command,
 				guild: msg.guild.id,
 			},
 		}).then((r) => {
-			let perms = r.map((p) => p.dataValues);
-			console.log(perms);
+			const perms = r.map((p) => p.dataValues);
 			return perms;
 		});
 	},

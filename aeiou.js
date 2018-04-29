@@ -7,6 +7,7 @@ const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
 const reacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
+const GatewayCommand = require('./utils/classes/GatewayCommand.js');
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -14,6 +15,7 @@ const Aeiou = new Commando.Client({
 	unknownCommandResponse: false,
 	disableEveryone: true,
 	messageCacheMaxSize: 50,
+	disabledEvents: ['TYPING_START'],
 });
 
 database.start(Aeiou.shard.id);
@@ -82,6 +84,73 @@ Aeiou.on('guildMemberAdd', (member) => {
 		}
 	});
 });
+
+Aeiou.on('guildCreate', (guild) => {
+	Aeiou.gateway.sendMessage(new GatewayCommand(
+		Aeiou.shard.count,
+		Aeiou.shard.id,
+		'messageServer',
+		[],
+		{
+			guild: '338414417006034947',
+			channel: '440263369656762379',
+			msg: '',
+			opts: {
+				embed: {
+					title: 'Server joined.',
+					color: 0x42f459,
+					thumbnail: {
+						url: guild.iconURL,
+					},
+					fields: [
+						{
+							name: 'Name',
+							value: guild.name,
+						},
+						{
+							name: 'Members',
+							value: guild.memberCount,
+						},
+					],
+				},
+			},
+		}
+	));
+});
+
+Aeiou.on('guildDelete', (guild) => {
+	Aeiou.gateway.sendMessage(new GatewayCommand(
+		Aeiou.shard.count,
+		Aeiou.shard.id,
+		'messageServer',
+		[],
+		{
+			guild: '338414417006034947',
+			channel: '440263369656762379',
+			msg: '',
+			opts: {
+				embed: {
+					title: 'Server left. :(',
+					color: 0xf71621,
+					thumbnail: {
+						url: guild.iconURL,
+					},
+					fields: [
+						{
+							name: 'Name',
+							value: guild.name,
+						},
+						{
+							name: 'Members',
+							value: guild.memberCount,
+						},
+					],
+				},
+			},
+		}
+	));
+});
+
 
 Aeiou.login(secure.token);
 

@@ -33,7 +33,7 @@ Aeiou.registry
 		['tag', 'Tag related commands'],
 		['misc', 'Miscellaneous commands'],
 		['owner', 'Owner commands'],
-		['permissions', 'Permission related commands'],
+		['permissions', 'Permission commands'],
 	])
 	.registerDefaultTypes()
 	.registerDefaultGroups()
@@ -64,12 +64,15 @@ Aeiou.dispatcher.addInhibitor(async (msg) => {
 
 Aeiou.dispatcher.addInhibitor(async msg => {
 	if (!msg.command) return false;
-	permissions.hasPermission(msg.command.name, msg);
+	// permissions.hasPermission(msg.command, msg);
 });
 
 Aeiou.dispatcher.addInhibitor(async msg => {
 	if (!msg.command) return false;
-	return permissions.hasPermission(msg.command.name, msg).then(r => !r);
+	return permissions.hasPermission(msg.command, msg).then(r => {
+		if (!r) msg.say('You do not have permission to use this command.');
+		return !r;
+	});
 });
 
 process.on('message', (response) => {

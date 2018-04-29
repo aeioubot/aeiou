@@ -1,5 +1,4 @@
 const {Command} = require('discord.js-commando');
-const permissions = require('../../utils/models/permissions.js');
 
 module.exports = class TagCommand extends Command {
 	constructor(client) {
@@ -24,7 +23,6 @@ module.exports = class TagCommand extends Command {
 	}
 
 	async run(msg, args) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const {tagname} = args;
 		if (msg.author.bot) return;
 		const provider = this.client.provider;

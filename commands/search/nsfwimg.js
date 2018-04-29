@@ -1,5 +1,4 @@
 const {Command} = require('discord.js-commando');
-const permissions = require('../../utils/models/permissions.js');
 const request = require('request-promise');
 
 module.exports = class YoutubeCommand extends Command {
@@ -30,7 +29,6 @@ module.exports = class YoutubeCommand extends Command {
 	}
 
 	async run(msg, { query }) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		if (msg.member.currentSearch && !msg.member.currentSearch.ended) msg.member.currentSearch.stop();
 		const sayResult = async (data) => {
 			try {

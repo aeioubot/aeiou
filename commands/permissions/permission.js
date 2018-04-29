@@ -37,18 +37,19 @@ module.exports = class PermissionCommand extends Command {
 					prompt: 'Please specify the command.',
 					type: 'string',
 					validate: (val, msg, currArg, prevArgs) => {
+						if (prevArgs.action === 'list') return true;
 						if (!val) return false;
-						//const groups = this.client.registry.findGroups(val);
-						//if (groups.length === 1) return true;
+						const groups = this.client.registry.findGroups(val);
+						if (groups.length === 1) return true;
 						const commands = this.client.registry.findCommands(val);
 						if (commands.length === 1) return true;
-						if (commands.length === 0/* && groups.length === 0*/) return false;
+						if (commands.length === 0 && groups.length === 0) return false;
 						return stripIndents`
 							${commands.length > 1 ? disambiguation(commands, 'commands') : ''}
-							${/*groups.length > 1 ? disambiguation(groups, 'groups') : ''*/''}
+							${groups.length > 1 ? disambiguation(groups, 'groups') : ''}
 						`;
 					},
-					parse: val => /*this.client.registry.findGroups(val)[0] ||*/ this.client.registry.findCommands(val)[0],
+					parse: val => this.client.registry.findGroups(val)[0] || this.client.registry.findCommands(val)[0],
 				}, {
 					key: 'targetType',
 					prompt: 'Please specify the type.', // user, role, channel, guild
@@ -69,43 +70,42 @@ module.exports = class PermissionCommand extends Command {
 						if (!value) return false;
 						let validated = false;
 						switch (prevArgs.targetType) {
-						case 'user':
-							return userType.validate(value, msg).then((x) => {
-								validated = x;
-								console.log(validated);
-								if (typeof validated === 'string' && validated.indexOf('Multiple users found') === 0) {
+							case 'user':
+								return userType.validate(value, msg).then((x) => {
+									validated = x;
+									console.log(validated);
+									if (typeof validated === 'string' && validated.indexOf('Multiple users found') === 0) {
+										currArg.reprompt = validated;
+										return false;
+									}
+									return validated;
+								});
+							case 'role':
+								validated = roleType.validate(value, msg);
+								if (typeof validated === 'string' && validated.indexOf('Multiple roles found') === 0) {
 									currArg.reprompt = validated;
 									return false;
 								}
 								return validated;
-							});
-						case 'role':
-							validated = roleType.validate(value, msg);
-							if (typeof validated === 'string' && validated.indexOf('Multiple roles found') === 0) {
-								currArg.reprompt = validated;
-								return false;
-							}
-							return validated;
-						case 'channel':
-							validated = channelType.validate(value, msg);
-							if (typeof validated === 'string' && validated.indexOf('Multiple channels found') === 0) {
-								currArg.reprompt = validated;
-								return false;
-							}
-							return validated;
+							case 'channel':
+								validated = channelType.validate(value, msg);
+								if (typeof validated === 'string' && validated.indexOf('Multiple channels found') === 0) {
+									currArg.reprompt = validated;
+									return false;
+								}
+								return validated;
 						}
 						return false;
 					},
 					parse: (value, msg, currArg, prevArgs) => {
 						if (['show', 'list'].includes(prevArgs.action)) return true;
 						switch (prevArgs.targetType) {
-						case 'user':
-							return userType.parse(value, msg.message);
-						case 'role':
-							console.log('rollll', roleType.parse(value, msg.message))
-							return roleType.parse(value, msg.message);
-						case 'channel':
-							return channelType.parse(value, msg.message);
+							case 'user':
+								return userType.parse(value, msg.message);
+							case 'role':
+								return roleType.parse(value, msg.message);
+							case 'channel':
+								return channelType.parse(value, msg.message);
 						}
 					},
 				},
@@ -115,11 +115,14 @@ module.exports = class PermissionCommand extends Command {
 
 	async run(msg, args) {
 		let { action, command, targetType, target } = args;
-		command = command.name;
-		if (action !== 'list' && ![...this.client.registry.commands.keys()].includes(command)) return msg.say(`**${command}** is not recognised. Please check that you are not using an alias.`);
+		console.log('Command ', command.constructor.name)
+		const commandType = command.constructor.name === 'CommandGroup' ? 'group' : 'command';
+		if (commandType === 'command') command = command.name;
+		else if (commandType === 'group') command = 'group:' + command.id;
+
+		// if (action !== 'list' && ![...this.client.registry.commands.keys()].includes(command)) return msg.say(`**${command}** is not recognised. Please check that you are not using an alias.`);
+		
 		if (action == 'deny' || action == 'allow') {
-			// if (!target && targetType !== 'guild') return msg.say('Please specify the target: a user, a role, or a channel');
-			console.log('target', target);
 			if (['user', 'role', 'channel'].includes(targetType)) target = target.id;
 			permissions.setPermission(msg, {
 				guild: msg.guild.id,
@@ -142,7 +145,7 @@ module.exports = class PermissionCommand extends Command {
 			});
 		} else if (action == 'show') {
 			permissions.showPermissions(msg, command).then((perms) => {
-				const res = [];
+				let res = [[], [], [], []];
 				for (let i = 0; i < perms.length; i++) {
 					const perm = perms[i];
 					if (perm.targetType === 'user') {
@@ -153,36 +156,34 @@ module.exports = class PermissionCommand extends Command {
 						} else {
 							memberTag = '[user left guild]';
 						}
-						res.push(`${(perm.allow ? 'Allow' : 'Deny')} for user: **${memberTag}** (ID \`${perm.target}\`)`);
+						res[0].push(`${(perm.allow ? 'Allow' : 'Deny')} for user: **${memberTag}** (ID \`${perm.target}\`)`);
 					}
 				};
-				for (let i = 0; i < perms.length; i++) {
-					const perm = perms[i];
-					if (perm.targetType === 'role') {
-						res.push(`${(perm.allow ? 'Allow' : 'Deny')} for role **${msg.guild.roles.get(perm.target).name}** (ID \`${perm.target}\`)`);
+				perms.forEach((perm) => {
+					switch (perm.targetType) {
+						case 'role':
+							res[1].push(`${(perm.allow ? 'Allow' : 'Deny')} for role **${msg.guild.roles.get(perm.target).name}** (ID \`${perm.target}\`)`);
+							break;
+						case 'channel':
+							res[2].push(`${(perm.allow ? 'Allow' : 'Deny')} in channel: <#${perm.target}> (${msg.guild.channels.get(perm.target).name})`);
+							break;
+						case 'guild':
+							res[3].push(`${(perm.allow ? 'Allow' : 'Deny')} in guild`);
+							break;
 					}
-				};
-				for (let i = 0; i < perms.length; i++) {
-					const perm = perms[i];
-					if (perm.targetType === 'channel') {
-						res.push(`${(perm.allow ? 'Allow' : 'Deny')} in channel: <#${perm.target}> (${msg.guild.channels.get(perm.target).name})`);
-					}
-				};
-				for (let i = 0; i < perms.length; i++) {
-					const perm = perms[i];
-					if (perm.targetType === 'guild') {
-						res.push(`${(perm.allow ? 'Allow' : 'Deny')} in guild`);
-					}
-				};
-				if (res.length > 0) msg.say('Here are the configured permissions for **' + command + '**:\n\n' + res.join('\n'));
+				});
+				res[0] = res[0].join('\n') + '\n';
+				res = res.reduce((acc, cur) => {
+					return acc + cur.join('\n') + '\n';
+				});
+				if (res.length > 0) msg.say('Here are the configured permissions for **' + command + '**:\n\n' + res);
 				else msg.say(`There are no configured permissions for **${command}**.`);
 			});
 		} else if (action == 'list') {
 			permissions.getList(msg).then((list) => {
+				if (list.length === 0) return msg.say('No permissions are set up yet in this guild.');
 				msg.say('There are permissions set up for: **' + list.join(', ') + '**');
 			});
-		} else {
-			msg.say('Unknown action! Please choose **allow**, **deny** or **show**.');
 		}
 	}
 };

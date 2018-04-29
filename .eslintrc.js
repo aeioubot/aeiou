@@ -13,7 +13,7 @@ module.exports = {
         "linebreak-style": 'off',
         "max-len": 'off',
         "require-jsdoc": 'off',
-        "indent": ["error", "tab"],
+        "indent": ["error", "tab", {"SwitchCase": 1}],
         "no-tabs": 'off',
         "no-unreachable": 'error',
         "no-multi-spaces": 'off',

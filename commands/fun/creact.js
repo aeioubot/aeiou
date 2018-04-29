@@ -1,5 +1,4 @@
 const {Command} = require('discord.js-commando');
-const permissions = require('../../utils/models/permissions.js');
 const reactDB = require('../../utils/models/creact.js');
 
 module.exports = class CReactCommand extends Command {
@@ -50,7 +49,6 @@ module.exports = class CReactCommand extends Command {
 	}
 
 	async run(msg, { option, trigger, content }) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		if (option === '') return msg.say('Please select an action.');
 		const crExists = reactDB.findReact(msg, trigger);
 		switch (option.toLowerCase()) {

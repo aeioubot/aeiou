@@ -1,5 +1,4 @@
 const {Command} = require('discord.js-commando');
-const permissions = require('../../utils/models/permissions.js');
 const plants = require('../../utils/models/plants.js');
 
 module.exports = class DigCommand extends Command {
@@ -17,7 +16,6 @@ module.exports = class DigCommand extends Command {
 	}
 
 	async run(msg, args) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		return plants.getPlant(msg).then((plantClass) => {
 			const color = Math.floor(Math.random() * 3);
 			const added = plantClass.addToSeeds({

@@ -1,5 +1,4 @@
 const {Command} = require('discord.js-commando');
-const permissions = require('../../utils/models/permissions.js');
 const plants = require('../../utils/models/plants.js');
 const commonWords = require('../../utils/commonWords.js');
 
@@ -56,7 +55,6 @@ module.exports = class SpliceCommand extends Command {
 	}
 
 	async run(msg, { seedOne, seedTwo }) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		const userPlant = await plants.getPlant(msg);
 		if (seedOne == seedTwo || !userPlant.seedExists(seedOne).success || !userPlant.seedExists(seedTwo).success) return msg.say('You provided invalid seed numbers. Please try again.');
 		const firstSeedObject = userPlant.getPlantData().seeds[seedOne];

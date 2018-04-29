@@ -1,5 +1,4 @@
 const { Command } = require('discord.js-commando');
-const permissions = require('../../utils/models/permissions.js');
 const { stripIndent } = require('common-tags');
 
 module.exports = class WizardCommand extends Command {
@@ -22,7 +21,6 @@ module.exports = class WizardCommand extends Command {
 	}
 
 	async run(msg, { echo }) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		if (echo.length > 24) {
 			return msg.say(`The wizard inhales–\n*:sparkles: "${echo}" :sparkles:*
                             __\\_/\\\\\\___

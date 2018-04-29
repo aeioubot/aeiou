@@ -1,5 +1,4 @@
 const {Command} = require('discord.js-commando');
-const permissions = require('../../utils/models/permissions.js');
 const {stripIndents} = require('common-tags');
 
 const definitions = {
@@ -47,7 +46,6 @@ module.exports = class BeginCommand extends Command {
 	}
 
 	async run(msg, { helpItem }) {
-		if (!await permissions.hasPermission(this.name, msg)) return msg.say(`You don't have permission to use this command.`);
 		if (!helpItem || !definitions[helpItem]) {
 			return msg.say(`You didn\'t provide a valid option, the available help items are: \`\`\`${Object.keys(definitions).join(',')}\`\`\``);
 		}

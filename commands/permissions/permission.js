@@ -1,8 +1,9 @@
 const { stripIndents } = require('common-tags');
 const { Command } = require('discord.js-commando');
 const permissions = require('../../utils/models/permissions.js');
-const channelType2 = require('discord.js-commando/src/types/channel.js');
-const channelType = new channelType2(this);
+const channelType = new (require('discord.js-commando/src/types/channel.js'))(this);
+const userType = new (require('discord.js-commando/src/types/user.js'))(this);
+const roleType = new (require('discord.js-commando/src/types/role.js'))(this);
 
 function disambiguation(items, label, property = 'name') {
 	const itemList = items.map(item => `"${(property ? item[property] : item).replace(/ /g, '\xa0')}"`).join(',   ');
@@ -35,14 +36,13 @@ module.exports = class PermissionCommand extends Command {
 					key: 'command',
 					prompt: 'Please specify the command.',
 					type: 'string',
-					default: '',
 					validate: (val, msg, currArg, prevArgs) => {
 						if (!val) return false;
 						//const groups = this.client.registry.findGroups(val);
 						//if (groups.length === 1) return true;
 						const commands = this.client.registry.findCommands(val);
 						if (commands.length === 1) return true;
-						if (commands.length === 0 && groups.length === 0) return false;
+						if (commands.length === 0/* && groups.length === 0*/) return false;
 						return stripIndents`
 							${commands.length > 1 ? disambiguation(commands, 'commands') : ''}
 							${/*groups.length > 1 ? disambiguation(groups, 'groups') : ''*/''}
@@ -52,10 +52,9 @@ module.exports = class PermissionCommand extends Command {
 				}, {
 					key: 'targetType',
 					prompt: 'Please specify the type.', // user, role, channel, guild
-					default: '',
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
-						if (['show', 'clear'].includes(prevArgs.action)) return true;
+						if (['show', 'list'].includes(prevArgs.action)) return true;
 						if (!value) return false;
 						return ['user', 'role', 'channel', 'guild'].includes(value.toLowerCase());
 					},
@@ -63,34 +62,51 @@ module.exports = class PermissionCommand extends Command {
 				}, {
 					key: 'target',
 					prompt: 'Please specify the target.',
-					default: '',
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
-						if (['show', 'clear'].includes(prevArgs.action)) return true;
+						if (['show', 'list'].includes(prevArgs.action)) return true;
 						if (prevArgs.targetType === 'guild') return true;
 						if (!value) return false;
+						let validated = false;
 						switch (prevArgs.targetType) {
 						case 'user':
-							currArg.label = 'user';
-							const targetUser = parse(value, msg);
-							if (!targetUser) return false;
-							return true;
+							return userType.validate(value, msg).then((x) => {
+								validated = x;
+								console.log(validated);
+								if (typeof validated === 'string' && validated.indexOf('Multiple users found') === 0) {
+									currArg.reprompt = validated;
+									return false;
+								}
+								return validated;
+							});
 						case 'role':
-							const match = value.match(/^<@&(\d+)>$|^(\d+)$/);
-							console.log(value);
-							console.log(match);
-							if (!match) return false;
-							const roleid = match.filter(m => !!m)[1];
-							const role = msg.guild.roles.find('id', roleid);
-							if (!role) return false;
-							return true;
+							validated = roleType.validate(value, msg);
+							if (typeof validated === 'string' && validated.indexOf('Multiple roles found') === 0) {
+								currArg.reprompt = validated;
+								return false;
+							}
+							return validated;
+						case 'channel':
+							validated = channelType.validate(value, msg);
+							if (typeof validated === 'string' && validated.indexOf('Multiple channels found') === 0) {
+								currArg.reprompt = validated;
+								return false;
+							}
+							return validated;
 						}
 						return false;
 					},
 					parse: (value, msg, currArg, prevArgs) => {
-						console.log('AAAAAAAAAA', [value, msg, currArg, prevArgs])
-						console.log(msg.command.argsCollector)
-						//s.toLowerCase()
+						if (['show', 'list'].includes(prevArgs.action)) return true;
+						switch (prevArgs.targetType) {
+						case 'user':
+							return userType.parse(value, msg.message);
+						case 'role':
+							console.log('rollll', roleType.parse(value, msg.message))
+							return roleType.parse(value, msg.message);
+						case 'channel':
+							return channelType.parse(value, msg.message);
+						}
 					},
 				},
 			],
@@ -102,19 +118,9 @@ module.exports = class PermissionCommand extends Command {
 		command = command.name;
 		if (action !== 'list' && ![...this.client.registry.commands.keys()].includes(command)) return msg.say(`**${command}** is not recognised. Please check that you are not using an alias.`);
 		if (action == 'deny' || action == 'allow') {
-			if (!target && targetType !== 'guild') return msg.say('Please specify the target: a user, a role, or a channel');
-			if (targetType === 'user') {
-				target = parse(target, msg).id;
-			} else if (targetType == 'role') {
-				target = target.match(/^<@&(\d+)>$|^(\d+)$/).filter(m => !!m)[1];
-			} else if (targetType == 'channel') {
-				const match = target.match(/^<#(\d+)>$|^(\d+)$/);
-				if (!match) return msg.say('Please specify the channel (channel link or ID).');
-				const channelid = match.filter(m => !!m)[1];
-				const channel = msg.guild.channels.find('id', channelid);
-				if (!channel) return msg.say('channel not found, please use a channel mention or ID.');
-				target = channelid;
-			}
+			// if (!target && targetType !== 'guild') return msg.say('Please specify the target: a user, a role, or a channel');
+			console.log('target', target);
+			if (['user', 'role', 'channel'].includes(targetType)) target = target.id;
 			permissions.setPermission(msg, {
 				guild: msg.guild.id,
 				targetType: targetType,
@@ -125,11 +131,14 @@ module.exports = class PermissionCommand extends Command {
 				msg.say(`Permission updated: **${action}** usage of **${command}** to **${targetType}**:**${target}**`);
 			});
 		} else if (action == 'clear') {
+			if (['user', 'role', 'channel'].includes(targetType)) target = target.id;
 			permissions.clearPermission(msg, {
 				guild: msg.guild.id,
 				targetType: targetType,
 				target: target,
 				command: command,
+			}).then(() => {
+				msg.say(`Permission to use **${command}** reset to default for ${target}`);
 			});
 		} else if (action == 'show') {
 			permissions.showPermissions(msg, command).then((perms) => {

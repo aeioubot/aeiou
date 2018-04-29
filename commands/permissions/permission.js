@@ -130,7 +130,18 @@ module.exports = class PermissionCommand extends Command {
 				command: command,
 				allow: [false, true][['deny', 'allow'].indexOf(action)],
 			}).then(() => {
-				msg.say(`Permission updated: **${action}** usage of **${command}** to **${targetType}**:**${target}**`);
+				let fancyTarget;
+				switch (targetType) {
+					case 'user':
+						fancyTarget = `<@${target}>`; break;
+					case 'role':
+						fancyTarget = `role **${msg.guild.roles.get(target).name}**`; break;
+					case 'channel':
+						fancyTarget = `<#${target}>`; break;
+					case 'guild':
+						fancyTarget = `guild`;
+				}
+				msg.say(`Permission updated: **${action}** usage of \`${command}\` to ${fancyTarget}`);
 			});
 		} else if (action == 'clear') {
 			if (['user', 'role', 'channel'].includes(targetType)) target = target.id;
@@ -221,31 +232,3 @@ module.exports = class PermissionCommand extends Command {
 		}
 	}
 };
-
-
-// From https://github.com/discordjs/Commando/blob/d372527e73b3378810d64ccae48f42a1a84ddbfb/src/types/user.js
-
-function parse(value, msg) {
-	const matches = value.match(/^(?:<@!?)?([0-9]+)>?$/);
-	if (matches) return msg.client.users.get(matches[1]) || null;
-	if (!msg.guild) return null;
-	const search = value.toLowerCase();
-	const members = msg.guild.members.filterArray(memberFilterInexact(search));
-	if (members.length === 0) return null;
-	if (members.length === 1) return members[0].user;
-	const exactMembers = members.filter(memberFilterExact(search));
-	if (exactMembers.length === 1) return exactMembers[0].user;
-	return null;
-}
-
-function memberFilterExact(search) {
-	return (mem) => mem.user.username.toLowerCase() === search ||
-		(mem.nickname && mem.nickname.toLowerCase() === search) ||
-		`${mem.user.username.toLowerCase()}#${mem.user.discriminator}` === search;
-}
-
-function memberFilterInexact(search) {
-	return (mem) => mem.user.username.toLowerCase().includes(search) ||
-		(mem.nickname && mem.nickname.toLowerCase().includes(search)) ||
-		`${mem.user.username.toLowerCase()}#${mem.user.discriminator}`.includes(search);
-}

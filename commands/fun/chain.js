@@ -27,6 +27,9 @@ module.exports = class ChainCommand extends Command {
 
 	async run(msg, {content}) {
 		const oldChain = await chainDB.getChain(msg);
+		if (new RegExp(`(${msg.guild.commandPrefix}|<@(!)?${this.client.user.id}>)( *)?chain`, 'gi').test(content)) {
+			return msg.say('Chain nesting is both dangerous and highly illegal.');
+		}
 		if (content.toLowerCase() == 'stats') {
 			const owner = msg.guild.members.get(oldChain.chainOwner);
 			if (oldChain.chainLength === 0) return msg.say('There is no longest chain for this server!');
@@ -59,7 +62,7 @@ module.exports = class ChainCommand extends Command {
 		}
 		let chainLength = 0;
 		const chainContributors = [];
-		await msg.say(`Chain started! Say \`${content}\` to continue the chain! \n(That includes you, ${msg.member.displayName}.)`);
+		await msg.say(`Chain started! To continue the chain, say:\n**"${content}"** \n(That includes you, ${msg.member.displayName}.)`);
 		let killer;
 		const collector = msg.channel.createMessageCollector((m) => m.author.id != this.client.user.id);
 		collector.on('collect', (m) => {

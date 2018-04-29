@@ -39,7 +39,7 @@ module.exports = {
 				guild: msg.guild.id,
 			},
 		}).then((r) => {
-			return [...new Set(r.map(perm => perm.dataValues.command))];
+			return r.map(perm => perm.dataValues);
 		});
 	},
 
@@ -87,7 +87,6 @@ module.exports = {
 	},
 
 	hasPermission: async function (command, msg) {
-		console.log('azzzza', command)
 		return permissions.findAll({
 			where: {
 				[Op.or]: [{
@@ -105,7 +104,6 @@ module.exports = {
 			perms.sort((a, b) => {
 				return orderOfImportance.indexOf(a.targetType) - orderOfImportance.indexOf(b.targetType);
 			});
-			console.log('aa')
 			const permTypes = [
 				perms.filter(p => p.command !== '*' && p.command.indexOf('group:') === -1),
 				perms.filter(p => p.command.indexOf('group:') === 0),

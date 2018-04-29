@@ -106,6 +106,12 @@ Aeiou.on('guildCreate', (guild) => {
 						{
 							name: 'Name',
 							value: guild.name,
+							inline: true,
+						},
+						{
+							name: 'Owner',
+							value: guild.owner.user.tag,
+							inline: true,
 						},
 						{
 							name: 'Members',
@@ -139,6 +145,12 @@ Aeiou.on('guildDelete', (guild) => {
 						{
 							name: 'Name',
 							value: guild.name,
+							inline: true,
+						},
+						{
+							name: 'Owner',
+							value: guild.owner.user.tag,
+							inline: true,
 						},
 						{
 							name: 'Members',

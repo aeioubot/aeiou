@@ -1,4 +1,5 @@
-const {Command} = require('discord.js-commando');
+const { Command } = require('discord.js-commando');
+const permissions = require('../../utils/models/permissions.js');
 
 module.exports = class IgnoreCommand extends Command {
 	constructor(client) {
@@ -18,6 +19,31 @@ module.exports = class IgnoreCommand extends Command {
 	}
 
 	async run(msg) {
+		const x = await permissions.findPermissions({
+			targetType: 'channel',
+			target: msg.channel.id,
+			command: '*',
+			guild: msg.guild.id,
+		});
+		if (x) {
+			permissions.defaultPermission(msg, {
+				targetType: 'channel',
+				target: msg.channel.id,
+				command: '*',
+			}).then(() => {
+				msg.say('I\'m L I S T E N')
+			});
+		} else {
+			permissions.setPermission(msg, {
+				targetType: 'channel',
+				target: msg.channel.id,
+				command: '*',
+				allow: false,
+			}).then(() => {
+				msg.say('I\'m IGNORING!!!!!')
+			});
+		}
+		return;
 		const provider = this.client.provider;
 		const ignoredChannels = provider.get(msg.guild.id, 'ignoredChannels', []);
 		if (ignoredChannels.includes(msg.channel.id)) {

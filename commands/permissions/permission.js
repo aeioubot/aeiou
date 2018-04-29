@@ -29,7 +29,7 @@ module.exports = class PermissionCommand extends Command {
 					type: 'string',
 					validate: (s) => {
 						if (!s) return false;
-						return ['allow', 'deny', 'show', 'clear', 'list', 'showall'].includes(s.toLowerCase());
+						return ['allow', 'deny', 'show', 'clear', 'list', 'showall', 'default'].includes(s.toLowerCase());
 					},
 					parse: (s) => s.toLowerCase(),
 				}, {
@@ -38,10 +38,14 @@ module.exports = class PermissionCommand extends Command {
 					type: 'string',
 					validate: (val, msg, currArg, prevArgs) => {
 						if (val === '*') return true;
-						if (['list', 'showall'].includes(prevArgs.action)) return true;
+						if (['list', 'showall', 'show'].includes(prevArgs.action)) return true;
 						if (!val) return false;
-						const groups = this.client.registry.findGroups(val);
-						if (groups.length === 1) return true;
+						let groups = [];
+						if (val.indexOf('group:') === 0) {
+							val = val.substr(6);
+							groups = this.client.registry.findGroups(val);
+							if (groups.length === 1) return true;
+						}
 						const commands = this.client.registry.findCommands(val);
 						if (commands.length === 1) return true;
 						if (commands.length === 0 && groups.length === 0) return false;
@@ -50,13 +54,13 @@ module.exports = class PermissionCommand extends Command {
 							${groups.length > 1 ? disambiguation(groups, 'groups') : ''}
 						`;
 					},
-					parse: val => val === '*' ? '*' : (this.client.registry.findGroups(val)[0] || this.client.registry.findCommands(val)[0]),
+					parse: val => val === '*' ? '*' : ((val.indexOf('group:') === 0 ? this.client.registry.findGroups(val.substr(6))[0] : false) || this.client.registry.findCommands(val)[0]),
 				}, {
 					key: 'targetType',
 					prompt: 'Please specify the type.', // user, role, channel, guild
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
-						if (['show', 'list', 'showall'].includes(prevArgs.action)) return true;
+						if (['show', 'list', 'showall', 'clear'].includes(prevArgs.action)) return true;
 						if (!value) return false;
 						return ['user', 'role', 'channel', 'guild'].includes(value.toLowerCase());
 					},
@@ -66,7 +70,7 @@ module.exports = class PermissionCommand extends Command {
 					prompt: 'Please specify the target.',
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
-						if (['show', 'list', 'showall'].includes(prevArgs.action)) return true;
+						if (['show', 'list', 'showall', 'clear'].includes(prevArgs.action)) return true;
 						if (prevArgs.targetType === 'guild') return true;
 						if (!value) return false;
 						let validated = false;
@@ -116,7 +120,7 @@ module.exports = class PermissionCommand extends Command {
 	async run(msg, args) {
 		let { action, command, targetType, target } = args;
 		let commandType;
-		if (command !== '*') {
+		if (command && command !== '*') {
 			commandType = command.constructor.name === 'CommandGroup' ? 'group' : 'command';
 			if (commandType === 'command') command = command.name;
 			else if (commandType === 'group') command = 'group:' + command.id;
@@ -130,105 +134,120 @@ module.exports = class PermissionCommand extends Command {
 				command: command,
 				allow: [false, true][['deny', 'allow'].indexOf(action)],
 			}).then(() => {
-				let fancyTarget;
-				switch (targetType) {
-					case 'user':
-						fancyTarget = `<@${target}>`; break;
-					case 'role':
-						fancyTarget = `role **${msg.guild.roles.get(target).name}**`; break;
-					case 'channel':
-						fancyTarget = `<#${target}>`; break;
-					case 'guild':
-						fancyTarget = `guild`;
-				}
-				msg.say(`Permission updated: **${action}** usage of \`${command}\` to ${fancyTarget}`);
+				msg.say(`Permission updated: **${action}** usage of \`${command}\` to ${fancyTarget(target, targetType, msg)}`);
 			});
-		} else if (action == 'clear') {
+		} else if (action == 'default') {
 			if (['user', 'role', 'channel'].includes(targetType)) target = target.id;
-			permissions.clearPermission(msg, {
+			permissions.defaultPermission(msg, {
 				guild: msg.guild.id,
 				targetType: targetType,
 				target: target,
 				command: command,
 			}).then(() => {
-				msg.say(`Permission to use **${command}** reset to default for ${target}`);
+				msg.say(`Permission to use \`${command}\` reset to default for ${fancyTarget(target, targetType, msg)}`);
 			});
-		} else if (action == 'show') {
-			permissions.showPermissions(msg, command).then((perms) => {
-				const res = [[], [], [], []];
-				let found = false;
-				perms.forEach((perm) => {
-					switch (perm.targetType) {
-						case 'user':
-							res[0].push(`${(perm.allow ? 'Allow' : 'Deny')} to <@${perm.target}>`);
-							found = true;
-							break;
-						case 'role':
-							res[1].push(`${(perm.allow ? 'Allow' : 'Deny')} to role **${msg.guild.roles.get(perm.target).name}**`);
-							found = true;
-							break;
-						case 'channel':
-							res[2].push(`${(perm.allow ? 'Allow' : 'Deny')} in <#${perm.target}>`);
-							found = true;
-							break;
-						case 'guild':
-							res[3].push(`${(perm.allow ? 'Allow' : 'Deny')} in guild`);
-							found = true;
-							break;
-					}
+		} else if (action == 'clear') {
+			permissions.clearPermission(msg, {
+				guild: msg.guild.id,
+				command: command,
+			}).then(() => {
+				msg.say(`All permissions set for \`${command}\` have been reset to default.`);
+			});
+		} else if (action == 'show' || action == 'list') {
+			if (command) {
+				permissions.showPermissions(msg, command).then((perms) => {
+					const res = [[], [], [], []];
+					let found = false;
+					perms.forEach((perm) => {
+						switch (perm.targetType) {
+							case 'user':
+								res[0].push(`${(perm.allow ? 'Allow' : 'Deny')} to ${fancyTarget(perm.target, perm.targetType, msg)}`);
+								found = true;
+								break;
+							case 'role':
+								res[1].push(`${(perm.allow ? 'Allow' : 'Deny')} to ${fancyTarget(perm.target, perm.targetType, msg)}`);
+								found = true;
+								break;
+							case 'channel':
+								res[2].push(`${(perm.allow ? 'Allow' : 'Deny')} in ${fancyTarget(perm.target, perm.targetType, msg)}`);
+								found = true;
+								break;
+							case 'guild':
+								res[3].push(`${(perm.allow ? 'Allow' : 'Deny')} in ${fancyTarget(perm.target, perm.targetType, msg)}`);
+								found = true;
+								break;
+						}
+					});
+					if (found) {
+						msg.say({
+							embed: {
+								title: 'Here are the configured permissions for *' + command + '*:',
+								description: res.map(x => x.join('\n')).join('\n').replace(/\n+/g, '\n'),
+								color: msg.guild.me.displayColor || 16743889,
+							},
+						});
+					} else msg.say(`There are no configured permissions for **${command}**.`);
 				});
-				if (found) {
+			} else {
+				permissions.getList(msg).then((list) => {
+					const fields = [];
+					const commands = {};
+					const orderOfImportance = ['user', 'role', 'channel', 'guild'];
+					list.sort((a, b) => {
+						return orderOfImportance.indexOf(a.targetType) - orderOfImportance.indexOf(b.targetType);
+					});
+					list.forEach(perm => {
+						if (!commands[perm.command]) commands[perm.command] = [];
+						let txt;
+						switch (perm.targetType) {
+							case 'user':
+								txt = `${['Deny', 'Allow'][+perm.allow]} to <@${perm.target}>`; break;
+							case 'role':
+								txt = `${['Deny', 'Allow'][+perm.allow]} to role '${msg.guild.roles.get(perm.target).name}'`; break;
+							case 'channel':
+								txt = `${['Deny', 'Allow'][+perm.allow]} in <#${perm.target}>`; break;
+							case 'guild':
+								txt = `${['Deny', 'Allow'][+perm.allow]} in guild`;
+						}
+						commands[perm.command].push(txt);
+					});
+					/* eslint-disable guard-for-in */
+					for (const cmd in commands) {
+						fields.push({
+							inline: true,
+							name: cmd,
+							value: commands[cmd].join('\n') || 'null???',
+						});
+					}
 					msg.say({
 						embed: {
-							title: 'Here are the configured permissions for *' + command + '*:',
-							description: res.map(x => x.join('\n')).join('\n'),
-						},
+							title: 'Permissions set up in ' + msg.guild.name,
+							fields: fields,
+							color: msg.guild.me.displayColor || 16743889,
+							description: fields.length === 0 ? 'No permissions are configured' : undefined,
+						}
 					});
-				} else msg.say(`There are no configured permissions for **${command}**.`);
-			});
-		} else if (action == 'list') {
+				});
+			}
+		} /*else if () {
 			permissions.getList(msg).then((list) => {
 				list = [...new Set(list.map(p => p.command))];
 				if (list.length === 0) return msg.say('No permissions are set up yet in this guild.');
 				msg.say('There are permissions set up for: **' + list.join(', ') + '**');
 			});
-		} else if (action == 'showall') {
-			permissions.getList(msg).then((list) => {
-				const fields = [];
-				const commands = {};
-				const orderOfImportance = ['user', 'role', 'channel', 'guild'];
-				list.sort((a, b) => {
-					return orderOfImportance.indexOf(a.targetType) - orderOfImportance.indexOf(b.targetType);
-				});
-				list.forEach(perm => {
-					if (!commands[perm.command]) commands[perm.command] = [];
-					let txt;
-					switch (perm.targetType) {
-						case 'user':
-							txt = `${['Deny', 'Allow'][+perm.allow]} to <@${perm.target}>`; break;
-						case 'role':
-							txt = `${['Deny', 'Allow'][+perm.allow]} to role '${msg.guild.roles.get(perm.target).name}'`; break;
-						case 'channel':
-							txt = `${['Deny', 'Allow'][+perm.allow]} in <#${perm.target}>`; break;
-						case 'guild':
-							txt = `${['Deny', 'Allow'][+perm.allow]} in guild`;
-					}
-					commands[perm.command].push(txt);
-				});
-				/* eslint-disable guard-for-in */
-				for (const cmd in commands) {
-					fields.push({
-						inline: true,
-						name: cmd,
-						value: commands[cmd].join('\n') || 'null???',
-					});
-				}
-				msg.say({embed: {
-					title: 'Permissions set up in ' + msg.guild.name,
-					color: 1127954,
-					fields: fields,
-				}});
-			});
-		}
+		}*/
 	}
 };
+
+function fancyTarget(target, targetType, msg) {
+	switch (targetType) {
+		case 'user':
+			return `<@${target}>`;
+		case 'role':
+			return `role **${msg.guild.roles.get(target).name}**`;
+		case 'channel':
+			return `<#${target}>`;
+		case 'guild':
+			return `guild`;
+	}
+}

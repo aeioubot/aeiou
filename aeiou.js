@@ -70,7 +70,15 @@ Aeiou.dispatcher.addInhibitor(async msg => {
 Aeiou.dispatcher.addInhibitor(async msg => {
 	if (!msg.command) return false;
 	return permissions.hasPermission(msg.command, msg).then(r => {
-		if (!r) msg.say('You do not have permission to use this command.');
+		console.log('r', r)
+		if (r === 'IGNORED') {
+			msg.react('🦆');
+			return true;
+		} else if (!r) {
+			msg.react('🚫');
+			return true;
+		}
+		// if (msg.command.name === 'ignore') return false;
 		return !r;
 	});
 });

@@ -32,14 +32,55 @@ const permissions = db.define('permissions', {
 	},
 }, { timestamps: false, charset: 'utf8mb4' });
 
+const permissionCache = {};
+/*
+{
+	guildID: [
+		perm,
+		perm,
+	]
+}
+*/
+
 module.exports = {
+	buildPermissionCache: async function(guildList) {
+		guildList.forEach(id => {
+			permissionCache[id] = [];
+		});
+		return permissions.findAll({
+			where: {
+				guild: {[Op.in]: guildList},
+			},
+		}).then(x => {
+			x = x.map(f => f.dataValues);
+			x.forEach(p => {
+				permissionCache[p.guild].push(p);
+			});
+			console.log(permissionCache);
+		});
+	},
+
 	getList: async function(msg) {
+		return permissionCache[msg.guild.id] || [];
 		return permissions.findAll({
 			where: {
 				guild: msg.guild.id,
 			},
 		}).then((r) => {
 			return r.map(perm => perm.dataValues);
+		});
+	},
+
+	findPermissions: async function(options) {
+		return permissionCache[options.guild].find((perm) => {
+			/* eslint-disable guard-for-in */
+			for (let opt in options) {
+				if (perm[opt] !== options[opt]) return false;
+			}
+			return true;
+		})
+		return permissions.find({
+			where: options,
 		});
 	},
 
@@ -75,7 +116,16 @@ module.exports = {
 		});
 	},
 
-	clearPermission: async function(msg, settings) {
+	clearPermission: async function (msg, settings) {
+		permissions.destroy({
+			where: {
+				guild: msg.guild.id,
+				command: settings.command,
+			},
+		});
+	},
+
+	defaultPermission: async function (msg, settings) {
 		permissions.destroy({
 			where: {
 				guild: msg.guild.id,
@@ -127,7 +177,8 @@ module.exports = {
 						case 'channel':
 							if (perm.targetType === 'channel') {
 								if (perm.target == msg.channel.id) {
-									return perm.allow;
+									if (perm.command === '*' && !perm.allow && msg.command.name !== 'ignore') return 'IGNORED';
+									if (msg.command.name !== 'ignore') return perm.allow;
 								}
 							}
 							break;

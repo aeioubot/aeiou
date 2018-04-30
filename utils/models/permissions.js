@@ -4,12 +4,6 @@ const Database = require('../../database.js');
 
 const db = Database.db;
 
-function test1(cmd) {
-	if (cmd === '*') return 2;
-	if (cmd.indexOf('group:') === 0) return 1;
-	return 0;
-}
-
 const permissions = db.define('permissions', {
 	guild: {
 		/* eslint-disable-next-line */
@@ -54,6 +48,12 @@ module.exports = {
 
 	getList: async function(msg) {
 		return permissionCache[msg.guild.id] || [];
+	},
+
+	showPermissions: async function(msg, command) {
+		return permissionCache[msg.guild.id].filter(p => {
+			return p.command === command;
+		});
 	},
 
 	findPermissions: async function(options) {
@@ -117,7 +117,7 @@ module.exports = {
 		});
 	},
 
-	clearPermission: async function (msg, settings) {
+	clearPermission: async function(msg, settings) {
 		for (let i = permissionCache[msg.guild.id].length - 1; i >= 0; i--) {
 			if (permissionCache[msg.guild.id][i].command === settings.command) permissionCache[msg.guild.id].splice(i, 1);
 		}
@@ -129,26 +129,27 @@ module.exports = {
 		});
 	},
 
-	defaultPermission: async function (msg, settings) {
+	defaultPermission: async function(msg, settings) {
 		permissionCache[msg.guild.id].splice(permissionCache[msg.guild.id].findIndex((perm) => {
 			for (const opt in settings) {
 				if (perm[opt] !== settings[opt] && opt !== 'allow') return false;
 			}
 			return true;
 		}), 1);
+		const where = {
+			guild: msg.guild.id,
+			targetType: settings.targetType,
+			command: settings.command,
+		};
+		if (settings.targetType !== 'guild') where.target = settings.target;
 		permissions.destroy({
-			where: {
-				guild: msg.guild.id,
-				targetType: settings.targetType,
-				target: settings.target,
-				command: settings.command,
-			},
+			where: where,
 		});
 	},
 
-	hasPermission: async function (command, msg) {
+	hasPermission: async function(command, msg) {
 		const perms = permissionCache[msg.guild.id].filter((p) => {
-			return (p.command === command.name || p.command === 'group:' + command.group.id || p.command === '*')
+			return (p.command === command.name || p.command === 'group:' + command.group.id || p.command === '*');
 		});
 		const orderOfImportance = ['user', 'role', 'channel', 'guild'];
 		perms.sort((a, b) => {
@@ -188,17 +189,5 @@ module.exports = {
 			}
 		}
 		return true;
-	},
-
-	showPermissions: async function(msg, command) {
-		return permissions.findAll({
-			where: {
-				command: command,
-				guild: msg.guild.id,
-			},
-		}).then((r) => {
-			const perms = r.map((p) => p.dataValues);
-			return perms;
-		});
 	},
 };

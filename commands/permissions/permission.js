@@ -226,7 +226,7 @@ module.exports = class PermissionCommand extends Command {
 							fields: fields,
 							color: msg.guild.me.displayColor || 16743889,
 							description: fields.length === 0 ? 'No permissions are configured' : undefined,
-						}
+						},
 					});
 				});
 			}

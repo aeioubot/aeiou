@@ -61,9 +61,10 @@ Aeiou.on('ready', () => {
 	if (Aeiou.shard.id == 0) Aeiou.dmManager = new (require('./utils/classes/DmManager.js'))(Aeiou);
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
 	if (dblEnabled) {
+		dbl.postStats(Aeiou.guilds.size, Aeiou.shard.id, Aeiou.shard.count);
 		setInterval(() => {
 			dbl.postStats(Aeiou.guilds.size, Aeiou.shard.id, Aeiou.shard.count);
-		}, 10 * 60 * 1000);
+		}, 15 * 60 * 1000); // 15 minutes
 	}
 });
 

@@ -18,9 +18,16 @@ module.exports = class PermissionCommand extends Command {
 			group: 'permissions',
 			memberName: 'permission',
 			description: 'Allow or deny command permissions to a user, role, channel or the entire guild.',
-			details: 'The order of importance (more to less) is: user, role, channel, guild. For example, if a command is allowed to [role], but denied to [user], the user will not be able to use it.',
-			examples: ['perms deny image guild', 'perms allow image channel #bot-commands', 'perms deny ping user @user#1234'],
-			format: '[allow|deny|show] <command> [user|role|channel|guild] <target>',
+			details: `The order of importance (more to less) is: user > role > channel > guild and command > group > *.
+For example, if a command is allowed to [role], but denied to [user], the user will not be able to use it.
+Likewise, if a command group (let's say "group:fun") is denied, but a single command (for example, "pacman") is allowed, all commands in the group are denied except for "pacman".`,
+			examples: ['perms deny image guild',
+				'perms allow image channel #bot-commands',
+				'perms deny group:fun user @user#1234',
+				'perms clear group:fun',
+				'perms default ping user @user#1234',
+			],
+			format: '[allow|deny|default|clear|show] <command|command group|*> [user|role|channel|guild] <target>',
 			guildOnly: true,
 			args: [
 				{
@@ -29,7 +36,7 @@ module.exports = class PermissionCommand extends Command {
 					type: 'string',
 					validate: (s) => {
 						if (!s) return false;
-						return ['allow', 'deny', 'show', 'clear', 'list', 'showall', 'default'].includes(s.toLowerCase());
+						return ['allow', 'deny', 'show', 'clear', 'list', 'default'].includes(s.toLowerCase());
 					},
 					parse: (s) => s.toLowerCase(),
 				}, {
@@ -38,7 +45,7 @@ module.exports = class PermissionCommand extends Command {
 					type: 'string',
 					validate: (val, msg, currArg, prevArgs) => {
 						if (val === '*') return true;
-						if (['list', 'showall', 'show'].includes(prevArgs.action)) return true;
+						if (['list', 'show'].includes(prevArgs.action)) return true;
 						if (!val) return false;
 						let groups = [];
 						if (val.indexOf('group:') === 0) {
@@ -60,7 +67,7 @@ module.exports = class PermissionCommand extends Command {
 					prompt: 'Please specify the type.', // user, role, channel, guild
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
-						if (['show', 'list', 'showall', 'clear'].includes(prevArgs.action)) return true;
+						if (['show', 'list', 'clear'].includes(prevArgs.action)) return true;
 						if (!value) return false;
 						return ['user', 'role', 'channel', 'guild'].includes(value.toLowerCase());
 					},
@@ -70,7 +77,7 @@ module.exports = class PermissionCommand extends Command {
 					prompt: 'Please specify the target.',
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
-						if (['show', 'list', 'showall', 'clear'].includes(prevArgs.action)) return true;
+						if (['show', 'list', 'clear'].includes(prevArgs.action)) return true;
 						if (prevArgs.targetType === 'guild') return true;
 						if (!value) return false;
 						let validated = false;

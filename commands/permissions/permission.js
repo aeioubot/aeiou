@@ -32,7 +32,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 			args: [
 				{
 					key: 'action',
-					prompt: 'Please specify allow, deny or show.',
+					prompt: 'Please specify the action: allow, deny, default, clear, or show',
 					type: 'string',
 					validate: (s) => {
 						if (!s) return false;
@@ -41,7 +41,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 					parse: (s) => s.toLowerCase(),
 				}, {
 					key: 'command',
-					prompt: 'Please specify the command.',
+					prompt: 'Please specify the command, group or `*`. Write `group:` before group names and use `*` to target all commands.',
 					type: 'string',
 					validate: (val, msg, currArg, prevArgs) => {
 						if (val === '*') return true;
@@ -64,7 +64,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 					parse: val => val === '*' ? '*' : ((val.indexOf('group:') === 0 ? this.client.registry.findGroups(val.substr(6))[0] : false) || this.client.registry.findCommands(val)[0]),
 				}, {
 					key: 'targetType',
-					prompt: 'Please specify the type.', // user, role, channel, guild
+					prompt: 'Please specify the type (user, role, channel or guild).', // user, role, channel, guild
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
 						if (['show', 'list', 'clear'].includes(prevArgs.action)) return true;

@@ -9,6 +9,10 @@ const reacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
 const permissions = require('./utils/models/permissions');
 const GatewayCommand = require('./utils/classes/GatewayCommand.js');
+const DBL = require('dblapi.js');
+
+const dblEnabled = secure.dblToken;
+const dbl = dblEnabled ? new DBL(secure.dblToken) : undefined;
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -56,6 +60,11 @@ Aeiou.on('ready', () => {
 	});
 	if (Aeiou.shard.id == 0) Aeiou.dmManager = new (require('./utils/classes/DmManager.js'))(Aeiou);
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
+	if (dblEnabled) {
+		setInterval(() => {
+			dbl.postStats(Aeiou.guilds.size, Aeiou.shard.id, Aeiou.shard.count);
+		}, 10 * 60 * 1000);
+	}
 });
 
 Aeiou.dispatcher.addInhibitor(async msg => {

@@ -32,7 +32,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 			args: [
 				{
 					key: 'action',
-					prompt: 'Please specify allow, deny or show.',
+					prompt: 'Would you like to `allow`, `deny`, or `list` permissions?',
 					type: 'string',
 					validate: (s) => {
 						if (!s) return false;
@@ -41,14 +41,13 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 					parse: (s) => s.toLowerCase(),
 				}, {
 					key: 'command',
-					prompt: 'Please specify the command.',
+					prompt: 'Which command would you like to change permissions for?',
 					type: 'string',
 					validate: (val, msg, currArg, prevArgs) => {
-						if (val === '*') return true;
-						if (['list', 'show'].includes(prevArgs.action)) return true;
+						if (val === '*' || ['list', 'show'].includes(prevArgs.action)) return true;
 						if (!val) return false;
 						let groups = [];
-						if (val.indexOf('group:') === 0) {
+						if (val.startsWith('group:')) {
 							val = val.substr(6);
 							groups = this.client.registry.findGroups(val);
 							if (groups.length === 1) return true;
@@ -64,7 +63,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 					parse: val => val === '*' ? '*' : ((val.indexOf('group:') === 0 ? this.client.registry.findGroups(val.substr(6))[0] : false) || this.client.registry.findCommands(val)[0]),
 				}, {
 					key: 'targetType',
-					prompt: 'Please specify the type.', // user, role, channel, guild
+					prompt: 'Who would you like to change permissions for? Please specify either `user`, `role`, `channel`, `guild`.', // user, role, channel, guild
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
 						if (['show', 'list', 'clear'].includes(prevArgs.action)) return true;
@@ -77,8 +76,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 					prompt: 'Please specify the target.',
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
-						if (['show', 'list', 'clear'].includes(prevArgs.action)) return true;
-						if (prevArgs.targetType === 'guild') return true;
+						if (['show', 'list', 'clear'].includes(prevArgs.action) || prevArgs.targetType === 'guild') return true;
 						if (!value) return false;
 						let validated = false;
 						switch (prevArgs.targetType) {
@@ -125,6 +123,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 	}
 
 	async run(msg, args) {
+		/* eslint-disable-next-line */
 		let { action, command, targetType, target } = args;
 		let commandType;
 		if (command && command !== '*') {
@@ -224,7 +223,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 						fields.push({
 							inline: true,
 							name: cmd,
-							value: commands[cmd].join('\n') || 'null???',
+							value: commands[cmd].join('\n'),
 						});
 					}
 					msg.say({
@@ -232,7 +231,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 							title: 'Permissions set up in ' + msg.guild.name,
 							fields: fields,
 							color: msg.guild.me.displayColor || 16743889,
-							description: fields.length === 0 ? 'No permissions are configured' : undefined,
+							description: fields.length === 0 ? 'No permissions are configured.' : undefined,
 						},
 					});
 				});

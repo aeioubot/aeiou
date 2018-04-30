@@ -85,7 +85,20 @@ Aeiou.on('guildMemberAdd', (member) => {
 	});
 });
 
-Aeiou.on('guildCreate', (guild) => {
+Aeiou.on('guildCreate', async (guild) => {
+	const totalGuilds = await Aeiou.gateway.sendMessage(new GatewayCommand(
+		Aeiou.shard.count,
+		Aeiou.shard.id,
+		'shardStats',
+		[],
+	)).then((data) => {
+		let totalGuilds = 0;
+		data.forEach((d, ind) => {
+			totalGuilds += d.totalGuilds;
+		});
+		return totalGuilds;
+	});
+
 	Aeiou.gateway.sendMessage(new GatewayCommand(
 		Aeiou.shard.count,
 		Aeiou.shard.id,
@@ -118,13 +131,29 @@ Aeiou.on('guildCreate', (guild) => {
 							value: guild.memberCount,
 						},
 					],
+					footer: {
+						text: 'Total guilds: ' + totalGuilds,
+					},
 				},
 			},
 		}
 	));
 });
 
-Aeiou.on('guildDelete', (guild) => {
+Aeiou.on('guildDelete', async (guild) => {
+	const totalGuilds = await Aeiou.gateway.sendMessage(new GatewayCommand(
+		Aeiou.shard.count,
+		Aeiou.shard.id,
+		'shardStats',
+		[],
+	)).then((data) => {
+		let totalGuilds = 0;
+		data.forEach((d, ind) => {
+			totalGuilds += d.totalGuilds;
+		});
+		return totalGuilds;
+	});
+
 	Aeiou.gateway.sendMessage(new GatewayCommand(
 		Aeiou.shard.count,
 		Aeiou.shard.id,
@@ -157,6 +186,9 @@ Aeiou.on('guildDelete', (guild) => {
 							value: guild.memberCount,
 						},
 					],
+					footer: {
+						text: 'Total guilds: ' + totalGuilds,
+					},
 				},
 			},
 		}

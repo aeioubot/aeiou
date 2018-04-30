@@ -42,7 +42,6 @@ module.exports = {
 			x.forEach(p => {
 				permissionCache[p.guild].push(p);
 			});
-			console.log(permissionCache);
 		});
 	},
 
@@ -78,8 +77,6 @@ module.exports = {
 			if (r) { // Permission exists --> update
 				const cached = permissionCache[msg.guild.id].find((perm) => {
 					/* eslint-disable guard-for-in */
-					console.log('SETTINGS', settings);
-					console.log('PERM', perm);
 					for (const opt in settings) {
 						if (perm[opt] !== settings[opt] && opt !== 'allow') return false;
 					}

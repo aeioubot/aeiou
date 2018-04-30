@@ -71,13 +71,12 @@ Aeiou.dispatcher.addInhibitor(async msg => {
 
 Aeiou.dispatcher.addInhibitor(async msg => {
 	if (!msg.command) return false;
-	// if (Aeiou.isOwner(msg.author.id)) return false;
+	if (Aeiou.isOwner(msg.author.id)) return false;
 	return permissions.hasPermission(msg.command, msg).then(r => {
 		if (r === 'IGNORED') {
-			msg.react('🦆');
 			return true;
 		} else if (!r) {
-			msg.react('🚫');
+			msg.react('🙅');
 			return true;
 		}
 		return !r;

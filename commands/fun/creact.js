@@ -31,7 +31,7 @@ module.exports = class CReactCommand extends Command {
 					parse: (trigger) => trigger.toLowerCase().trim().replace(/`|\*|_|~/gi, ''),
 					validate: (value, msg, currArg, prevArgs) => {
 						if (prevArgs.option === 'list') return true;
-						return value && value.length > 1;
+						return value && value.length >= 1;
 					},
 				},
 				{
@@ -41,7 +41,7 @@ module.exports = class CReactCommand extends Command {
 					validate: (value, msg, currArg, prevArgs) => {
 						if (prevArgs.option === 'list' || prevArgs.option === 'remove') return true;
 						if (prevArgs.option === 'add' && !value) return false;
-						return value && value.length > 1;
+						return value && value.length >= 1;
 					},
 				},
 			],

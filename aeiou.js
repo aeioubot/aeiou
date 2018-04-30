@@ -8,6 +8,7 @@ const donors = require('./utils/models/donor.js');
 const reacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
 const permissions = require('./utils/models/permissions');
+const GatewayCommand = require('./utils/classes/GatewayCommand.js');
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -15,6 +16,7 @@ const Aeiou = new Commando.Client({
 	unknownCommandResponse: false,
 	disableEveryone: true,
 	messageCacheMaxSize: 50,
+	disabledEvents: ['TYPING_START'],
 });
 
 database.start(Aeiou.shard.id);
@@ -104,6 +106,117 @@ Aeiou.on('guildMemberAdd', (member) => {
 		}
 	});
 });
+
+Aeiou.on('guildCreate', async (guild) => {
+	const totalGuilds = await Aeiou.gateway.sendMessage(new GatewayCommand(
+		Aeiou.shard.count,
+		Aeiou.shard.id,
+		'shardStats',
+		[],
+	)).then((data) => {
+		let totalGuilds = 0;
+		data.forEach((d, ind) => {
+			totalGuilds += d.totalGuilds;
+		});
+		return totalGuilds;
+	});
+
+	Aeiou.gateway.sendMessage(new GatewayCommand(
+		Aeiou.shard.count,
+		Aeiou.shard.id,
+		'messageServer',
+		[],
+		{
+			guild: '338414417006034947',
+			channel: '440263369656762379',
+			msg: '',
+			opts: {
+				embed: {
+					title: 'Server joined.',
+					color: 0x42f459,
+					thumbnail: {
+						url: guild.iconURL,
+					},
+					fields: [
+						{
+							name: 'Name',
+							value: guild.name,
+							inline: true,
+						},
+						{
+							name: 'Owner',
+							value: guild.owner.user.tag,
+							inline: true,
+						},
+						{
+							name: 'Members',
+							value: guild.memberCount,
+						},
+					],
+					footer: {
+						text: 'Total guilds: ' + totalGuilds,
+					},
+				},
+			},
+		}
+	));
+});
+
+Aeiou.on('guildDelete', async (guild) => {
+	const totalGuilds = await Aeiou.gateway.sendMessage(new GatewayCommand(
+		Aeiou.shard.count,
+		Aeiou.shard.id,
+		'shardStats',
+		[],
+	)).then((data) => {
+		let totalGuilds = 0;
+		data.forEach((d, ind) => {
+			totalGuilds += d.totalGuilds;
+		});
+		return totalGuilds;
+	});
+
+	Aeiou.gateway.sendMessage(new GatewayCommand(
+		Aeiou.shard.count,
+		Aeiou.shard.id,
+		'messageServer',
+		[],
+		{
+			guild: '338414417006034947',
+			channel: '440263369656762379',
+			msg: '',
+			opts: {
+				embed: {
+					title: 'Server left. :(',
+					color: 0xf71621,
+					thumbnail: {
+						url: guild.iconURL,
+					},
+					fields: [
+						{
+							name: 'Name',
+							value: guild.name,
+							inline: true,
+						},
+						{
+							name: 'Owner',
+							value: guild.owner.user.tag,
+							inline: true,
+						},
+						{
+							name: 'Members',
+							value: guild.memberCount,
+						},
+					],
+					footer: {
+						text: 'Total guilds: ' + totalGuilds,
+					},
+				},
+			},
+		}
+	));
+});
+
 
 Aeiou.login(secure.token);
 

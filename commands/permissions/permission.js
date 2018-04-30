@@ -124,6 +124,12 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 		});
 	}
 
+	hasPermission(msg) {
+		if (this.client.isOwner(msg.author)) return true;
+		if (msg.member.hasPermission('ADMINISTRATOR')) return true;
+		return 'only server administrators can use this command.';
+	}
+
 	async run(msg, args) {
 		/* eslint-disable-next-line */
 		let { action, command, targetType, target } = args;

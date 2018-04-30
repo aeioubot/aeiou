@@ -48,11 +48,13 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 						if (!val) return false;
 						let groups = [];
 						if (val.startsWith('group:')) {
-							val = val.substr(6);
-							groups = this.client.registry.findGroups(val);
+							const groupval = val.substr(6);
+							groups = this.client.registry.findGroups(groupval);
 							if (groups.length === 1) return true;
 						}
 						const commands = this.client.registry.findCommands(val);
+						console.log('commands', commands);
+						console.log('groups', groups);
 						if (commands.length === 1) return true;
 						if (commands.length === 0 && groups.length === 0) return false;
 						return stripIndents`

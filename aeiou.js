@@ -46,6 +46,7 @@ Aeiou.on('ready', () => {
 	reacts.buildReactCache(Array.from(Aeiou.guilds.keys()), Aeiou.shard.id).then(c => {
 		console.log(`[Shard ${Aeiou.shard.id}] Cached ${c} reactions for ${Array.from(Aeiou.guilds.keys()).length} guilds!`);
 	});
+	permissions.buildPermissionCache([...Aeiou.guilds.keys()]);
 	memwatch.on('leak', (info) => {
 		info.time = new Date().toLocaleString();
 		info.shard = Aeiou.shard.id;
@@ -58,19 +59,18 @@ Aeiou.on('ready', () => {
 Aeiou.dispatcher.addInhibitor(async (msg) => {
 	if (!msg.command) return false;
 	if (msg.channel.type == 'dm') return false;
-	if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.author.id) || msg.command.name === 'ignore') return false;
+	// if (msg.member.hasPermission('ADMINISTRATOR') || Aeiou.isOwner(msg.author.id) || msg.command.name === 'ignore') return false;
 	return Aeiou.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id);
 });
 
 Aeiou.dispatcher.addInhibitor(async msg => {
 	if (!msg.command) return false;
-	// permissions.hasPermission(msg.command, msg);
 });
 
 Aeiou.dispatcher.addInhibitor(async msg => {
 	if (!msg.command) return false;
+	// if (Aeiou.isOwner(msg.author.id)) return false;
 	return permissions.hasPermission(msg.command, msg).then(r => {
-		console.log('r', r)
 		if (r === 'IGNORED') {
 			msg.react('🦆');
 			return true;
@@ -78,7 +78,6 @@ Aeiou.dispatcher.addInhibitor(async msg => {
 			msg.react('🚫');
 			return true;
 		}
-		// if (msg.command.name === 'ignore') return false;
 		return !r;
 	});
 });

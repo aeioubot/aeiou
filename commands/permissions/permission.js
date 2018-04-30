@@ -127,6 +127,7 @@ module.exports = class PermissionCommand extends Command {
 		}
 		if (action == 'deny' || action == 'allow') {
 			if (['user', 'role', 'channel'].includes(targetType)) target = target.id;
+			if (command === 'permission' && action === 'deny') return msg.say('You cannot deny permission to use the `permission` command.');
 			permissions.setPermission(msg, {
 				guild: msg.guild.id,
 				targetType: targetType,
@@ -201,13 +202,13 @@ module.exports = class PermissionCommand extends Command {
 						let txt;
 						switch (perm.targetType) {
 							case 'user':
-								txt = `${['Deny', 'Allow'][+perm.allow]} to <@${perm.target}>`; break;
+								txt = `${['Deny', 'Allow'][+perm.allow]} to ${fancyTarget(perm.target, perm.targetType, msg)}`; break;
 							case 'role':
-								txt = `${['Deny', 'Allow'][+perm.allow]} to role '${msg.guild.roles.get(perm.target).name}'`; break;
+								txt = `${['Deny', 'Allow'][+perm.allow]} to ${fancyTarget(perm.target, perm.targetType, msg)}`; break;
 							case 'channel':
-								txt = `${['Deny', 'Allow'][+perm.allow]} in <#${perm.target}>`; break;
+								txt = `${['Deny', 'Allow'][+perm.allow]} in ${fancyTarget(perm.target, perm.targetType, msg)}`; break;
 							case 'guild':
-								txt = `${['Deny', 'Allow'][+perm.allow]} in guild`;
+								txt = `${['Deny', 'Allow'][+perm.allow]} in ${fancyTarget(perm.target, perm.targetType, msg)}`;
 						}
 						commands[perm.command].push(txt);
 					});
@@ -229,13 +230,7 @@ module.exports = class PermissionCommand extends Command {
 					});
 				});
 			}
-		} /*else if () {
-			permissions.getList(msg).then((list) => {
-				list = [...new Set(list.map(p => p.command))];
-				if (list.length === 0) return msg.say('No permissions are set up yet in this guild.');
-				msg.say('There are permissions set up for: **' + list.join(', ') + '**');
-			});
-		}*/
+		}
 	}
 };
 

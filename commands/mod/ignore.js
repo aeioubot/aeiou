@@ -31,7 +31,7 @@ module.exports = class IgnoreCommand extends Command {
 				target: msg.channel.id,
 				command: '*',
 			}).then(() => {
-				msg.say('I\'m L I S T E N')
+				msg.say('I\'m now listening to this channel.');
 			});
 		} else {
 			permissions.setPermission(msg, {
@@ -40,7 +40,7 @@ module.exports = class IgnoreCommand extends Command {
 				command: '*',
 				allow: false,
 			}).then(() => {
-				msg.say('I\'m IGNORING!!!!!')
+				msg.say('I\'m now ignoring this channel. Type `!ignore` again to undo.');
 			});
 		}
 		return;

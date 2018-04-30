@@ -41,7 +41,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 					parse: (s) => s.toLowerCase(),
 				}, {
 					key: 'command',
-					prompt: 'Which command would you like to change permissions for?',
+					prompt: 'Which command or group? Write `group:` before group names and use `*` to target all commands.',
 					type: 'string',
 					validate: (val, msg, currArg, prevArgs) => {
 						if (val === '*' || ['list', 'show'].includes(prevArgs.action)) return true;

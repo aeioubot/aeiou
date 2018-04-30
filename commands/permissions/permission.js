@@ -63,11 +63,13 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 					parse: val => val === '*' ? '*' : ((val.indexOf('group:') === 0 ? this.client.registry.findGroups(val.substr(6))[0] : false) || this.client.registry.findCommands(val)[0]),
 				}, {
 					key: 'targetType',
-					prompt: 'Who would you like to change permissions for? Please specify either `user`, `role`, `channel`, `guild`.', // user, role, channel, guild
+					prompt: 'Who would you like to change permissions for? Please specify `user`, `role`, `channel`, or `guild`.', // user, role, channel, guild
+					reprompt: 'Invalid type specified: please specify `user`, `role`, `channel`, or `guild`.',
 					type: 'string',
 					validate: (value, msg, currArg, prevArgs) => {
 						if (['show', 'list', 'clear'].includes(prevArgs.action)) return true;
 						if (!value) return false;
+						this.argsCollector.args[3].prompt = 'Please specify the ' + value.toLowerCase() + '.';
 						return ['user', 'role', 'channel', 'guild'].includes(value.toLowerCase());
 					},
 					parse: (s) => s.toLowerCase(),

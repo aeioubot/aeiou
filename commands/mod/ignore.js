@@ -26,23 +26,21 @@ module.exports = class IgnoreCommand extends Command {
 			guild: msg.guild.id,
 		});
 		if (x) {
-			permissions.defaultPermission(msg, {
+			return permissions.defaultPermission(msg, {
 				targetType: 'channel',
 				target: msg.channel.id,
 				command: '*',
 			}).then(() => {
-				msg.say('I\'m now listening to this channel.');
-			});
-		} else {
-			permissions.setPermission(msg, {
-				targetType: 'channel',
-				target: msg.channel.id,
-				command: '*',
-				allow: false,
-			}).then(() => {
-				msg.say('I\'m now ignoring this channel. Type `!ignore` again to undo.');
+				return msg.say('I\'m now listening to this channel.');
 			});
 		}
-		return;
+		return permissions.setPermission(msg, {
+			targetType: 'channel',
+			target: msg.channel.id,
+			command: '*',
+			allow: false,
+		}).then(() => {
+			return msg.say('I\'m now ignoring this channel. Type `!ignore` again to undo.');
+		});
 	}
 };

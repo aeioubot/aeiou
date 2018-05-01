@@ -234,14 +234,14 @@ function postBFDstats() {
 		data.forEach((d, ind) => {
 			totalGuilds += d.totalGuilds;
 		});
-		botsfordiscord.postCount(totalGuilds, Aeiou.client.user.id);
+		botsfordiscord.postCount(totalGuilds, Aeiou.user.id);
 	});
 }
 
 function postBDPstats() {
 	rp({
 		method: 'POST',
-		uri: 'https://bots.discord.pw/api/bots/' + Aeiou.client.user.id + '/stats',
+		uri: 'https://bots.discord.pw/api/bots/' + Aeiou.user.id + '/stats',
 		body: {
 			shard_id: Aeiou.shard.id,
 			shard_count: Aeiou.shard.count,

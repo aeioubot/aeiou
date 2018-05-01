@@ -72,8 +72,8 @@ Aeiou.on('ready', () => {
 		setTimeout(postBFDstats, 1 * 60 * 1000); // set initially after 1 min, when shards have all started
 		setInterval(postBFDstats, 15 * 60 * 1000); // 15 minutes
 	}
-	postBDPstats();
 	if (secure.botsdiscordpwToken) {
+		postBDPstats();
 		setInterval(postBDPstats, 15 * 60 * 1000); // 15 minutes
 	}
 });

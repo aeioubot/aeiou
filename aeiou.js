@@ -11,6 +11,7 @@ const permissions = require('./utils/models/permissions');
 const GatewayCommand = require('./utils/classes/GatewayCommand.js');
 const DBL = require('dblapi.js');
 const BFD = require('bfd-api');
+const rp = require('request-promise');
 
 const dbl = secure.dblToken ? new DBL(secure.dblToken) : undefined;
 const botsfordiscord = secure.botsfordiscordToken ? new BFD(secure.botsfordiscordToken) : undefined;
@@ -68,8 +69,11 @@ Aeiou.on('ready', () => {
 		}, 15 * 60 * 1000); // 15 minutes
 	}
 	if (secure.botsfordiscordToken && Aeiou.shard.id === 0) {
-		setTimeout(postBFDstats, 1 * 60 * 1000);
+		setTimeout(postBFDstats, 1 * 60 * 1000); // set initially after 1 min, when shards have all started
 		setInterval(postBFDstats, 15 * 60 * 1000); // 15 minutes
+	}
+	if (secure.botdiscordpwToken) {
+		setInterval(postBDPstats, 15 * 60 * 1000); // 15 minutes
 	}
 });
 
@@ -230,5 +234,18 @@ function postBFDstats() {
 			totalGuilds += d.totalGuilds;
 		});
 		botsfordiscord.postCount(totalGuilds, Aeiou.client.user.id);
+	});
+}
+
+function postBDPstats() {
+	rp({
+		method: 'POST',
+		uri: 'https://bots.discord.pw/api/bots/:bot_user_id/stats',
+		body: {
+			shard_id: Aeiou.shard.id,
+			shard_count: Aeiou.shard.count,
+			server_count: Aeiou.guilds.size,
+		},
+		json: true,
 	});
 }

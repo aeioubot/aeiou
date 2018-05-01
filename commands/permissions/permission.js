@@ -72,6 +72,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 						if (['show', 'list', 'clear'].includes(prevArgs.action)) return true;
 						if (!value) return false;
 						this.argsCollector.args[3].prompt = 'Please specify the ' + value.toLowerCase() + '.';
+						this.argsCollector.args[3].reprompt = 'You provided an invalid ' + value.toLowerCase() + '.';
 						return ['user', 'role', 'channel', 'guild'].includes(value.toLowerCase());
 					},
 					parse: (s) => s.toLowerCase(),

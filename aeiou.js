@@ -9,6 +9,12 @@ const reacts = require('./utils/models/creact.js');
 const memwatch = require('memwatch-next');
 const permissions = require('./utils/models/permissions');
 const GatewayCommand = require('./utils/classes/GatewayCommand.js');
+const DBL = require('dblapi.js');
+const BFD = require('bfd-api');
+const rp = require('request-promise');
+
+const dbl = secure.dblToken ? new DBL(secure.dblToken) : undefined;
+const botsfordiscord = secure.botsfordiscordToken ? new BFD(secure.botsfordiscordToken) : undefined;
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -56,11 +62,25 @@ Aeiou.on('ready', () => {
 	});
 	if (Aeiou.shard.id == 0) Aeiou.dmManager = new (require('./utils/classes/DmManager.js'))(Aeiou);
 	console.log(`[Shard ${Aeiou.shard.id}] ＡＥＩＯＵ-${Aeiou.shard.id} Ready to be used and abused!`);
+	if (secure.dblToken) {
+		dbl.postStats(Aeiou.guilds.size, Aeiou.shard.id, Aeiou.shard.count);
+		setInterval(() => {
+			dbl.postStats(Aeiou.guilds.size, Aeiou.shard.id, Aeiou.shard.count);
+		}, 15 * 60 * 1000); // 15 minutes
+	}
+	if (secure.botsfordiscordToken && Aeiou.shard.id === 0) {
+		setTimeout(postBFDstats, 1 * 60 * 1000); // set initially after 1 min, when shards have all started
+		setInterval(postBFDstats, 15 * 60 * 1000); // 15 minutes
+	}
+	if (secure.botsdiscordpwToken) {
+		postBDPstats();
+		setInterval(postBDPstats, 15 * 60 * 1000); // 15 minutes
+	}
 });
 
 Aeiou.dispatcher.addInhibitor(async msg => {
-	if (['ignore', 'crignore', 'permission'].includes(msg.command.name)) return false;
 	if (!msg.command) return false;
+	if (['ignore', 'crignore', 'permission'].includes(msg.command.name)) return false;
 	if (Aeiou.isOwner(msg.author.id)) return false;
 	if (msg.channel.type == 'dm') return false;
 	return permissions.hasPermission(msg.command, msg).then(r => {
@@ -207,3 +227,29 @@ Aeiou.on('guildDelete', async (guild) => {
 });
 
 Aeiou.login(secure.token);
+
+function postBFDstats() {
+	Aeiou.gateway.sendMessage(new GatewayCommand(Aeiou.shard.count, Aeiou.shard.id, 'shardStats', [])).then((data) => {
+		let totalGuilds = 0;
+		data.forEach((d, ind) => {
+			totalGuilds += d.totalGuilds;
+		});
+		botsfordiscord.postCount(totalGuilds, Aeiou.user.id);
+	});
+}
+
+function postBDPstats() {
+	rp({
+		method: 'POST',
+		uri: 'https://bots.discord.pw/api/bots/' + Aeiou.user.id + '/stats',
+		body: {
+			shard_id: Aeiou.shard.id,
+			shard_count: Aeiou.shard.count,
+			server_count: Aeiou.guilds.size,
+		},
+		headers: {
+			Authorization: secure.botsdiscordpwToken,
+		},
+		json: true,
+	});
+}

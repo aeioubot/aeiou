@@ -4,5 +4,6 @@
     "dbPassword": "local MySQL database pass",
     "genius": "genius api token",
     "youtube": "youtube search api token",
-    "imgSearch": "google image search api key"
+    "imgSearch": "google image search api key",
+    "dblToken": "discordbots.org api token"
 }

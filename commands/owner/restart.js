@@ -38,10 +38,9 @@ module.exports = class RestartCommand extends Command {
 				this.client.shard.count,
 				this.client.shard.id,
 				'restart',
-			)));
+			))).catch(() => msg.say('Restart aborted.'));
 		}
-		msg.react('🌰');
 		console.log(`[Shard ${msg.client.shard.id}] restarting...`);
-		return msg.react('⏰').then(() => process.exit(0));
+		return msg.react('✅').then(() => process.exit(0));
 	}
 };

@@ -79,8 +79,8 @@ Aeiou.on('ready', () => {
 });
 
 Aeiou.dispatcher.addInhibitor(async msg => {
-	if (['ignore', 'crignore', 'permission'].includes(msg.command.name)) return false;
 	if (!msg.command) return false;
+	if (['ignore', 'crignore', 'permission'].includes(msg.command.name)) return false;
 	if (Aeiou.isOwner(msg.author.id)) return false;
 	if (msg.channel.type == 'dm') return false;
 	return permissions.hasPermission(msg.command, msg).then(r => {

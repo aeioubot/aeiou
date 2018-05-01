@@ -10,8 +10,10 @@ const memwatch = require('memwatch-next');
 const permissions = require('./utils/models/permissions');
 const GatewayCommand = require('./utils/classes/GatewayCommand.js');
 const DBL = require('dblapi.js');
+const BFD = require('bfd-api');
 
 const dbl = secure.dblToken ? new DBL(secure.dblToken) : undefined;
+const botsfordiscord = secure.botsfordiscordToken ? new BFD(secure.botsfordiscordToken) : undefined;
 
 const Aeiou = new Commando.Client({
 	owner: ['147604925612818432', '94155927032176640'],
@@ -64,6 +66,10 @@ Aeiou.on('ready', () => {
 		setInterval(() => {
 			dbl.postStats(Aeiou.guilds.size, Aeiou.shard.id, Aeiou.shard.count);
 		}, 15 * 60 * 1000); // 15 minutes
+	}
+	if (secure.botsfordiscordToken && Aeiou.shard.id === 0) {
+		setTimeout(postBFDstats, 1 * 60 * 1000);
+		setInterval(postBFDstats, 15 * 60 * 1000); // 15 minutes
 	}
 });
 
@@ -216,3 +222,13 @@ Aeiou.on('guildDelete', async (guild) => {
 });
 
 Aeiou.login(secure.token);
+
+function postBFDstats() {
+	Aeiou.gateway.sendMessage(new GatewayCommand(Aeiou.shard.count, Aeiou.shard.id, 'shardStats', [])).then((data) => {
+		let totalGuilds = 0;
+		data.forEach((d, ind) => {
+			totalGuilds += d.totalGuilds;
+		});
+		botsfordiscord.postCount(totalGuilds, Aeiou.client.user.id);
+	});
+}

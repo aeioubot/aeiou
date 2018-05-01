@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bfd-api": "^0.2.6",
     "common-tags": "^1.7.2",
     "dblapi.js": "^2.0.1",
     "discord.js": "git://github.com/aeioubot/discord.js.git#11.3-dev",

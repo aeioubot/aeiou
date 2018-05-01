@@ -147,6 +147,7 @@ module.exports = {
 	},
 
 	hasPermission: async function(command, msg) {
+		if (!permissionCache[msg.guild.id]) permissionCache[msg.guild.id] = [];
 		const perms = permissionCache[msg.guild.id].filter((p) => {
 			return (p.command === command.name || p.command === 'group:' + command.group.id || p.command === '*');
 		});

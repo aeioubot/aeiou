@@ -27,7 +27,7 @@ module.exports = class ChainCommand extends Command {
 
 	async run(msg, {content}) {
 		const oldChain = await chainDB.getChain(msg);
-		if (new RegExp(`^(\\${msg.guild.commandPrefix}|<@(!)?${this.client.user.id}>)( *)?chain`, 'gi').test(content)) {
+		if (new RegExp(`^(${msg.guild.commandPrefix.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}|<@(!)?${this.client.user.id}>)\s*chain`, 'gi').test(content)) {
 			return msg.say('Chain nesting is both dangerous and highly illegal.');
 		}
 		if (content.toLowerCase() == 'stats') {

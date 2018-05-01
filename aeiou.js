@@ -42,6 +42,7 @@ Aeiou.registry
 		['misc', 'Miscellaneous commands'],
 		['owner', 'Owner commands'],
 		['permissions', 'Permission commands'],
+		['cr', 'Custom reactions'],
 	])
 	.registerDefaultTypes()
 	.registerDefaultGroups()

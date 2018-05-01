@@ -72,7 +72,7 @@ Aeiou.on('ready', () => {
 		setTimeout(postBFDstats, 1 * 60 * 1000); // set initially after 1 min, when shards have all started
 		setInterval(postBFDstats, 15 * 60 * 1000); // 15 minutes
 	}
-	if (secure.botdiscordpwToken) {
+	if (secure.botsdiscordpwToken) {
 		setInterval(postBDPstats, 15 * 60 * 1000); // 15 minutes
 	}
 });
@@ -240,11 +240,14 @@ function postBFDstats() {
 function postBDPstats() {
 	rp({
 		method: 'POST',
-		uri: 'https://bots.discord.pw/api/bots/:bot_user_id/stats',
+		uri: 'https://bots.discord.pw/api/bots/' + Aeiou.client.user.id + '/stats',
 		body: {
 			shard_id: Aeiou.shard.id,
 			shard_count: Aeiou.shard.count,
 			server_count: Aeiou.guilds.size,
+		},
+		headers: {
+			Authorization: secure.botsdiscordpwToken,
 		},
 		json: true,
 	});

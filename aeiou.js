@@ -84,6 +84,7 @@ Aeiou.dispatcher.addInhibitor(async msg => {
 	if (['ignore', 'crignore', 'permission'].includes(msg.command.name)) return false;
 	if (Aeiou.isOwner(msg.author.id)) return false;
 	if (msg.channel.type == 'dm') return false;
+	if (msg.command.name === 'creact' && /\s+list/.test(msg.argString)) return false; // The permission check will be done inside the cr command.
 	return permissions.hasPermission(msg.command, msg).then(r => {
 		if (r === 'IGNORED') return true;
 		if (!r) {

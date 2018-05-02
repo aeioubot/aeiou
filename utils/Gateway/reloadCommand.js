@@ -5,6 +5,7 @@ module.exports = async (client, payload) => {
 		return true;
 	} catch (e) {
 		console.log(`Shard ${client.shard.id} failed to reload ${payload.cmdOrGrp}.`);
+		console.log(e);
 		return false;
 	}
 };

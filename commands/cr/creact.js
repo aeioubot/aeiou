@@ -17,11 +17,11 @@ module.exports = class CReactCommand extends Command {
 			args: [
 				{
 					key: 'option',
-					prompt: 'Would you like to `add`, `remove`, or `list` a custom reaction?',
+					prompt: 'Would you like to `add`, `remove`, `edit`, or `list` a custom reaction?',
 					type: 'string',
 					validate: (s) => {
 						if (!s) return false;
-						return ['add', 'remove', 'list', 'del', 'delete'].includes(s.toLowerCase());
+						return ['add', 'remove', 'list', 'del', 'delete', 'edit'].includes(s.toLowerCase());
 					},
 					parse: (s) => s.toLowerCase(),
 				},

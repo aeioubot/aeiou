@@ -30,8 +30,6 @@ module.exports = class AskCommand extends Command {
 				return t;
 			});
 		}
-		console.log(this.questions.length);
-		console.log((new Set(this.questions)).size);
 		return msg.say(
 			this.questions.splice(Math.floor(Math.random() * this.questions.length), 1)[0]
 				.replace(/subreddit/gi, 'server')

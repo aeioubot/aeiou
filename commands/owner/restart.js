@@ -27,12 +27,20 @@ module.exports = class RestartCommand extends Command {
 	}
 
 	async run(msg, {all}) {
+		if (all == 'none') {
+			msg.delete();
+			const edit = await msg.say('git starting');
+			child.execSync('git pull');
+			await edit.edit('git done, npm starting');
+			child.execSync('npm install --production --silent');
+			return edit.edit('all done').then(d => d.delete(4000));
+		}
 		if (all == 'all') {
 			await msg.react('🌰');
 			console.log(`[Shard ${this.client.shard.id}] Pulling...`);
 			child.execSync('git pull');
 			console.log(`[Shard ${this.client.shard.id}] Pulling complete! Installing...`);
-			child.execSync('npm install --production --silent');
+			child.execSync('npm update --production --silent');
 			console.log(`[Shard ${this.client.shard.id}] Install complete! Killing my friends.`);
 			return msg.react('⏰').then(() => process.send(new GatewayCommand(
 				this.client.shard.count,

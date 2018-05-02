@@ -88,6 +88,7 @@ module.exports = class CReactCommand extends Command {
 			}
 			case 'list': { // Lists the triggers in the guild.
 				const crList = new (require('./crlist.js'))(this.client);
+				crList.group = this.client.registry.groups.find(grp => grp.id === crList.groupID);
 				return permissions.hasPermission(crList, msg).then(r => {
 					if (!r && msg.channel.type !== 'dm' && !this.client.isOwner(msg.author.id)) {
 						msg.react('🙅');

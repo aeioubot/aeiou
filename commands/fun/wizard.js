@@ -21,6 +21,7 @@ module.exports = class WizardCommand extends Command {
 	}
 
 	async run(msg, { echo }) {
+		msg.delete();
 		if (echo.length > 24) {
 			return msg.say(`The wizard inhales–\n*:sparkles: "${echo}" :sparkles:*
                             __\\_/\\\\\\___

@@ -22,6 +22,7 @@ module.exports = class SparkleCommand extends Command {
 	async run(msg, { echo }) {
 		msg.say(`:sparkles:_~ ${echo} ~_:sparkles:`).catch(() => {
 			msg.say(`:sparkles:_~ ${echo.slice(0, 1900)} ~_:sparkles:`);
+			msg.delete();
 		}).catch(() => {});
 	}
 };

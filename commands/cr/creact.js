@@ -21,7 +21,7 @@ module.exports = class CReactCommand extends Command {
 					type: 'string',
 					validate: (s) => {
 						if (!s) return false;
-						return ['add', 'remove', 'list', 'del', 'delete'].includes(s.toLowerCase());
+						return ['add', 'remove', 'list', 'del', 'delete', 'edit'].includes(s.toLowerCase());
 					},
 					parse: (s) => s.toLowerCase(),
 				},
@@ -38,7 +38,9 @@ module.exports = class CReactCommand extends Command {
 				{
 					key: 'content',
 					prompt: 'What should be said in response to the trigger?',
+					reprompt: 'h',
 					type: 'string',
+					infinite: true,
 					validate: (value, msg, currArg, prevArgs) => {
 						if (['list', 'remove', 'del', 'delete'].includes(prevArgs.option)) return true;
 						if (prevArgs.option === 'add' && !value) return false;
@@ -55,25 +57,25 @@ module.exports = class CReactCommand extends Command {
 		switch (option.toLowerCase()) {
 			case 'add': {
 				if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
-				if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.replace(/ /g, '').length === 0) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
+				if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.some((x) => x.replace(/ /g, '').length === 0)) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
 				if (crExists) return msg.say(`There is already a reaction with the trigger **${trigger}**.`); // return the error
 				reactDB.addReact(msg, trigger, content);
 				return reactDB.addToCache({
 					guild: msg.guild.id,
 					trigger: trigger,
 					content: content,
-				}).then(() => msg.say(`Reaction added, **${trigger}** will cause me to say **${content}**.`));
+				}).then(() => msg.say(`Reaction added, **${trigger}** will cause me to say ${content.length === 1 ? '**' + content[0] + '**' : 'one of **' + content.join(', ') + '**'}.`));
 			}
 			case 'edit': {
 				if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
-				if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.replace(/ /g, '').length === 0) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
+				if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.some((x) => x.replace(/ /g, '').length === 0)) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
 				if (!crExists) return msg.say(`There is no custom reaction with the trigger **${trigger}**. Please add it with \`!creact add\` first.`);
 				reactDB.editReact(msg, trigger, content);
 				return reactDB.editInCache({
 					guild: msg.guild.id,
 					trigger: trigger,
 					content: content,
-				}).then(msg.say(`Reaction edited! I will now say **${content}** in response to **${trigger}**.`));
+				}).then(msg.say(`Reaction edited! I will now say ${content.length === 1 ? '**' + content[0] + '**' : 'one of **' + content.join(', ') + '**'} in response to **${trigger}**.`));
 			}
 			case 'remove': // 3 acceptable options to delete using fall-through.
 			case 'delete':

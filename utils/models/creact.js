@@ -23,7 +23,7 @@ module.exports = {
 		return reacts.upsert({
 			guild: msg.guild.id,
 			trigger: trigger,
-			content: content,
+			content: JSON.stringify(content),
 		});
 	},
 	deleteReact: async (msg, trigger) => {
@@ -53,7 +53,7 @@ module.exports = {
 			if (result) { // cr trigger exists -> edit.
 				reacts.update({
 					trigger: trigger,
-					content: content,
+					content: JSON.stringify(content),
 				}, {
 					where: {
 						guild: msg.guild.id,
@@ -66,16 +66,29 @@ module.exports = {
 	findReact: (msg, trigger) => { // from cache
 		if (!allReacts) return null;
 		if (!allReacts[msg.guild.id]) return null;
-		return allReacts[msg.guild.id].find((react) => {
+		const found = allReacts[msg.guild.id].find((react) => {
 			return react.trigger === trigger;
 		});
+		if (found) return {
+			trigger: found.trigger,
+			content: JSON.parse(found.content),
+		};
+		return undefined;
 	},
 	findAllForGuild: (guild) => { // from cache
-		return allReacts[guild] || [];
+		if (allReacts[guild]) {
+			return allReacts[guild].map(r => {
+				return {
+					trigger: r.trigger,
+					content: JSON.parse(r.content),
+				};
+			});
+		}
+		return [];
 	},
 	addToCache: async function(toAdd) {
 		allReacts[toAdd.guild] = allReacts[toAdd.guild] || [];
-		allReacts[toAdd.guild].push({trigger: toAdd.trigger, content: toAdd.content});
+		allReacts[toAdd.guild].push({trigger: toAdd.trigger, content: JSON.stringify(toAdd.content)});
 	},
 	removeFromCache: async function(toRemove) {
 		allReacts[toRemove.guild] = allReacts[toRemove.guild] || [];
@@ -83,7 +96,7 @@ module.exports = {
 	},
 	editInCache: async function(toEdit) {
 		allReacts[toEdit.guild] = allReacts[toEdit.guild] || [];
-		allReacts[toEdit.guild].find((reaction) => reaction.trigger === toEdit.trigger).content = toEdit.content;
+		allReacts[toEdit.guild].find((reaction) => reaction.trigger === toEdit.trigger).content = JSON.stringify(toEdit.content);
 	},
 	buildReactCache: async function(guildArray, shardID) {
 		return reacts.findAll({

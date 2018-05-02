@@ -27,6 +27,7 @@ module.exports = class ShardsCommand extends Command {
 				Channels: 0,
 			};
 			data.forEach((d, ind) => {
+				if (!d) return message.push(` ${ind}              --  This shard seems to be dead.  --`);
 				totals.Members += d.totalMembers;
 				totals.Guilds += d.totalGuilds;
 				totals.Channels += d.totalChannels;

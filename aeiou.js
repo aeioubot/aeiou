@@ -47,6 +47,7 @@ Aeiou.registry
 	.registerDefaultGroups()
 	.registerDefaultCommands({
 		ping: false,
+		reload: false,
 	})
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 

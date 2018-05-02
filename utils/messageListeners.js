@@ -25,7 +25,6 @@ module.exports = {
 		});
 
 		if (toSay) {
-			toSay.content = toSay.content[Math.floor(Math.random() * toSay.content.length)];
 			const reactContent = (messageContent === upify(messageContent) && toSay.trigger !== upify(toSay.trigger)) ? toSay.content.toUpperCase() : toSay.content;
 			return msg.channel.send(markdownStart + reactContent + markdownStart.split('').reverse().join(''));
 		}

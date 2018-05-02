@@ -15,12 +15,19 @@ class Gateway {
 		return new Promise((resolve, reject) => {
 			this.pending[gcmd.time] = {data: new Array(gcmd.totalDestinations).fill(undefined), resolve: resolve, reject: reject};
 			process.send(gcmd);
+			setTimeout(() => { // Shards that are dead or take too long to respond, we continue without them.
+				if (this.pending[gcmd.time]) {
+					this.pending[gcmd.time].resolve(this.pending[gcmd.time].data);
+					delete this.pending[gcmd.time];
+				}
+			}, 5000);
 		});
 	}
 
 	async processMessage(gcmd) {
 		// Response handler
 		if (gcmd.command == 'response') { // If recieving data from a command
+			if (!this.pending[gcmd.time]) return; // Honestly if your data is too late just forget it.
 			const thisCommand = this.pending[gcmd.time].data;
 			thisCommand[gcmd.source] = gcmd.payload;
 			if (thisCommand.some((d) => d === undefined)) return; // Returns if the responses are not all here yet.
@@ -29,12 +36,12 @@ class Gateway {
 		}
 
 		// Response sender
-		this.commands[gcmd.command](this.client, gcmd.payload).then(data => {
+		return this.commands[gcmd.command](this.client, gcmd.payload).then(data => {
 			process.send(new GatewayCommand(
 				this.client.shard.count,
 				this.client.shard.id,
 				'response',
-				[gcmd.source],
+				[gcmd.source], // Reverse the sources and destinations, and send data.
 				data,
 				gcmd.time,
 			));
@@ -44,7 +51,7 @@ class Gateway {
 				this.client.shard.id,
 				'response',
 				[gcmd.source],
-				null,
+				null, // If the command errors send null AKA falsey value.
 				gcmd.time,
 			));
 		});

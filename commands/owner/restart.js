@@ -42,11 +42,14 @@ module.exports = class RestartCommand extends Command {
 			console.log(`[Shard ${this.client.shard.id}] Pulling complete! Installing...`);
 			child.execSync('npm update --production --silent');
 			console.log(`[Shard ${this.client.shard.id}] Install complete! Killing my friends.`);
-			return msg.react('⏰').then(() => process.send(new GatewayCommand(
-				this.client.shard.count,
-				this.client.shard.id,
-				'restart',
-			))).catch(() => msg.say('Restart aborted.'));
+			return msg.react('⏰').then(() => {
+				process.send(new GatewayCommand(
+					this.client.shard.count,
+					this.client.shard.id,
+					'restart',
+				));
+				return;
+			}).catch(() => msg.say('Restart aborted.'));
 		}
 		console.log(`[Shard ${msg.client.shard.id}] restarting...`);
 		return msg.react('✅').then(() => process.exit(0));

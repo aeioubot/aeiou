@@ -14,8 +14,8 @@ module.exports = class PermissionCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'permission',
-			aliases: ['perms', 'perm'],
-			group: 'permissions',
+			aliases: ['perms', 'perm', 'permissions'],
+			group: 'mod',
 			memberName: 'permission',
 			description: 'Allow or deny command permissions to a user, role, channel or the entire guild.',
 			details: `The order of importance (more to less) is: user > role > channel > guild and command > group > *.

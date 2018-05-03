@@ -56,6 +56,7 @@ module.exports = {
 	},
 
 	findPermissions: async function(options) {
+		if (!permissionCache[options.guild]) permissionCache[options.guild] = [];
 		return permissionCache[options.guild].find((perm) => {
 			/* eslint-disable guard-for-in */
 			for (const opt in options) {

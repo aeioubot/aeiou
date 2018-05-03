@@ -86,7 +86,8 @@ module.exports = class CReactCommand extends Command {
 				}).then(msg.say(`Reaction deleted, I'll no longer respond to **${trigger}**.`));
 			}
 			case 'list': { // Lists the triggers in the guild.
-				return this.client.registry.commands.get('crlist').run(msg, {trigger: trigger});
+				console.log(trigger);
+				return this.client.registry.commands.get('crlist').run(msg, {argPage: trigger});
 			}
 			default: msg.say('That isn\'t a valid option.'); break;
 		}

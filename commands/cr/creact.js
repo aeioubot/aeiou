@@ -1,6 +1,5 @@
 const {Command} = require('discord.js-commando');
 const reactDB = require('../../utils/models/creact.js');
-const permissions = require('../../utils/models/permissions');
 
 module.exports = class CReactCommand extends Command {
 	constructor(client) {
@@ -87,15 +86,7 @@ module.exports = class CReactCommand extends Command {
 				}).then(msg.say(`Reaction deleted, I'll no longer respond to **${trigger}**.`));
 			}
 			case 'list': { // Lists the triggers in the guild.
-				const crList = new (require('./crlist.js'))(this.client);
-				crList.group = this.client.registry.groups.find(grp => grp.id === crList.groupID);
-				return permissions.hasPermission(crList, msg).then(r => {
-					if (!r && msg.channel.type !== 'dm' && !this.client.isOwner(msg.author.id)) {
-						msg.react('🙅');
-						return;
-					}
-					return crList.run(msg, trigger);
-				});
+				return this.client.registry.commands.get('crlist').run(msg, {trigger: trigger});
 			}
 			default: msg.say('That isn\'t a valid option.'); break;
 		}

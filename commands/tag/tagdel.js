@@ -33,7 +33,7 @@ module.exports = class TagDelCommand extends Command {
 			if (x.trigger === trigger) return x;
 		});
 		if (toDelete) {
-			if (msg.author.id !== toDelete.owner) return msg.say('You can only delete tags you created!');
+			if (msg.author.id !== toDelete.owner && !msg.member.hasPermission('ADMINISTRATOR') && !this.client.isOwner(msg.author.id)) return msg.say('You can only delete tags you created!');
 		}
 		toBePushedDelete.splice(toBePushedDelete.indexOf(toDelete), 1);
 		provider.set(msg.guild, 'customReactions', toBePushedDelete);

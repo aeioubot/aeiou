@@ -13,6 +13,7 @@
  * lastEvent (str) - The last thing that occured on this plant.
  */
 
+const MAX_SEEDS_LENGTH = 10;
 
 class Plant {
 	constructor(user, plantData) {
@@ -47,7 +48,7 @@ class Plant {
 	 * @return {Object}
 	 */
 	addToSeeds(seed) {
-		if (this.plantData.seeds.length >= 10) return {success: false, seeds: this.plantData.seeds.length};
+		if (this.plantData.seeds.length >= MAX_SEEDS_LENGTH) return {success: false, seeds: this.plantData.seeds.length};
 		this.plantData.seeds.push(seed);
 		return {success: true, seeds: this.plantData.seeds.length};
 	}
@@ -115,6 +116,7 @@ class Plant {
 	*/
 	async harvest() {
 		if (!this.plantData.activeSeed) return {success: false, leaves: null};
+		if (this.plantData.seeds.length >= MAX_SEEDS_LENGTH) return {success: false, seeds: this.plantData.seeds.length};
 		const returnObject = {
 			success: true,
 			grown: this.plantData.progress == 100,
@@ -138,8 +140,11 @@ class Plant {
 	 */
 	rename(index, name) {
 		if (index == -1) {
-			this.plantData.activeSeed.name = name;
-			return {success: true};
+			if (this.plantData.activeSeed) {
+				this.plantData.activeSeed.name = name;
+				return {success: true};
+			}
+			return {success: false};
 		}
 		try {
 			this.plantData.seeds[index].name = name;

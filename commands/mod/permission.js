@@ -134,7 +134,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 	}
 
 	async run(msg, args) {
-		/* eslint-disable-next-line */
+		/* eslint-disable */
 		let { action, command, targetType, target } = args;
 		let commandType;
 		if (command && command !== '*') {
@@ -249,6 +249,7 @@ Likewise, if a command group (let's say "group:fun") is denied, but a single com
 			}
 		}
 	}
+	/* eslint-enable */
 };
 
 function fancyTarget(target, targetType, msg) {

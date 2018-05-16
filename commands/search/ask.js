@@ -32,6 +32,7 @@ module.exports = class AskCommand extends Command {
 		}
 		return msg.say(
 			this.questions.splice(Math.floor(Math.random() * this.questions.length), 1)[0]
+				.replace(/redditors/gi, 'Discord users')
 				.replace(/subreddit/gi, 'server')
 				.replace(/reddit/gi, 'Discord')
 				.replace(/\[serious\]/gi, '')

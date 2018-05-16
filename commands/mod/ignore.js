@@ -19,6 +19,10 @@ module.exports = class IgnoreCommand extends Command {
 	}
 
 	async run(msg) {
+		msg.guild.members.forEach(m => {
+			m.currentSearch.stop();
+			delete m.currentSearch;
+		});
 		const x = await permissions.findPermissions({
 			targetType: 'channel',
 			target: msg.channel.id,

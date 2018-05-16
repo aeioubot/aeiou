@@ -42,8 +42,7 @@ module.exports = class LyricsCommand extends Command {
 		};
 		return request(`https://api.genius.com/search?access_token=${require('../../secure.json').genius}&q=${query}`, {json: true})
 			.then(async (d) => {
-				const test = d.response.hits.filter((e) => e.result.primary_artist.is_verified);
-				sayFunction(test.length == 0 ? d.response.hits : test);
+				sayFunction(d.response.hits);
 			})
 			.catch((e) => msg.say('I didn\'t find a song by that title, try another.'));
 	}

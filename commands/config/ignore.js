@@ -5,10 +5,10 @@ module.exports = class IgnoreCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'ignore',
-			group: 'mod',
+			group: 'config',
 			memberName: 'ignore',
-			description: 'Toggles whether Aeiou will run commands in this channel.',
-			details: 'Toggles whether Aeiou will run commands in this channel.',
+			description: 'Toggles whether Aeiou will run commands in this channel. Stops ongoing image/lyrics searches.',
+			details: 'Toggles whether Aeiou will run commands in this channel. Stops ongoing image/lyrics searches.',
 			guildOnly: true,
 		});
 	}

@@ -4,8 +4,8 @@ const plants = require('../../utils/models/plants.js');
 module.exports = class LeaderboardCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'leaderboard',
-			aliases: ['leaderboards', 'top', 'lb'],
+			name: 'lb',
+			aliases: ['leaderboards', 'top', 'leaderboard'],
 			group: 'plant',
 			memberName: 'leaderboard',
 			description: 'See the top leafholders ever.',

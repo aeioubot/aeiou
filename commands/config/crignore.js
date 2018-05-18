@@ -4,10 +4,10 @@ module.exports = class IgnoreCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'crignore',
-			group: 'mod',
+			group: 'config',
 			memberName: 'crignore',
-			description: 'Toggles whether Aeiou will respond to custom reactions in this channel. Also stops search-commands from \'next\'ing.',
-			details: 'Toggles whether Aeiou will respond to custom reactions in this channel. Also stops search-commands from \'next\'ing.',
+			description: 'Toggles whether Aeiou will respond to custom reactions in this channel.',
+			details: 'Toggles whether Aeiou will respond to custom reactions in this channel.',
 			guildOnly: true,
 		});
 	}

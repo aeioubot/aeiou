@@ -4,7 +4,7 @@ module.exports = class ReplyCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'toggleseeds',
-			group: 'mod',
+			group: 'config',
 			memberName: 'toggleseeds',
 			description: 'Toggles whether seeds will be planted in this channel.',
 			details: 'Toggles whether seeds will be planted in this channel.',

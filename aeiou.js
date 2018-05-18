@@ -32,15 +32,16 @@ Aeiou.gateway = new (require('./utils/Gateway/Gateway.js'))(Aeiou);
 
 Aeiou.registry
 	.registerGroups([
-		['games', 'Game commands'],
-		['cr', 'Custom reactions'],
 		['fun', 'Fun commands'],
 		['search', 'Search commands'],
+		['cr', 'Custom reactions'],
+		['games', 'Game commands'],
+		['config', 'Config commands'],
 		['mod', 'Mod commands'],
 		['plant', 'Plant commands'],
 		['misc', 'Miscellaneous commands'],
 		['role', 'Role commands'],
-		['tag', 'Tag related commands'],
+		['tag', 'Tag commands'],
 		['owner', 'Owner commands'],
 	])
 	.registerDefaultTypes()
@@ -48,6 +49,7 @@ Aeiou.registry
 	.registerDefaultCommands({
 		ping: false,
 		reload: false,
+		prefix: false,
 	})
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 

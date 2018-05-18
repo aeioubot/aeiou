@@ -5,8 +5,8 @@ const items = require('../../utils/classes/plantItems');
 module.exports = class InventoryCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'inventory',
-			aliases: ['inv'],
+			name: 'inv',
+			aliases: ['inventory'],
 			group: 'plant',
 			memberName: 'inventory',
 			description: 'Shows the items you have in your inventory.',

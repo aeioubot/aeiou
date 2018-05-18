@@ -18,9 +18,9 @@ module.exports = class PermissionCommand extends Command {
 			group: 'mod',
 			memberName: 'permission',
 			description: 'Allow or deny command permissions to a user, role, channel or the entire guild.',
-			details: `The order of importance (more to less) is: user > role > channel > guild and command > group > *.
-For example, if a command is allowed to [role], but denied to [user], the user will not be able to use it.
-Likewise, if a command group (let's say "group:fun") is denied, but a single command (for example, "pacman") is allowed, all commands in the group are denied except for "pacman".`,
+			details: stripIndents`The order of importance (more to less) is: user > role > channel > guild and command > group > *.
+				For example, if a command is allowed to [role], but denied to [user], the user will not be able to use it.
+				Likewise, if a command group (let's say "group:fun") is denied, but a single command (for example, "pacman") is allowed, all commands in the group are denied except for "pacman".`,
 			examples: ['perms deny image guild',
 				'perms allow image channel #bot-commands',
 				'perms deny group:fun user @user#1234',

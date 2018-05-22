@@ -25,7 +25,7 @@ module.exports = {
 		});
 
 		if (toSay) {
-			const reactContent = (messageContent === upify(messageContent) && toSay.trigger !== upify(toSay.trigger)) ? toSay.content.toUpperCase() : toSay.content;
+			const reactContent = (messageContent === upify(messageContent) && toSay.trigger !== upify(toSay.trigger)) ? upify(toSay.content) : toSay.content;
 			return msg.channel.send(markdownStart + reactContent + markdownStart.split('').reverse().join(''));
 		}
 	},

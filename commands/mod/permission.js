@@ -53,8 +53,6 @@ module.exports = class PermissionCommand extends Command {
 							if (groups.length === 1) return true;
 						}
 						const commands = this.client.registry.findCommands(val);
-						console.log('commands', commands);
-						console.log('groups', groups);
 						if (commands.length === 1) return true;
 						if (commands.length === 0 && groups.length === 0) return false;
 						return stripIndents`

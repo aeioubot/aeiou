@@ -6,6 +6,7 @@ module.exports = class ReplyCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'bepfinder',
+			aliases: ['bepfriends', 'bepfriend', 'beps'],
 			group: 'fun',
 			memberName: 'bepfinder',
 			description: 'Finds all your bepfriends, people that have the same discriminator as you.',

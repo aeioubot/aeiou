@@ -30,7 +30,7 @@ module.exports = class ReplyCommand extends Command {
 
 	async run(msg, {discrim}) {
 		discrim = discrim.replace(/[^0-9]/g, '');
-		if (discrim && !parseInt(discrim)) return msg.say('The discrim must be a number between 0000 and 9999.');
+		if (discrim && (discrim.length !== 4 | !parseInt(discrim))) return msg.say('The discrim must be a 4-character number between 0000 and 9999.');
 		return this.client.gateway.sendMessage(new Gcmd(
 			this.client.shard.count,
 			this.client.shard.id,
@@ -47,7 +47,9 @@ module.exports = class ReplyCommand extends Command {
 			return msg.say(
 				stripIndents`${discrim ? `Here are the bepfriends for **#${discrim}**!` : `Here are your bepfriends!`}\`\`\`${userTags.join('\n')}\`\`\`
 				ℹ What's this? Type \`${msg.guild.commandPrefix}help bepfinder\` for details.`
-			);
+			).catch(() => {
+				return msg.say(`It looks like you have a LOT of friends! I can't show you all ${userTags.length} of them, but here are 20.\`\`\`${userTags.splice(0, 20).join('\n')}\`\`\``);
+			});
 		});
 	}
 };

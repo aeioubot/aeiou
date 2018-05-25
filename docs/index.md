@@ -1,1 +1,1 @@
-Please visit the new website at https://aeioubot.github.io
+Please visit the new website [here](https://aeioubot.github.io)!

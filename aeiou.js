@@ -1,5 +1,6 @@
 const secure = require('./secure.json');
 const Commando = require('discord.js-commando');
+const Discord = require('discord.js');
 const path = require('path');
 const SequelizeProvider = require('./utils/Sequelize');
 const messageListeners = require('./utils/messageListeners.js');
@@ -86,47 +87,50 @@ Aeiou.on('ready', () => {
 	}
 });
 
+// Starboard
 Aeiou.on('messageReactionAdd', (reaction, user) => {
-	const channelID = starboard.getChannel(reaction.message);
+	if (reaction.message.author.id === Aeiou.user.id) return;
 
 	if (reaction.emoji.name !== '⭐') return;
 
 	if (starboard.getLimit(reaction.message) > reaction.count) return;
 
+	const channelID = starboard.getChannel(reaction.message);
+
 	if (starboard.isStarpost(reaction.message)) {
-		reaction.message.guild.channels.get(channelID).messages.get(starboard.getStarpost(reaction.message)).edit({embed: {
-			author: {
-				name: reaction.message.author.username + ' in #' + reaction.message.channel.name,
-				icon_url: reaction.message.author.avatarURL,
-			},
-			description: reaction.message.content,
-			footer: {
-				icon_url: 'https://images-ext-1.discordapp.net/external/3wBJyAlmIpF1rveHgNaFa_wNFgK7LdwypIpNMcAa7Y8/https/emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/white-medium-star_2b50.png',
-				text: reaction.count,
-			},
-		}});
+		reaction.message.guild.channels.get(channelID).messages.get(starboard.getStarpost(reaction.message)).edit({embed: createStarboardEmbed(reaction.message, reaction.count)});
 		return;
 	};
 
-
-	console.log('msg', reaction.message);
-	console.log('channel', channelID);
-
-
-	reaction.message.guild.channels.get(channelID).send({embed: {
-		author: {
-			name: reaction.message.author.username + ' in #' + reaction.message.channel.name,
-			icon_url: reaction.message.author.avatarURL,
-		},
-		description: reaction.message.content,
-		footer: {
-			icon_url: 'https://images-ext-1.discordapp.net/external/3wBJyAlmIpF1rveHgNaFa_wNFgK7LdwypIpNMcAa7Y8/https/emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/white-medium-star_2b50.png',
-			text: reaction.count,
-		},
-	}}).then(msg => {
+	reaction.message.guild.channels.get(channelID).send({embed: createStarboardEmbed(reaction.message, reaction.count)}).then(msg => {
 		starboard.addStarpost(reaction.message, msg.id);
 	});
 });
+
+function createStarboardEmbed(msg, count) {
+	const embed = new Discord.RichEmbed({
+		author: {
+			name: msg.author.username + ' in #' + msg.channel.name,
+			icon_url: msg.author.avatarURL,
+		},
+		description: msg.content,
+		footer: {
+			icon_url: 'https://images-ext-1.discordapp.net/external/3wBJyAlmIpF1rveHgNaFa_wNFgK7LdwypIpNMcAa7Y8/https/emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/white-medium-star_2b50.png',
+			text: count,
+		},
+	});
+	if (msg.attachments.size > 0) {
+		const att = msg.attachments.first();
+		const imgtypes = ['jpg', 'jpeg', 'png', 'gif'];
+		console.log(att.filename);
+		if (att.filename.includes('.') && imgtypes.includes(att.filename.slice(att.filename.lastIndexOf('.') + 1, att.filename.length))) {
+			embed.setImage(att.url);
+		} else {
+			embed.addField('Attachments', msg.attachments.first().url);
+		}
+	}
+	return embed;
+}
 
 Aeiou.dispatcher.addInhibitor(async msg => {
 	if (!msg.command) return false;

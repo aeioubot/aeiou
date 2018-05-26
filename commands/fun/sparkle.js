@@ -7,8 +7,8 @@ module.exports = class SparkleCommand extends Command {
 			aliases: ['sparkles'],
 			group: 'fun',
 			memberName: 'sparkle',
-			description: 'Makes your words :sparkles:_*sparkly*_:sparkles:',
-			details: 'Makes your words :sparkles:_*sparkly*_:sparkles:',
+			description: 'Makes your words ✨sparkly✨',
+			details: 'Makes your words ✨sparkly✨',
 			args: [
 				{
 					key: 'echo',

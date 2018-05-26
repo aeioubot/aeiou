@@ -36,7 +36,7 @@ const thumbnailURLs = [
 
 const titles = [
 	'Today is a beautiful day, and your plant knows it.',
-	'Your plant is enojoying basking in the sun.',
+	'Your plant is enjoying basking in the sun.',
 	'The warmth of the sun makes your plant happy.',
 	'As you take in the sun, so does your plant.',
 	'Roots deep, your plant prepares for the day.',

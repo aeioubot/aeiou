@@ -87,23 +87,61 @@ Aeiou.on('ready', () => {
 	}
 });
 
+const events = {
+	MESSAGE_REACTION_ADD: 'messageReactionAdd',
+	MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
+};
+
+Aeiou.on('raw', async event => {
+	if (!events.hasOwnProperty(event.t)) return;
+
+	const { d: data } = event;
+	if (data.emoji.name !== '⭐') return;
+
+	const user = Aeiou.users.get(data.user_id);
+	const channel = Aeiou.channels.get(data.channel_id) || await user.createDM();
+
+	if (channel.messages.has(data.message_id)) return;
+
+	const message = await channel.fetchMessage(data.message_id);
+
+	const reaction = message.reactions.get(data.emoji.name) || {count: 0, emoji: {name: '⭐', id: null, animated: false}, message: message};
+
+	Aeiou.emit(events[event.t], reaction, user);
+});
+
+
 // Starboard
 Aeiou.on('messageReactionAdd', (reaction, user) => {
-	if (reaction.message.author.id === Aeiou.user.id) return;
-
 	if (reaction.emoji.name !== '⭐') return;
 
 	if (starboard.getLimit(reaction.message) > reaction.count) return;
 
+	if (starboard.isStarpost(reaction.message)) return;
+
 	const channelID = starboard.getChannel(reaction.message);
 
-	if (starboard.isStarpost(reaction.message)) {
-		reaction.message.guild.channels.get(channelID).messages.get(starboard.getStarpost(reaction.message)).edit({embed: createStarboardEmbed(reaction.message, reaction.count)});
-		return;
+	if (starboard.isStarposted(reaction.message)) {
+		return reaction.message.guild.channels.get(channelID).fetchMessage(starboard.getStarpost(reaction.message)).then(msg => {
+			msg.edit({embed: createStarboardEmbed(reaction.message, reaction.count)});
+		});
 	};
 
 	reaction.message.guild.channels.get(channelID).send({embed: createStarboardEmbed(reaction.message, reaction.count)}).then(msg => {
 		starboard.addStarpost(reaction.message, msg.id);
+	});
+});
+
+Aeiou.on('messageReactionRemove', (reaction, user) => {
+	if (reaction.emoji.name !== '⭐') return;
+
+	if (starboard.isStarpost(reaction.message)) return;
+
+	if (!starboard.isStarposted(reaction.message)) return;
+
+	const channelID = starboard.getChannel(reaction.message);
+	reaction.message.guild.channels.get(channelID).fetchMessage(starboard.getStarpost(reaction.message)).then(msg => {
+		msg.edit({embed: createStarboardEmbed(reaction.message, reaction.count)});
 	});
 });
 
@@ -119,14 +157,29 @@ function createStarboardEmbed(msg, count) {
 			text: count,
 		},
 	});
-	if (msg.attachments.size > 0) {
+	if (msg.attachments.size) {
 		const att = msg.attachments.first();
 		const imgtypes = ['jpg', 'jpeg', 'png', 'gif'];
-		console.log(att.filename);
 		if (att.filename.includes('.') && imgtypes.includes(att.filename.slice(att.filename.lastIndexOf('.') + 1, att.filename.length))) {
 			embed.setImage(att.url);
 		} else {
 			embed.addField('Attachments', msg.attachments.first().url);
+		}
+	}
+	else if (msg.embeds.length) {
+		/* eslint-disable guard-for-in */
+		for (const index in msg.embeds) {
+			const msgEmbed = msg.embeds[index];
+			switch (msgEmbed.type) {
+				case 'image':
+				case 'gifv':
+					embed.setImage(msgEmbed.url);
+					break;
+				case 'link':
+					embed.setTitle(msgEmbed.title);
+					embed.setURL(msgEmbed.url);
+					embed.setThumbnail(msgEmbed.thumbnail.url);
+			}
 		}
 	}
 	return embed;

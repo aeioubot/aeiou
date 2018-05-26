@@ -79,8 +79,12 @@ module.exports = {
 		});
 	},
 
-	isStarpost: function(msg) {
+	isStarposted: function(msg) {
 		return starboardCache[msg.guild.id].find(m => m.message === msg.id);
+	},
+
+	isStarpost: function(msg) {
+		return starboardCache[msg.guild.id].find(m => m.starpost === msg.id)
 	},
 
 	setLimit: async function(msg, limit) {
@@ -112,4 +116,5 @@ module.exports = {
 	getStarpost: function(msg) {
 		return starboardCache[msg.guild.id].find(m => m.message === msg.id).starpost;
 	},
+
 };

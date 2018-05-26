@@ -6,6 +6,7 @@ const messageListeners = require('./utils/messageListeners.js');
 const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
 const reacts = require('./utils/models/creact.js');
+const starboard = require('./utils/models/starboard.js');
 const memwatch = require('memwatch-next');
 const permissions = require('./utils/models/permissions');
 const GatewayCommand = require('./utils/classes/GatewayCommand.js');
@@ -43,6 +44,7 @@ Aeiou.registry
 		['role', 'Role commands'],
 		['tag', 'Tag commands'],
 		['owner', 'Owner commands'],
+		['starboard', 'starry commands'],
 	])
 	.registerDefaultTypes()
 	.registerDefaultGroups()
@@ -56,6 +58,9 @@ Aeiou.registry
 Aeiou.on('ready', () => {
 	reacts.buildReactCache(Array.from(Aeiou.guilds.keys()), Aeiou.shard.id).then(c => {
 		console.log(`[Shard ${Aeiou.shard.id}] Cached ${c} reactions for ${Array.from(Aeiou.guilds.keys()).length} guilds!`);
+	});
+	starboard.buildStarboardCache(Array.from(Aeiou.guilds.keys()), Aeiou.shard.id).then(c => {
+		console.log(`[Shard ${Aeiou.shard.id}] Cached ${c} starposts for ${Array.from(Aeiou.guilds.keys()).length} guilds!`);
 	});
 	permissions.buildPermissionCache([...Aeiou.guilds.keys()]);
 	memwatch.on('leak', (info) => {
@@ -79,6 +84,48 @@ Aeiou.on('ready', () => {
 		postBDPstats();
 		setInterval(postBDPstats, 15 * 60 * 1000); // 15 minutes
 	}
+});
+
+Aeiou.on('messageReactionAdd', (reaction, user) => {
+	const channelID = starboard.getChannel(reaction.message);
+
+	if (reaction.emoji.name !== '⭐') return;
+
+	if (starboard.getLimit(reaction.message) > reaction.count) return;
+
+	if (starboard.isStarpost(reaction.message)) {
+		reaction.message.guild.channels.get(channelID).messages.get(starboard.getStarpost(reaction.message)).edit({embed: {
+			author: {
+				name: reaction.message.author.username + ' in #' + reaction.message.channel.name,
+				icon_url: reaction.message.author.avatarURL,
+			},
+			description: reaction.message.content,
+			footer: {
+				icon_url: 'https://images-ext-1.discordapp.net/external/3wBJyAlmIpF1rveHgNaFa_wNFgK7LdwypIpNMcAa7Y8/https/emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/white-medium-star_2b50.png',
+				text: reaction.count,
+			},
+		}});
+		return;
+	};
+
+
+	console.log('msg', reaction.message);
+	console.log('channel', channelID);
+
+
+	reaction.message.guild.channels.get(channelID).send({embed: {
+		author: {
+			name: reaction.message.author.username + ' in #' + reaction.message.channel.name,
+			icon_url: reaction.message.author.avatarURL,
+		},
+		description: reaction.message.content,
+		footer: {
+			icon_url: 'https://images-ext-1.discordapp.net/external/3wBJyAlmIpF1rveHgNaFa_wNFgK7LdwypIpNMcAa7Y8/https/emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/white-medium-star_2b50.png',
+			text: reaction.count,
+		},
+	}}).then(msg => {
+		starboard.addStarpost(reaction.message, msg.id);
+	});
 });
 
 Aeiou.dispatcher.addInhibitor(async msg => {

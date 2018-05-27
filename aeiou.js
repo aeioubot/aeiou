@@ -154,7 +154,7 @@ function createStarboardEmbed(msg, count) {
 		description: msg.content,
 		footer: {
 			icon_url: 'https://images-ext-1.discordapp.net/external/3wBJyAlmIpF1rveHgNaFa_wNFgK7LdwypIpNMcAa7Y8/https/emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/white-medium-star_2b50.png',
-			text: count,
+			text: count + ' · posted at ' + msg.createdAt.toISOString().replace('T', ' ').replace(/:\d\d\.\d\d\dZ/, ' UTC'),
 		},
 	});
 	if (msg.attachments.size) {
@@ -165,21 +165,31 @@ function createStarboardEmbed(msg, count) {
 		} else {
 			embed.addField('Attachments', msg.attachments.first().url);
 		}
-	}
-	else if (msg.embeds.length) {
-		/* eslint-disable guard-for-in */
-		for (const index in msg.embeds) {
-			const msgEmbed = msg.embeds[index];
-			switch (msgEmbed.type) {
-				case 'image':
-				case 'gifv':
-					embed.setImage(msgEmbed.url);
-					break;
-				case 'link':
-					embed.setTitle(msgEmbed.title);
-					embed.setURL(msgEmbed.url);
-					embed.setThumbnail(msgEmbed.thumbnail.url);
-			}
+	} else if (msg.embeds.length) {
+		const msgEmbed = msg.embeds[0];
+		switch (msgEmbed.type) {
+			case 'image':
+			case 'gifv':
+				embed.setImage(msgEmbed.url);
+				break;
+			case 'link':
+				embed.setTitle(msgEmbed.title);
+				embed.setURL(msgEmbed.url);
+				embed.setThumbnail(msgEmbed.thumbnail.url);
+				break;
+			case 'rich':
+				if (msgEmbed.title) embed.setTitle(msgEmbed.title);
+				if (msgEmbed.description) embed.addField('Embed', msgEmbed.description);
+				/* eslint-disable guard-for-in */
+				for (const fieldIndex in msgEmbed.fields) {
+					const field = msgEmbed.fields[fieldIndex];
+					embed.addField(field.name, field.value, field.inline);
+				}
+				if (msgEmbed.thumbnail) embed.setThumbnail(msgEmbed.thumbnail.url);
+				if (msgEmbed.image) embed.setImage(msgEmbed.image.url);
+				break;
+			case 'video':
+				embed.setTitle(msgEmbed.title);
 		}
 	}
 	return embed;

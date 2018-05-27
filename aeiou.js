@@ -159,7 +159,7 @@ function createStarboardEmbed(msg, count) {
 		},
 		description: msg.content,
 		footer: {
-			icon_url: 'https://images-ext-1.discordapp.net/external/3wBJyAlmIpF1rveHgNaFa_wNFgK7LdwypIpNMcAa7Y8/https/emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/white-medium-star_2b50.png',
+			icon_url: 'http://www.webweaver.nu/clipart/img/nature/planets/smiling-gold-star.png',
 			text: count + ' · posted '
 				+ months[msg.createdAt.getUTCMonth()] + ' '
 				+ msg.createdAt.getUTCDate() + ', '

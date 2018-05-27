@@ -45,7 +45,6 @@ Aeiou.registry
 		['role', 'Role commands'],
 		['tag', 'Tag commands'],
 		['owner', 'Owner commands'],
-		['starboard', 'starry commands'],
 	])
 	.registerDefaultTypes()
 	.registerDefaultGroups()
@@ -115,6 +114,8 @@ Aeiou.on('raw', async event => {
 Aeiou.on('messageReactionAdd', (reaction, user) => {
 	if (reaction.emoji.name !== '⭐') return;
 
+	if (!starboard.isEnabled(reaction.message)) return;
+
 	if (starboard.getLimit(reaction.message) > reaction.count) return;
 
 	if (starboard.isStarpost(reaction.message)) return;
@@ -134,6 +135,8 @@ Aeiou.on('messageReactionAdd', (reaction, user) => {
 
 Aeiou.on('messageReactionRemove', (reaction, user) => {
 	if (reaction.emoji.name !== '⭐') return;
+
+	if (!starboard.isEnabled(reaction.message)) return;
 
 	if (starboard.isStarpost(reaction.message)) return;
 

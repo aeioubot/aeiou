@@ -9,7 +9,7 @@ const starposts = db.define('starposts', {
 		/* eslint-disable-next-line */
 		type: Sequelize.STRING(25),
 	},
-	message: { // 'guild', 'channel', 'role', 'user'
+	message: {
 		/* eslint-disable-next-line */
 		type: Sequelize.STRING(25),
 	},
@@ -31,6 +31,10 @@ const starguilds = db.define('starguilds', {
 	channel: {
 		/* eslint-disable-next-line */
 		type: Sequelize.STRING(25),
+	},
+	enabled: {
+		type: Sequelize.BOOLEAN,
+		defaultValue: false,
 	},
 });
 
@@ -54,7 +58,6 @@ module.exports = {
 				starguildCache[p.guild] = {limit: p.limit, channel: p.channel};
 			});
 		});
-		console.log(starguildCache);
 		return starposts.findAll({
 			where: {
 				guild: {[Op.in]: guildList},
@@ -97,10 +100,12 @@ module.exports = {
 	},
 
 	getLimit: function(msg) {
-		return starguildCache[msg.guild.id].limit || 9000;
+		starguildCache[msg.guild.id] = starguildCache[msg.guild.id] || {};
+		return starguildCache[msg.guild.id].limit;
 	},
 
 	getChannel: function(msg) {
+		starguildCache[msg.guild.id] = starguildCache[msg.guild.id] || {};
 		return starguildCache[msg.guild.id].channel;
 	},
 
@@ -117,4 +122,26 @@ module.exports = {
 		return starboardCache[msg.guild.id].find(m => m.message === msg.id).starpost;
 	},
 
+	enable: function(msg) {
+		starguildCache[msg.guild.id] = starguildCache[msg.guild.id] || {};
+		starguildCache[msg.guild.id].enabled = true;
+		return starguilds.upsert({
+			guild: msg.guild.id,
+			enabled: true,
+		});
+	},
+
+	disable: function(msg) {
+		starguildCache[msg.guild.id] = starguildCache[msg.guild.id] || {};
+		starguildCache[msg.guild.id].enabled = false;
+		return starguilds.upsert({
+			guild: msg.guild.id,
+			enabled: false,
+		});
+	},
+
+	isEnabled: function(msg) {
+		starguildCache[msg.guild.id] = starguildCache[msg.guild.id] || {};
+		return starguildCache[msg.guild.id].enabled;
+	},
 };

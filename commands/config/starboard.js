@@ -21,14 +21,14 @@ module.exports = class StarboardCommand extends Command {
 			args: [
 				{
 					key: 'action',
-					prompt: 'which action!',
+					prompt: 'Please specify one of: threshold, channele, enable, disable.',
 					type: 'string',
 					validate: (val, msg, currArg, prevArgs) => {
 						return ['limit', 'threshold', 'channel', 'enable', 'disable'].includes(val);
 					},
 				}, {
 					key: 'limitorchannel',
-					prompt: 'What is the limit :):)',
+					prompt: 'What is the threshold?',
 					type: 'string',
 					default: '',
 					validate: (val, msg, currArg, prevArgs) => {

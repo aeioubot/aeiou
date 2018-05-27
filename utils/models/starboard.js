@@ -55,7 +55,7 @@ module.exports = {
 		}).then(x => {
 			x = x.map(f => f.dataValues);
 			x.forEach(p => {
-				starguildCache[p.guild] = {limit: p.limit, channel: p.channel};
+				starguildCache[p.guild] = {limit: p.limit, channel: p.channel, enabled: p.enabled};
 			});
 		});
 		return starposts.findAll({

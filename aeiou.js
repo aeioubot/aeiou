@@ -149,6 +149,9 @@ Aeiou.on('messageReactionRemove', (reaction, user) => {
 });
 
 function createStarboardEmbed(msg, count) {
+	const months = ['January', 'February', 'March', 'April', 'May', 'June',
+		'July', 'August', 'September', 'October', 'November', 'December',
+	];
 	const embed = new Discord.RichEmbed({
 		author: {
 			name: msg.author.username + ' in #' + msg.channel.name,
@@ -157,7 +160,12 @@ function createStarboardEmbed(msg, count) {
 		description: msg.content,
 		footer: {
 			icon_url: 'https://images-ext-1.discordapp.net/external/3wBJyAlmIpF1rveHgNaFa_wNFgK7LdwypIpNMcAa7Y8/https/emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/white-medium-star_2b50.png',
-			text: count + ' · posted at ' + msg.createdAt.toISOString().replace('T', ' ').replace(/:\d\d\.\d\d\dZ/, ' UTC'),
+			text: count + ' · posted '
+				+ months[msg.createdAt.getUTCMonth()] + ' '
+				+ msg.createdAt.getUTCDate() + ', '
+				+ msg.createdAt.getUTCFullYear() + ' at '
+				+ msg.createdAt.getUTCHours() + ':'
+				+ msg.createdAt.getUTCMinutes().toString().padStart(2, '0') + ' UTC',
 		},
 	});
 	if (msg.attachments.size) {
@@ -195,6 +203,7 @@ function createStarboardEmbed(msg, count) {
 				embed.setTitle(msgEmbed.title);
 		}
 	}
+	embed.setColor(msg.guild.me.displayColor || 16741829);
 	return embed;
 }
 

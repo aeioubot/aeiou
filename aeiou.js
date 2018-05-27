@@ -1,11 +1,13 @@
 const secure = require('./secure.json');
 const Commando = require('discord.js-commando');
+const Discord = require('discord.js');
 const path = require('path');
 const SequelizeProvider = require('./utils/Sequelize');
 const messageListeners = require('./utils/messageListeners.js');
 const database = require('./database.js');
 const donors = require('./utils/models/donor.js');
 const reacts = require('./utils/models/creact.js');
+const starboard = require('./utils/models/starboard.js');
 const memwatch = require('memwatch-next');
 const permissions = require('./utils/models/permissions');
 const GatewayCommand = require('./utils/classes/GatewayCommand.js');
@@ -57,6 +59,9 @@ Aeiou.on('ready', () => {
 	reacts.buildReactCache(Array.from(Aeiou.guilds.keys()), Aeiou.shard.id).then(c => {
 		console.log(`[Shard ${Aeiou.shard.id}] Cached ${c} reactions for ${Array.from(Aeiou.guilds.keys()).length} guilds!`);
 	});
+	starboard.buildStarboardCache(Array.from(Aeiou.guilds.keys()), Aeiou.shard.id).then(c => {
+		console.log(`[Shard ${Aeiou.shard.id}] Cached ${c} starposts for ${Array.from(Aeiou.guilds.keys()).length} guilds!`);
+	});
 	permissions.buildPermissionCache([...Aeiou.guilds.keys()]);
 	memwatch.on('leak', (info) => {
 		info.time = new Date().toLocaleString();
@@ -80,6 +85,127 @@ Aeiou.on('ready', () => {
 		setInterval(postBDPstats, 15 * 60 * 1000); // 15 minutes
 	}
 });
+
+const events = {
+	MESSAGE_REACTION_ADD: 'messageReactionAdd',
+	MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
+};
+
+Aeiou.on('raw', async event => {
+	if (!events.hasOwnProperty(event.t)) return;
+
+	const { d: data } = event;
+	if (data.emoji.name !== '⭐') return;
+
+	const user = Aeiou.users.get(data.user_id);
+	const channel = Aeiou.channels.get(data.channel_id) || await user.createDM();
+
+	if (channel.messages.has(data.message_id)) return;
+
+	const message = await channel.fetchMessage(data.message_id);
+
+	const reaction = message.reactions.get(data.emoji.name) || {count: 0, emoji: {name: '⭐', id: null, animated: false}, message: message};
+
+	Aeiou.emit(events[event.t], reaction, user);
+});
+
+
+// Starboard
+Aeiou.on('messageReactionAdd', (reaction, user) => {
+	if (reaction.emoji.name !== '⭐') return;
+
+	if (!starboard.isEnabled(reaction.message)) return;
+
+	if (starboard.getLimit(reaction.message) > reaction.count) return;
+
+	if (starboard.isStarpost(reaction.message)) return;
+
+	const channelID = starboard.getChannel(reaction.message);
+
+	if (starboard.isStarposted(reaction.message)) {
+		return reaction.message.guild.channels.get(channelID).fetchMessage(starboard.getStarpost(reaction.message)).then(msg => {
+			msg.edit({embed: createStarboardEmbed(reaction.message, reaction.count)});
+		});
+	};
+
+	reaction.message.guild.channels.get(channelID).send({embed: createStarboardEmbed(reaction.message, reaction.count)}).then(msg => {
+		starboard.addStarpost(reaction.message, msg.id);
+	});
+});
+
+Aeiou.on('messageReactionRemove', (reaction, user) => {
+	if (reaction.emoji.name !== '⭐') return;
+
+	if (!starboard.isEnabled(reaction.message)) return;
+
+	if (starboard.isStarpost(reaction.message)) return;
+
+	if (!starboard.isStarposted(reaction.message)) return;
+
+	const channelID = starboard.getChannel(reaction.message);
+	reaction.message.guild.channels.get(channelID).fetchMessage(starboard.getStarpost(reaction.message)).then(msg => {
+		msg.edit({embed: createStarboardEmbed(reaction.message, reaction.count)});
+	});
+});
+
+function createStarboardEmbed(msg, count) {
+	const months = ['January', 'February', 'March', 'April', 'May', 'June',
+		'July', 'August', 'September', 'October', 'November', 'December',
+	];
+	const embed = new Discord.RichEmbed({
+		author: {
+			name: msg.author.username + ' in #' + msg.channel.name,
+			icon_url: msg.author.avatarURL,
+		},
+		description: msg.content,
+		footer: {
+			icon_url: 'http://www.webweaver.nu/clipart/img/nature/planets/smiling-gold-star.png',
+			text: count + ' · posted '
+				+ months[msg.createdAt.getUTCMonth()] + ' '
+				+ msg.createdAt.getUTCDate() + ', '
+				+ msg.createdAt.getUTCFullYear() + ' at '
+				+ msg.createdAt.getUTCHours() + ':'
+				+ msg.createdAt.getUTCMinutes().toString().padStart(2, '0') + ' UTC',
+		},
+	});
+	if (msg.attachments.size) {
+		const att = msg.attachments.first();
+		const imgtypes = ['jpg', 'jpeg', 'png', 'gif'];
+		if (att.filename.includes('.') && imgtypes.includes(att.filename.slice(att.filename.lastIndexOf('.') + 1, att.filename.length))) {
+			embed.setImage(att.url);
+		} else {
+			embed.addField('Attachments', msg.attachments.first().url);
+		}
+	} else if (msg.embeds.length) {
+		const msgEmbed = msg.embeds[0];
+		switch (msgEmbed.type) {
+			case 'image':
+			case 'gifv':
+				embed.setImage(msgEmbed.url);
+				break;
+			case 'link':
+				embed.setTitle(msgEmbed.title);
+				embed.setURL(msgEmbed.url);
+				embed.setThumbnail(msgEmbed.thumbnail.url);
+				break;
+			case 'rich':
+				if (msgEmbed.title) embed.setTitle(msgEmbed.title);
+				if (msgEmbed.description) embed.addField('Embed', msgEmbed.description);
+				/* eslint-disable guard-for-in */
+				for (const fieldIndex in msgEmbed.fields) {
+					const field = msgEmbed.fields[fieldIndex];
+					embed.addField(field.name, field.value, field.inline);
+				}
+				if (msgEmbed.thumbnail) embed.setThumbnail(msgEmbed.thumbnail.url);
+				if (msgEmbed.image) embed.setImage(msgEmbed.image.url);
+				break;
+			case 'video':
+				embed.setTitle(msgEmbed.title);
+		}
+	}
+	embed.setColor(msg.guild.me.displayColor || 16741829);
+	return embed;
+}
 
 Aeiou.dispatcher.addInhibitor(async msg => {
 	if (!msg.command) return false;

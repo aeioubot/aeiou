@@ -28,7 +28,7 @@ module.exports = class CReactCommand extends Command {
 					key: 'trigger',
 					prompt: 'What is the trigger for the reaction?',
 					type: 'string',
-					parse: (trigger) => trigger.toLowerCase().trim().replace(/`|\*|_|~/gi, ''),
+					parse: (trigger) => trigger.toLowerCase().replace(/`|\*|_|~/gi, '').trim(),
 					validate: (value, msg, currArg, prevArgs) => {
 						if (prevArgs.option === 'list') return true;
 						return value && value.length >= 1;
@@ -48,46 +48,32 @@ module.exports = class CReactCommand extends Command {
 		});
 	}
 
-	async run(msg, { option, trigger, content }) {
-		if (option === '') return msg.say('Please select an action.');
-		const crExists = reactDB.findReact(msg, trigger);
+	hasPermission(msg) {
+		return msg.member.hasPermission('MANAGE_MESSAGES') || this.client.isOwner(msg.author.id);
+	}
+
+	async run(msg, { option, trigger, content, specificReaction }) {
 		switch (option.toLowerCase()) {
 			case 'add': {
-				if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
-				if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.replace(/ /g, '').length === 0) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
-				if (crExists) return msg.say(`There is already a reaction with the trigger **${trigger}**.`); // return the error
-				reactDB.addReact(msg, trigger, content);
-				return reactDB.addToCache({
-					guild: msg.guild.id,
-					trigger: trigger,
-					content: content,
-				}).then(() => msg.say(`Reaction added, **${trigger}** will cause me to say **${content}**.`));
-			}
-			case 'edit': {
-				if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
-				if (trigger === '' || content === '' || trigger.replace(/ /g, '').length === 0 || content.replace(/ /g, '').length === 0) return msg.say('The custom reaction content or trigger can\'t be empty.'); // Because of default arguments, detecting an empty trigger or content when adding is necessary.
-				if (!crExists) return msg.say(`There is no custom reaction with the trigger **${trigger}**. Please add it with \`!creact add\` first.`);
-				reactDB.editReact(msg, trigger, content);
-				return reactDB.editInCache({
-					guild: msg.guild.id,
-					trigger: trigger,
-					content: content,
-				}).then(msg.say(`Reaction edited! I will now say **${content}** in response to **${trigger}**.`));
+				return reactDB.addReaction(msg, trigger, content).then(() => {
+					return msg.say(`Reaction added! I will now say **${content}** in response to **${trigger}**.`);
+				});
 			}
 			case 'remove': // 3 acceptable options to delete using fall-through.
 			case 'delete':
 			case 'del': {
-				if (!msg.member.hasPermission('MANAGE_MESSAGES') && !this.client.isOwner(msg.author.id)) return msg.say('You need permission to manage messages in order to manage custom reacts.');
-				if (!crExists) return msg.say(`There are no custom reactions with the trigger **${trigger}**...`); // Does not exist.
-				reactDB.deleteReact(msg, trigger);
-				return reactDB.removeFromCache({
-					guild: msg.guild.id,
-					trigger: trigger,
-				}).then(msg.say(`Reaction deleted, I'll no longer respond to **${trigger}**.`));
+				if (content === 'all') {
+					return reactDB.deleteTrigger(msg, trigger.replace('--partial', '').trim()).then(() => {
+						return msg.say(`Deleted ALL reactions for the trigger **${trigger}**`);
+					});
+				}
+				return reactDB.deleteReaction(msg, trigger.replace('--partial', '').trim(), parseInt(content)-1).then((bool) => {
+					if (!bool) return msg.say('There is no reaction with that trigger, or you chose an invalid index.\nYou may also use `all` for the index to delete all reactions for this trigger.');
+					return msg.say(`Reaction deleted, I'll no longer respond _that_ in response to **${trigger}**.`);
+				});
 			}
 			case 'list': { // Lists the triggers in the guild.
-				console.log(trigger);
-				return this.client.registry.commands.get('crlist').run(msg, {argPage: trigger});
+				return this.client.registry.commands.get('crlist').run(msg, {argPage: trigger, specificReaction: content});
 			}
 			default: msg.say('That isn\'t a valid option.'); break;
 		}

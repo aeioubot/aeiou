@@ -1,33 +1,10 @@
-const reactDB = require('./models/creact.js');
 const plants = require('./models/plants.js');
-
-function upify(msgContent) {
-	msgContent = msgContent.split('');
-	let upping = true;
-	for (let i = 0; i < msgContent.length; i++) {
-		if (upping) msgContent[i] = msgContent[i].toUpperCase();
-		if (msgContent[i] == '<') upping = false;
-		if (msgContent[i] == '>') upping = true;
-	}
-	return msgContent.join('');
-}
+const CRManager = require('./classes/cr/CRManager');
 
 module.exports = {
 	creact: async (msg) => {
 		if (msg.author.bot || msg.channel.type != 'text' || msg.client.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id)) return;
-
-		let markdownStart = '';
-		for (let i = 0; msg.content[i] === msg.content.split('').reverse().join('')[i] && '`*_~'.includes(msg.content[i]); i++) markdownStart += msg.content[i];
-		const messageContent = msg.content.substr(markdownStart.length, msg.content.length - (2 * markdownStart.length));
-
-		const toSay = reactDB.findAllForGuild(msg.guild.id).find((reaction) => {
-			return reaction.trigger === messageContent.toLowerCase();
-		});
-
-		if (toSay) {
-			const reactContent = (messageContent === upify(messageContent) && toSay.trigger !== upify(toSay.trigger)) ? upify(toSay.content) : toSay.content;
-			return msg.channel.send(markdownStart + reactContent + markdownStart.split('').reverse().join(''));
-		}
+		CRManager.processMessage(msg);
 	},
 	plantSeed: async (msg) => {
 		if (Math.floor(Math.random() * 600) !== 0 || msg.client.provider.get(msg.guild.id, 'noSeedChannels', []).includes(msg.channel.id)) return;

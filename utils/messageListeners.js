@@ -3,7 +3,12 @@ const CRManager = require('./classes/cr/CRManager');
 
 module.exports = {
 	creact: async (msg) => {
-		if (msg.author.bot || msg.channel.type != 'text' || msg.client.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id)) return;
+		if (
+			msg.author.bot ||
+			msg.channel.type != 'text' || // Exit conditions for no CR.
+			msg.client.provider.get(msg.guild, 'ignoredChannels', []).includes(msg.channel.id) ||
+			!msg.content
+		) return;
 		CRManager.processMessage(msg);
 	},
 	plantSeed: async (msg) => {

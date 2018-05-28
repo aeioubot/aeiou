@@ -15,14 +15,17 @@
     "dblapi.js": "^2.0.1",
     "discord.js": "git://github.com/aeioubot/discord.js.git#11.3-dev",
     "discord.js-commando": "git://github.com/aeioubot/Commando.git",
+    "ffmpeg-binaries": "^3.2.2-3",
     "memwatch-next": "^0.3.0",
     "mysql2": "^1.5.3",
+    "node-opus": "^0.3.0",
     "request": "^2.85.0",
     "request-promise": "^4.2.2",
     "require-all": "^2.2.0",
     "sequelize": "^4.37.6",
     "unescape": "^1.0.1",
-    "unidecode": "^0.1.8"
+    "unidecode": "^0.1.8",
+    "ytdl-core": "^0.20.4"
   },
   "devDependencies": {
     "@types/node": "^9.6.7",

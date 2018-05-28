@@ -25,7 +25,7 @@ module.exports = class YoutubeCommand extends Command {
 	}
 
 	async run(msg, { query }) {
-		request({uri: `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${query}&key=${secure.youtube}`, json: true}).then((d) => {
+		request({uri: `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=video&q=${query}&key=${secure.youtube}`, json: true}).then((d) => {
 			return msg.say('', {embed: {
 				title: d.items[0].snippet.title,
 				color: 0xFF2020,

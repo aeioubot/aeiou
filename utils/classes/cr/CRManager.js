@@ -18,6 +18,7 @@ class CRManager {
 
 	processMessage(msg) {
 		for (const cr of this.getGuildReactions(msg.guild.id)) if (cr.isMatch(msg)) return cr.react(msg);
+		return null;
 	}
 }
 global.meme = new CRManager();

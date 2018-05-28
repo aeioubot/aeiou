@@ -8,8 +8,7 @@ module.exports = class CrListCommand extends Command {
 			aliases: [],
 			group: 'cr',
 			memberName: 'crlist',
-			description: 'Show a list of custom reactions in the server.',
-			details: 'If the list does not fit into one message, it will be split up in pages of 10 reactions.',
+			description: 'Show a list of custom reactions in the server, and manage them in-depth.',
 			guildOnly: true,
 			args: [
 				{

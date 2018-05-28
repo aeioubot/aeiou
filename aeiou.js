@@ -45,6 +45,7 @@ Aeiou.registry
 		['role', 'Role commands'],
 		['tag', 'Tag commands'],
 		['owner', 'Owner commands'],
+		['music', 'music commands'],
 	])
 	.registerDefaultTypes()
 	.registerDefaultGroups()

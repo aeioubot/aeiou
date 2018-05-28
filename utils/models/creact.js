@@ -21,76 +21,59 @@ const reacts = db.define('reacts', {
 	},
 	type: {
 		type: Sequelize.STRING(20), // eslint-disable-line
+		allowNull: false,
 	},
 }, {timestamps: false, charset: 'utf8mb4'});
 
+function determineType(trigger) {
+	trigger = trigger.toLowerCase();
+	if (trigger.includes('--partial') && (trigger.match(/\{[1-9]\}/gi) || trigger.match(/\{[1-9]\}/gi))) return 'templatePartial';
+	if (trigger.includes('--partial')) return 'partial';
+	if ((trigger.match(/\{[1-9]\}/gi) || trigger.match(/\{[1-9]\}/gi))) return 'template';
+	return 'whole';
+}
 module.exports = {
-	addReact: async (msg, trigger, content) => {
-		return reacts.upsert({
+	addReaction: async (msg, trigger, content) => {
+		CRManager.addReaction(msg.guild.id, determineType(trigger), trigger.replace('--partial', '').trim(), content);
+		return reacts.create({
 			guild: msg.guild.id,
-			trigger: trigger,
+			trigger: trigger.replace('--partial', '').trim(),
 			content: content,
+			type: determineType(trigger),
 		});
 	},
-	deleteReact: async (msg, trigger) => {
-		return reacts.find({
-			where: {
-				guild: msg.guild.id,
-				trigger: trigger,
-			},
-		}).then((result) => {
-			if (result) { // cr trigger exists -> delete.
-				reacts.destroy({
-					where: {
-						guild: msg.guild.id,
-						trigger: trigger,
-					},
-				});
-			};
-		});
-	},
-	editReact: async (msg, trigger, content) => {
-		return reacts.find({
-			where: {
-				guild: msg.guild.id,
-				trigger: trigger,
-			},
-		}).then((result) => {
-			if (result) { // cr trigger exists -> edit.
-				reacts.update({
+	deleteReaction: async (msg, trigger, index) => {
+		const {success, text} = CRManager.deleteReaction(msg, trigger, index);
+		if (success) {
+			reacts.destroy({
+				where: {
+					guild: msg.guild.id,
 					trigger: trigger,
-					content: content,
-				}, {
-					where: {
-						guild: msg.guild.id,
-						trigger: trigger,
-					},
-				});
-			}
+					content: text,
+				},
+			});
+			return success;
+		}
+		return success;
+	},
+	deleteTrigger: async (msg, trigger) => {
+		CRManager.deleteTrigger(msg, trigger);
+		return reacts.destroy({
+			where: {
+				guild: msg.guild.id,
+				trigger: trigger,
+			},
 		});
 	},
-	// findReact: (msg, trigger) => { // from cache
-	// 	if (!allReacts) return null;
-	// 	if (!allReacts[msg.guild.id]) return null;
-	// 	return allReacts[msg.guild.id].find((react) => {
-	// 		return react.trigger === trigger;
-	// 	});
-	// },
-	// findAllForGuild: (guild) => { // from cache
-	// 	return allReacts[guild] || [];
-	// },
-	// addToCache: async function(toAdd) {
-	// 	allReacts[toAdd.guild] = allReacts[toAdd.guild] || [];
-	// 	allReacts[toAdd.guild].push({trigger: toAdd.trigger, content: toAdd.content});
-	// },
-	// removeFromCache: async function(toRemove) {
-	// 	allReacts[toRemove.guild] = allReacts[toRemove.guild] || [];
-	// 	allReacts[toRemove.guild].splice(allReacts[toRemove.guild].findIndex((reaction) => reaction.trigger === toRemove.trigger), 1);
-	// },
-	// editInCache: async function(toEdit) {
-	// 	allReacts[toEdit.guild] = allReacts[toEdit.guild] || [];
-	// 	allReacts[toEdit.guild].find((reaction) => reaction.trigger === toEdit.trigger).content = toEdit.content;
-	// },
+	getReacts(guild) {
+		return CRManager.getGuildReactions(guild);
+	},
+	triggerExists(text, guild) {
+		return CRManager.getGuildReactions(guild).find(d => d.trigger.toLowerCase() === text.toLowerCase) ? true : false;
+	},
+	getTriggerArray(guild) {
+		return CRManager.getGuildReactions(guild).map(d => d.trigger);
+	},
 	buildReactCache: async function(guildArray, shardID) {
 		return reacts.findAll({
 			where: {

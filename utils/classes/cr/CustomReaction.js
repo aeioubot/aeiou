@@ -14,7 +14,7 @@ class CustomReaction {
 	}
 
 	getContents() {
-		return this.contents.slice(0); // Clone of array for immutability.
+		return this.contents;
 	}
 	// End getters/setters
 
@@ -74,7 +74,7 @@ class CustomReaction {
 			case 'partial': {
 				const {md} = this.removeMarkdown(msg.content);
 				return msg.channel.send(
-					`${md}${msg.content === this.upify(msg.content) ? this.upify(this.pickResponse()) : this.pickResponse}${md.split('').reverse().join('')}`
+					`${md}${msg.content === this.upify(msg.content) ? this.upify(this.pickResponse()) : this.pickResponse()}${md.split('').reverse().join('')}`
 				);
 			}
 			case 'template': {

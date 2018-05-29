@@ -33,11 +33,11 @@ module.exports = {
 		});
 	},
 
-	queue: async (song, msg) => {
+	queue: async (song, msg, playNext) => {
 		guilds[msg.guild.id] = guilds[msg.guild.id] || {queue: [], playing: false};
 		if (guilds[msg.guild.id].playing) {
-			guilds[msg.guild.id].queue.push(song);
-			return;
+			if (playNext) return guilds[msg.guild.id].queue.unshift(song);
+			return guilds[msg.guild.id].queue.push(song);
 		}
 		msg.guild.channels.get(msg.member.voiceChannelID).join().then(conn => {
 			guilds[msg.guild.id].connection = conn;

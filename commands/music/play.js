@@ -12,7 +12,7 @@ module.exports = class PlayCommand extends Command {
 			description: 'Searches for a video on Youtube and plays it.',
 			details: 'Searches for a video on Youtube and plays it.',
 			aliases: ['p'],
-			examples: ['play despacito'],
+			examples: ['play  despacito'],
 			format: '[query]',
 			guildOnly: true,
 			args: [

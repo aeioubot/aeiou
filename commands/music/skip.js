@@ -16,10 +16,8 @@ module.exports = class SkipCommand extends Command {
 		});
 	}
 
-	async run(msg, { query }) {
+	async run(msg) {
+		if (!music.isPlaying(msg)) return msg.say('I am not playing music.');
 		music.skip(msg);
-		if (this.client.voiceConnections.get(msg.guild.id).dispatcher) {
-			this.client.voiceConnections.get(msg.guild.id).dispatcher.end()
-		}
 	}
 };

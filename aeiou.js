@@ -87,6 +87,17 @@ Aeiou.on('ready', () => {
 	}
 });
 
+const music = require('./utils/models/music.js');
+
+Aeiou.on('voiceStateUpdate', (oldMember, newMember) => {
+	if (!newMember.guild.me.voiceChannel) return;
+	if (newMember.guild.me.voiceChannel.members.filter(member => !member.user.bot && !member.deaf).size < 1 || newMember.guild.me.mute) {
+		console.log('Left channel because no one is listening.');
+		// todo: make it send a message
+		music.stop(newMember.guild.id, Aeiou);
+	}
+});
+
 const events = {
 	MESSAGE_REACTION_ADD: 'messageReactionAdd',
 	MESSAGE_REACTION_REMOVE: 'messageReactionRemove',

@@ -82,10 +82,14 @@ class CustomReaction {
 				let r = this.pickResponse();
 				const messageReplacements = new RegExp('^' + this.escapeRegex(this.trigger).replace(/\\{[1-9]\\}/gi, '(.+)') + '$', 'gim').exec(msg.content);
 				const responseTemplates = r.match(/{[1-9]}/g);
-				if (responseTemplates) {
-					responseTemplates.forEach(cTemplate => {
-						r = r.replace(cTemplate, messageReplacements[cTemplate.charAt(1)] || '');
-					});
+				try {
+					if (responseTemplates) {
+						responseTemplates.forEach(cTemplate => {
+							r = r.replace(cTemplate, messageReplacements[cTemplate.charAt(1)] || '');
+						});
+					}
+				} catch (e) {
+					// If it errors just continue, template is proper already.
 				}
 				return msg.channel.send(
 					`${md}${msg.content === this.upify(msg.content) ? this.upify(r) : r}${md.split('').reverse().join('')}`
@@ -96,10 +100,14 @@ class CustomReaction {
 				let r = this.pickResponse();
 				const messageReplacements = new RegExp('\\b' + this.escapeRegex(this.trigger).replace(/\\{[1-9]\\}/gi, '(.+)') + '\\b', 'gim').exec(msg.content);
 				const responseTemplates = r.match(/{[1-9]}/g);
-				if (responseTemplates) {
-					responseTemplates.forEach(cTemplate => {
-						r = r.replace(cTemplate, messageReplacements[cTemplate.charAt(1)] || '');
-					});
+				try {
+					if (responseTemplates) {
+						responseTemplates.forEach(cTemplate => {
+							r = r.replace(cTemplate, messageReplacements[cTemplate.charAt(1)] || '');
+						});
+					}
+				} catch (e) {
+					// If it errors just continue, template is proper already.
 				}
 				return msg.channel.send(
 					`${md}${msg.content === this.upify(msg.content) ? this.upify(r) : r}${md.split('').reverse().join('')}`

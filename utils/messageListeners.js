@@ -12,7 +12,7 @@ module.exports = {
 		CRManager.processMessage(msg);
 	},
 	plantSeed: async (msg) => {
-		if (Math.floor(Math.random() * 600) !== 0 || msg.client.provider.get(msg.guild.id, 'noSeedChannels', []).includes(msg.channel.id)) return;
+		if (Math.floor(Math.random() * 600) !== 0 || !msg.guild || msg.client.provider.get(msg.guild.id, 'noSeedChannels', []).includes(msg.channel.id)) return;
 		msg.react('🌰')
 			.then(() => {
 				setTimeout(async () => {

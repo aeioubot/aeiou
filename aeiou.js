@@ -207,6 +207,16 @@ function createStarboardEmbed(msg, count) {
 	return embed;
 }
 
+process.on('unhandledRejection', async e => {
+	if (e instanceof Discord.DiscordAPIError && e.message === 'Missing Permissions') return console.log('PERMS ERROR'); // Stops permissions errors from being logged.
+	console.error(e);
+});
+
+Aeiou.dispatcher.addInhibitor(async msg => {
+	if (!msg.command) return false;
+	console.log(msg.command.name);
+});
+
 Aeiou.dispatcher.addInhibitor(async msg => {
 	if (!msg.command) return false;
 	if (['ignore', 'crignore', 'permission'].includes(msg.command.name)) return false;

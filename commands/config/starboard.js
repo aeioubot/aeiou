@@ -78,21 +78,18 @@ module.exports = class StarboardCommand extends Command {
 			case 'limit':
 			case 'threshold':
 				if (args.limitorchannel === '') return msg.say('The threshold is ' + starboard.getLimit(msg));
-				if (args.limitorchannel > 2147483647) return msg.say('do you think you\'re funny')
+				if (args.limitorchannel > 2147483647) return msg.say('do you think you\'re funny');
 				starboard.setLimit(msg, args.limitorchannel);
-				msg.say(`Starboard threshold set to ${args.limitorchannel}.` + (starboard.getChannel(msg) ? starboard.isEnabled(msg) ? '' : '\n*Starboard is disabled, use `' + px + 'starboard enable`*' : '\n*Please set a channel using `' + px + 'starboard channel ...`*'));
-				break;
+				return msg.say(`Starboard threshold set to ${args.limitorchannel}.` + (starboard.getChannel(msg) ? starboard.isEnabled(msg) ? '' : '\n*Starboard is disabled, use `' + px + 'starboard enable`*' : '\n*Please set a channel using `' + px + 'starboard channel ...`*'));
 			case 'channel':
 				starboard.setChannel(msg, args.limitorchannel);
-				msg.say(`Starboard channel set to <#${args.limitorchannel.id}>.` + (starboard.getLimit(msg) ? starboard.isEnabled(msg) ? '' : '\n*Starboard is disabled, use `' + px + 'starboard enable`*' : '\n*Please set a threshold using `' + px + 'starboard threshold ...`*'));
-				break;
+				return msg.say(`Starboard channel set to <#${args.limitorchannel.id}>.` + (starboard.getLimit(msg) ? starboard.isEnabled(msg) ? '' : '\n*Starboard is disabled, use `' + px + 'starboard enable`*' : '\n*Please set a threshold using `' + px + 'starboard threshold ...`*'));
 			case 'enable':
 				starboard.enable(msg);
-				msg.say('Starboard is now enabled.');
-				break;
+				return msg.say('Starboard is now enabled.');
 			case 'disable':
 				starboard.disable(msg);
-				msg.say('Starboard is now disabled.');
+				return msg.say('Starboard is now disabled.');
 		}
 	}
 };

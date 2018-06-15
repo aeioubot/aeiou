@@ -214,7 +214,7 @@ process.on('unhandledRejection', async e => {
 
 Aeiou.dispatcher.addInhibitor(async msg => {
 	if (!msg.command) return false;
-	console.log(msg.command.name);
+	console.log(`${new Date().toUTCString()} // ${msg.command.name} // ${msg.author.tag} // Shard ${Aeiou.shard.id}`);
 });
 
 Aeiou.dispatcher.addInhibitor(async msg => {

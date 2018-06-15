@@ -18,12 +18,12 @@ module.exports = class SayCommand extends Command {
 		});
 	}
 	hasPermission(msg) {
-		if (!this.client.isOwner(msg.author)) return 'only owners can do that.';
+		if (!this.client.isOwner(msg.author) || !msg.member.hasPermission('ADMINISTRATOR')) return 'only owners and admins can do that.';
 		return true;
 	}
 
 	async run(msg, {echo}) {
 		msg.say(echo);
-		return msg.delete().catch(() => {});
+		return msg.delete().catch(() => msg.react('👀'));
 	}
 };

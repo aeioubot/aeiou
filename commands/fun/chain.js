@@ -19,7 +19,7 @@ module.exports = class ChainCommand extends Command {
 					key: 'content',
 					prompt: 'What do you want to chain?',
 					type: 'string',
-					max: 1800,
+					max: 1500,
 				},
 			],
 		});

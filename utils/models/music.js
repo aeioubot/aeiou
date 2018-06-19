@@ -20,7 +20,8 @@ module.exports = {
 		const dispatcher = connection.playStream(stream, streamOptions);
 		guilds[msg.guild.id].playing = true;
 		dispatcher.on('end', function(reason) {
-			if (reason === 'user') guilds[msg.guild.id].song = undefined;
+			stream.destroy();
+			if (reason === 'user' || reason === '') guilds[msg.guild.id].song = undefined;
 			guilds[msg.guild.id].playing = false;
 			if (reason === 'stop') {
 				return guilds[msg.guild.id].connection.channel.leave();

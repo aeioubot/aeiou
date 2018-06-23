@@ -9,10 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^10.1.2",
-    "bfd-api": "^0.2.6",
     "common-tags": "^1.7.2",
-    "dblapi.js": "^2.0.1",
     "discord.js": "git://github.com/aeioubot/discord.js.git#11.3-dev",
     "discord.js-commando": "git://github.com/aeioubot/Commando.git",
     "memwatch-next": "^0.3.0",
@@ -25,7 +22,6 @@
     "unidecode": "^0.1.8"
   },
   "devDependencies": {
-    "@types/node": "^9.6.7",
     "eslint": "^4.19.1",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-import": "^2.11.0"

@@ -1,5 +1,5 @@
 const { ShardingManager } = require('discord.js');
-const manager = new ShardingManager('./aeiou.js', { totalShards: 2, respawn: true });
+const manager = new ShardingManager('./aeiou.js', { totalShards: 4, respawn: true });
 const managerCommands = require('require-all')({
 	dirname: `${__dirname}/managerCommands`,
 	filter: n => n.slice(0, -3),
